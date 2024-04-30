@@ -1,0 +1,34 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+}
+
+.page-title {
+  text-align: center; /* Centra el texto */
+  color: #333; /* Cambia el color del texto */
+  font-size: 2em; /* Aumenta el tamaño del texto */
+  margin-bottom: 20px; /* Añade un poco de espacio debajo del título */
+}
+
+.app-logo {
+  width: 300px; /* Ajusta el ancho del logo */
+  height: auto; /* Mantiene la proporción del logo */
+  display: block; /* Hace que el logo sea un bloque, lo que permite centrarlo */
+  margin: 0 auto; /* Centra el logo horizontalmente */
+  padding: 20px 0; /* Añade un poco de espacio encima y debajo del logo */
+}
