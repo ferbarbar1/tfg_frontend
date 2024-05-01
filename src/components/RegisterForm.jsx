@@ -22,7 +22,7 @@ export const RegisterForm = ({ closeModal }) => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/register/client/",
+        "https://tfgbackend-production.up.railway.app/api/register/client/",
         {
           user: {
             username,
