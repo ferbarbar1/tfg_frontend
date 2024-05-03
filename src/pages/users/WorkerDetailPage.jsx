@@ -1,16 +1,16 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { deleteService } from '../api/services.api';
-import { ServiceForm } from '../components/ServiceForm';
+import { deleteWorker } from '../../api/workers.api';
+import { WorkerForm } from '../../components/users/WorkerForm';
 
-export function ServiceDetailPage({ isUpdate }) {
+export function WorkerDetailPage({ isUpdate }) {
     const { id } = useParams();
     const navigate = useNavigate();
 
     const handleDelete = async () => {
         try {
-            await deleteService(id);
-            navigate('/services');
+            await deleteWorker(id);
+            navigate('/users?tab=workers');
         } catch (error) {
             console.error(error);
         }
@@ -18,8 +18,8 @@ export function ServiceDetailPage({ isUpdate }) {
 
     return (
         <div>
-            <h1>{isUpdate ? 'Update Service' : 'Create Service'}</h1>
-            <ServiceForm isUpdate={isUpdate} />
+            <h1>{isUpdate ? 'View Worker' : 'Create Worker'}</h1>
+            <WorkerForm isUpdate={isUpdate} />
             {isUpdate && <button onClick={handleDelete}>Delete</button>}
         </div>
     );

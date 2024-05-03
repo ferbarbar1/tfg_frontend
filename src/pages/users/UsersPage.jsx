@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
-import { WorkersList } from '../components/WorkersList';
-import { ClientsList } from '../components/ClientsList';
+import { WorkersList } from '../../components/users/WorkersList';
+import { ClientsList } from '../../components/users/ClientsList';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export function UsersPage() {

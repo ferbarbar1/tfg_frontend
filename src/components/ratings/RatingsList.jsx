@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllRatings } from '../api/ratings.api';
+import { getAllRatings } from '../../api/ratings.api';
 import DataTable from 'react-data-table-component';
 
 export function RatingsList() {

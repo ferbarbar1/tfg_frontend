@@ -8,8 +8,7 @@ import { AuthContext } from '../contexts/AuthContext';
 
 export function Sidebar() {
     const [isHover, setIsHover] = useState(true);
-    const { token, setToken } = useContext(AuthContext);
-    const { user } = useContext(AuthContext);
+    const { token, setToken, user } = useContext(AuthContext);
 
     const handleLogout = () => {
         setToken(null);

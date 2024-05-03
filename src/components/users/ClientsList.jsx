@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllClients } from '../api/clients.api';
+import { getAllClients } from '../../api/clients.api';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
 

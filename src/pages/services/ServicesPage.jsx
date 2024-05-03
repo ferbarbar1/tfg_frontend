@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ServicesList } from '../components/ServicesList';
+import { ServicesList } from '../../components/services/ServicesList';
 
 
 export function ServicesPage() {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getAppointment, deleteAppointment, updateAppointment } from '../api/appointments.api';
+import { getAppointment, deleteAppointment, updateAppointment } from '../../api/appointments.api';
 
 export function AppointmentDetailPage() {
     const navigate = useNavigate();
@@ -11,6 +11,8 @@ export function AppointmentDetailPage() {
     const [client, setClient] = useState('');
     const [worker, setWorker] = useState('');
     const [schedule, setSchedule] = useState({ date: '', start_time: '', end_time: '' });
+    const [modality, setModality] = useState('');
+    const [meeting_link, setMeetingLink] = useState('');
 
     useEffect(() => {
         const fetchAppointment = async () => {
@@ -23,6 +25,8 @@ export function AppointmentDetailPage() {
                 setClient(appointmentData.client);
                 setWorker(appointmentData.worker);
                 setSchedule(appointmentData.schedule);
+                setModality(appointmentData.modality);
+                setMeetingLink(appointmentData.meeting_link);
             } catch (error) {
                 console.error('Error fetching appointment:', error);
             }
@@ -51,7 +55,9 @@ export function AppointmentDetailPage() {
                 status,
                 client,
                 worker,
-                schedule
+                schedule,
+                modality,
+                meeting_link,
             };
 
             await updateAppointment(id, updatedAppointment);
@@ -85,6 +91,14 @@ export function AppointmentDetailPage() {
                     <input type="text" value={schedule.date} onChange={e => setSchedule(prev => ({ ...prev, date: e.target.value }))} />
                     <input type="text" value={schedule.start_time} onChange={e => setSchedule(prev => ({ ...prev, start_time: e.target.value }))} />
                     <input type="text" value={schedule.end_time} onChange={e => setSchedule(prev => ({ ...prev, end_time: e.target.value }))} />
+                </label>
+                <label>
+                    Modality:
+                    <input type="text" value={modality} onChange={e => setModality(e.target.value)} />
+                </label>
+                <label>
+                    Meeting Link:
+                    <input type="text" value={meeting_link} onChange={e => setMeetingLink(e.target.value)} />
                 </label>
             </form>
             <button onClick={handleUpdate}>Update</button>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
 export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
-  const API_URL = "https://tfgbackend-production.up.railway.app/api/";
+  const API_URL = "http://127.0.0.1:8000/api/";
   const [userType, setUserType] = useState("client");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

@@ -1,44 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getClient, updateClient, createClient } from '../api/clients.api';
+import { getWorker, updateWorker, createWorker } from '../../api/workers.api';
 
-export function ClientForm({ isUpdate }) {
+export function WorkerForm({ isUpdate }) {
     const [username, setUsername] = useState("");
     const [originalUsername, setOriginalUsername] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [subscriptionPlan, setSubscriptionPlan] = useState("FREE");
+    const [salary, setSalary] = useState("");
+    const [specialty, setSpecialty] = useState("");
     const [error, setError] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
-        async function fetchclient() {
+        async function fetchWorker() {
             if (isUpdate) {
                 try {
-                    const response = await getClient(id);
-                    const client = response.data;
-                    setUsername(client.user.username);
-                    setOriginalUsername(client.user.username);
-                    setFirstName(client.user.first_name);
-                    setLastName(client.user.last_name);
-                    setEmail(client.user.email);
-                    setPassword(client.user.password);
-                    setSubscriptionPlan(client.subscription_plan);
+                    const response = await getWorker(id);
+                    const worker = response.data;
+                    setUsername(worker.user.username);
+                    setOriginalUsername(worker.user.username);
+                    setFirstName(worker.user.first_name);
+                    setLastName(worker.user.last_name);
+                    setEmail(worker.user.email);
+                    setPassword(worker.user.password);
+                    setSalary(worker.salary);
+                    setSpecialty(worker.specialty);
                 } catch (error) {
                     console.error(error);
                 }
             }
         }
-        fetchclient();
+        fetchWorker();
     }, [id, isUpdate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(null);
-        if (!username || !firstName || !lastName || !email || (!isUpdate && !password)) {
+        if (!username || !firstName || !lastName || !email || !salary || !specialty || (!isUpdate && !password)) {
             setError('All fields are required');
             return;
         }
@@ -52,12 +54,13 @@ export function ClientForm({ isUpdate }) {
                 userData.username = username;
             }
             if (isUpdate) {
-                await updateClient(id, {
+                await updateWorker(id, {
                     user: userData,
-                    subscription_plan: subscriptionPlan
+                    salary: salary,
+                    specialty: specialty
                 });
             } else {
-                await createClient({
+                await createWorker({
                     user: {
                         username: username,
                         first_name: firstName,
@@ -65,10 +68,11 @@ export function ClientForm({ isUpdate }) {
                         email: email,
                         password: password
                     },
-                    subscription_plan: subscriptionPlan
+                    salary: salary,
+                    specialty: specialty
                 });
             }
-            navigate('/users?tab=clients');
+            navigate('/users?tab=workers');
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message);
@@ -98,8 +102,12 @@ export function ClientForm({ isUpdate }) {
                 <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </label>
             <label>
-                Subscription Plan:
-                <input type="text" value={subscriptionPlan} onChange={(e) => setSubscriptionPlan(e.target.value)} required />
+                Salary:
+                <input type="text" value={salary} onChange={(e) => setSalary(e.target.value)} required />
+            </label>
+            <label>
+                Specialty:
+                <input type="text" value={specialty} onChange={(e) => setSpecialty(e.target.value)} required />
             </label>
             {!isUpdate && (
                 <label>

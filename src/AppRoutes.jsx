@@ -1,40 +1,95 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { HomePage } from "./pages/HomePage";
-import { UsersPage } from "./pages/UsersPage";
-import { ServicesPage } from "./pages/ServicesPage";
-import { ServiceDetailPage } from "./pages/ServiceDetailPage";
-import { ClientDetailPage } from "./pages/ClientDetailPage";
-import { WorkerDetailPage } from "./pages/WorkerDetailPage";
-import { AppointmentsPage } from "./pages/AppointmentsPage";
-import { AppointmentDetailPage } from "./pages/AppointmentDetailPage";
+import { UsersPage } from "./pages/users/UsersPage";
+import { ServicesPage } from "./pages/services/ServicesPage";
+import { ServiceDetailPage } from "./pages/services/ServiceDetailPage";
+import { ClientDetailPage } from "./pages/users/ClientDetailPage";
+import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
+import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
+import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPage";
 import { Sidebar } from "./components/Sidebar";
-import { RatingsPage } from "./pages/RatingsPage";
+import { RatingsPage } from "./pages/ratings/RatingsPage";
+import { AuthContext } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import './styles/AppRoutes.css';
 
-const AppRoutes = () => (
-    <Router>
-        <div className="app-container">
-            <Sidebar />
-            <div className="content">
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/users" element={<UsersPage />} />
-                    <Route path="/services" element={<ServicesPage />} />
-                    <Route path="/services/create" element={<ServiceDetailPage isUpdate={false} />} />
-                    <Route path="/services/:id/update" element={<ServiceDetailPage isUpdate={true} />} />
-                    <Route path="/clients/create" element={<ClientDetailPage isUpdate={false} />} />
-                    <Route path="/clients/:id/update" element={<ClientDetailPage isUpdate={true} />} />
-                    <Route path="/workers/create" element={<WorkerDetailPage isUpdate={false} />} />
-                    <Route path="/workers/:id/update" element={<WorkerDetailPage isUpdate={true} />} />
-                    <Route path="/appointments" element={<AppointmentsPage />} />
-                    <Route path="/appointments/:id" element={<AppointmentDetailPage />} />
-                    <Route path="/analytics" element={<RatingsPage />} />
+const AppRoutes = () => {
+    const { user } = useContext(AuthContext);
 
-                </Routes>
+    if (!user) {
+        return null; // o renderiza un componente de carga, o redirige al usuario a una página de inicio de sesión
+    }
+
+    return (
+        <Router>
+            <div className="app-container">
+                <Sidebar />
+                <div className="content">
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/users" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <UsersPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/services" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <ServicesPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/services/create" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <ServiceDetailPage isUpdate={false} />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/services/:id/update" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <ServiceDetailPage isUpdate={true} />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/clients/create" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <ClientDetailPage isUpdate={false} />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/clients/:id/update" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <ClientDetailPage isUpdate={true} />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/workers/create" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <WorkerDetailPage isUpdate={false} />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/workers/:id/update" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <WorkerDetailPage isUpdate={true} />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/appointments" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <AppointmentsPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/appointments/:id" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <AppointmentDetailPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/analytics" element={
+                            <ProtectedRoute roles={['owner']}>
+                                <RatingsPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/unauthorized" element={<ForbiddenPage />} />
+                    </Routes>
+                </div>
             </div>
-        </div>
-    </Router>
-);
+        </Router>
+    );
+};
 
 export default AppRoutes;

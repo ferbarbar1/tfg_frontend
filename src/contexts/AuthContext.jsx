@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import { getUserData } from '../api/users.api';
 
 export const AuthContext = React.createContext({
   token: "",
@@ -9,27 +9,29 @@ export const AuthContext = React.createContext({
 
 export const AuthProvider = ({ children }) => {
   const savedToken = localStorage.getItem('token');
-  const [token, setToken] = useState(savedToken);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const getUserData = async () => {
-      if (token) {
-        const response = await axios.get('https://tfgbackend-production.up.railway.app/api/profile', {
-          headers: {
-            'Authorization': `Token ${token}`
-          }
-        });
+  const setToken = async (newToken) => {
+    localStorage.setItem('token', newToken);
 
-        setUser(response.data);
+    if (newToken) {
+      try {
+        const userData = await getUserData(newToken);
+        setUser(userData);
+      } catch (error) {
+        console.error(error);
       }
-    };
+    } else {
+      setUser(null);
+    }
+  };
 
-    getUserData();
-  }, [token]);
+  useEffect(() => {
+    setToken(savedToken);
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ token, setToken, user }}>
+    <AuthContext.Provider value={{ token: savedToken, setToken, user }}>
       {children}
     </AuthContext.Provider>
   );

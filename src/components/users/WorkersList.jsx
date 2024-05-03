@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllWorkers } from '../api/workers.api';
+import { getAllWorkers } from '../../api/workers.api';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
 

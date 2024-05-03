@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { getAllAppointments } from '../api/appointments.api';
+import { getAllAppointments } from '../../api/appointments.api';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
-import { AppointmentForm } from '../components/AppointmentForm';
+import { AppointmentForm } from '../../components/appointments/AppointmentForm';
 
 const localizer = momentLocalizer(moment);
 
@@ -85,10 +85,6 @@ export function AppointmentsPage() {
                 </div>
                 <div className="modalBody">
                     <AppointmentForm closeModal={closeModal} />
-                </div>
-                <div className="modalFooter">
-                    <button type="submit" className="button register-button">Create</button>
-                    <button type="button" className="button close-button" onClick={closeModal}>Cancel</button>
                 </div>
             </Modal>
         </div>

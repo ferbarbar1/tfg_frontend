@@ -1,5 +1,5 @@
 import React from 'react';
-import { RatingsList } from '../components/RatingsList';
+import { RatingsList } from '../../components/ratings/RatingsList';
 
 
 export function RatingsPage() {

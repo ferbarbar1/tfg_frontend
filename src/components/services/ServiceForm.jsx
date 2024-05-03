@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getService, updateService, createService } from '../api/services.api';
-import { getAllWorkers } from '../api/workers.api';
+import { getService, updateService, createService } from '../../api/services.api';
+import { getAllWorkers } from '../../api/workers.api';
 
 export function ServiceForm({ isUpdate }) {
     const [name, setName] = useState('');

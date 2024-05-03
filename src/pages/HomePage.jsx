@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import Modal from "react-modal";
-import { LoginForm } from "../components/LoginForm";
-import { RegisterForm } from "../components/RegisterForm";
+import { LoginForm } from "../components/users/LoginForm";
+import { RegisterForm } from "../components/users/RegisterForm";
 import "../styles/Modal.css";
 import '../styles/Buttons.css';
 import '../styles/Inputs.css';

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { createAppointment } from '../api/appointments.api';
+import { createAppointment } from '../../api/appointments.api';
 
 export const AppointmentForm = ({ closeModal }) => {
     const [description, setDescription] = useState("");
     const [client, setClient] = useState("");
     const [worker, setWorker] = useState("");
     const [schedule, setSchedule] = useState({ date: '', start_time: '', end_time: '' });
+    const [modality, setModality] = useState("");
 
     const navigate = useNavigate();
 
@@ -19,10 +20,12 @@ export const AppointmentForm = ({ closeModal }) => {
                     date: schedule.date,
                     start_time: schedule.start_time,
                     end_time: schedule.end_time,
+                    worker,
                 },
                 description,
                 client,
                 worker,
+                modality,
             };
 
             await createAppointment(appointmentData);
@@ -81,6 +84,18 @@ export const AppointmentForm = ({ closeModal }) => {
                 required
                 value={schedule.end_time}
                 onChange={(e) => setSchedule(prev => ({ ...prev, end_time: e.target.value }))} />
+
+            <input
+                type="text"
+                placeholder="Modality"
+                className="input-field"
+                required
+                value={modality}
+                onChange={(e) => setModality(e.target.value)} />
+            <div className="modalFooter">
+                <button type="submit" className="button register-button">Create</button>
+                <button type="button" className="button close-button" onClick={closeModal}>Cancel</button>
+            </div>
         </form>
     );
 };
