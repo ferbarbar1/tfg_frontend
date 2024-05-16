@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from "../../api/users.api";
+import { Button } from "react-bootstrap";
 
 export const RegisterForm = ({ closeModal }) => {
   const [username, setUsername] = useState("");
@@ -16,27 +17,24 @@ export const RegisterForm = ({ closeModal }) => {
     event.preventDefault();
 
     if (password !== repeatPassword) {
-      setPasswordError("Las contraseñas no coinciden");
+      setPasswordError("Passwords do not match");
       return;
     }
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/register/client/",
-        {
-          user: {
-            username,
-            first_name: firstName,
-            last_name: lastName,
-            email,
-            password,
-          },
-          subscription_plan: "FREE",
-        }
-      );
-      // Cierra el modal después de enviar el formulario
+      const userData = {
+        user: {
+          username,
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          password,
+        },
+        subscription_plan: "FREE",
+      };
+
+      await registerUser(userData);
       closeModal();
-      // Redirige al usuario a la página de inicio
       navigate('/');
     } catch (error) {
       console.error(error);
@@ -97,8 +95,8 @@ export const RegisterForm = ({ closeModal }) => {
       {passwordError && <p>{passwordError}</p>}
 
       <div className="modalFooter">
-        <button type="submit" className="button register-button">Register</button>
-        <button type="button" className="button close-button" onClick={closeModal}>Close</button>
+        <Button type="submit" variant="primary">Register</Button>
+        <Button type="button" variant="danger" onClick={closeModal}>Close</Button>
       </div>
     </form>
   );

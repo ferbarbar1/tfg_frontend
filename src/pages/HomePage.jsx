@@ -1,9 +1,9 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import Modal from "react-modal";
 import { LoginForm } from "../components/users/LoginForm";
 import { RegisterForm } from "../components/users/RegisterForm";
+import { Button } from "react-bootstrap";
 import "../styles/Modal.css";
-import '../styles/Buttons.css';
 import '../styles/Inputs.css';
 import { AuthContext } from '../contexts/AuthContext';
 import logo from '../assets/logo.png';
@@ -14,23 +14,6 @@ export function HomePage() {
   const { token, setToken } = useContext(AuthContext);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
-
-  // Comprueba si el usuario ya ha iniciado sesión al cargar la página
-  useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    if (savedToken) {
-      setToken(savedToken);
-    }
-  }, []);
-
-  // Guarda el token en el localStorage cuando cambia
-  useEffect(() => {
-    if (token) {
-      localStorage.setItem('token', token);
-    } else {
-      localStorage.removeItem('token');
-    }
-  }, [token]);
 
   return (
     <>
@@ -45,7 +28,7 @@ export function HomePage() {
 
       {!token && (
         <div className="button-container">
-          <button className="button register-button" onClick={() => setRegisterModalOpen(true)}>Register</button>
+          <Button variant="primary" onClick={() => setRegisterModalOpen(true)}>Register</Button>
           <Modal
             isOpen={registerModalOpen}
             onRequestClose={() => setRegisterModalOpen(false)}
@@ -59,7 +42,7 @@ export function HomePage() {
             </div>
           </Modal>
 
-          <button className="button login-button" onClick={() => setLoginModalOpen(true)}>Login</button>
+          <Button variant="primary" onClick={() => setLoginModalOpen(true)}>Login</Button>
           <Modal
             isOpen={loginModalOpen}
             onRequestClose={() => setLoginModalOpen(false)}

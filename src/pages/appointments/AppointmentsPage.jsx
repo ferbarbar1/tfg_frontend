@@ -12,7 +12,6 @@ const localizer = momentLocalizer(moment);
 export function AppointmentsPage() {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
-    const [selectedSlot, setSelectedSlot] = useState(null);
     const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
 
     useEffect(() => {

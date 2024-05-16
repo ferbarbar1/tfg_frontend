@@ -4,16 +4,20 @@ import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 
 export const ProtectedRoute = ({ roles, children }) => {
-    const { user } = useContext(AuthContext);
+    const { user, loading } = useContext(AuthContext);
 
-    // Si el usuario no está autenticado, redirige a la página de inicio de sesión
-    if (!user) {
-        return <Navigate to="/" />;
+    // Si la llamada a la API está en progreso o el usuario aún no se ha cargado, muestra un mensaje de carga
+    if (loading || !user || !user.user) {
+        return <div>Loading...</div>;
+    }
+
+    // Si el usuario no tiene rol, redirige a la página /unauthorized
+    if (!user.user.role) {
+        return <Navigate to="/unauthorized" />;
     }
 
     // Si el usuario no tiene el rol necesario, redirige a la página /unauthorized
     if (user && roles && !roles.includes(user.user.role)) {
-
         return <Navigate to="/unauthorized" />;
     }
 

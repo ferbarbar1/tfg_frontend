@@ -1,26 +1,24 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { Sidebar } from "./components/Sidebar";
 import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { HomePage } from "./pages/HomePage";
 import { UsersPage } from "./pages/users/UsersPage";
 import { ServicesPage } from "./pages/services/ServicesPage";
+import { ServiceFormPage } from "./pages/services/ServiceFormPage";
 import { ServiceDetailPage } from "./pages/services/ServiceDetailPage";
 import { ClientDetailPage } from "./pages/users/ClientDetailPage";
 import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
 import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
 import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPage";
-import { Sidebar } from "./components/Sidebar";
+import { MyAppointmentsPage } from "./pages/appointments/MyAppointmentsPage";
 import { RatingsPage } from "./pages/ratings/RatingsPage";
-import { AuthContext } from "./contexts/AuthContext";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AboutUsPage } from './pages/AboutUsPage';
 import './styles/AppRoutes.css';
 
 const AppRoutes = () => {
-    const { user } = useContext(AuthContext);
 
-    if (!user) {
-        return null; // o renderiza un componente de carga, o redirige al usuario a una página de inicio de sesión
-    }
 
     return (
         <Router>
@@ -35,18 +33,33 @@ const AppRoutes = () => {
                             </ProtectedRoute>
                         } />
                         <Route path="/services" element={
-                            <ProtectedRoute roles={['owner']}>
+                            <ProtectedRoute roles={['owner', 'client']}>
+                                <ServicesPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/services" element={
+                            <ProtectedRoute roles={['client']}>
                                 <ServicesPage />
                             </ProtectedRoute>
                         } />
                         <Route path="/services/create" element={
                             <ProtectedRoute roles={['owner']}>
-                                <ServiceDetailPage isUpdate={false} />
+                                <ServiceFormPage isUpdate={false} />
                             </ProtectedRoute>
                         } />
                         <Route path="/services/:id/update" element={
                             <ProtectedRoute roles={['owner']}>
-                                <ServiceDetailPage isUpdate={true} />
+                                <ServiceFormPage isUpdate={true} />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/services/:id/details" element={
+                            <ProtectedRoute roles={['client']}>
+                                <ServiceDetailPage />
+                            </ProtectedRoute>
+                        } />
+                        <Route path="/my-appointments" element={
+                            <ProtectedRoute roles={['worker', 'client']}>
+                                <MyAppointmentsPage />
                             </ProtectedRoute>
                         } />
                         <Route path="/clients/create" element={
@@ -84,6 +97,7 @@ const AppRoutes = () => {
                                 <RatingsPage />
                             </ProtectedRoute>
                         } />
+                        <Route path="/about" element={<AboutUsPage />} />
                         <Route path="/unauthorized" element={<ForbiddenPage />} />
                     </Routes>
                 </div>

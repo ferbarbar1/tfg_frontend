@@ -1,9 +1,10 @@
 import React, { useState, useContext } from "react";
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import "../styles/Sidebar.css";
 import logo from "../assets/react.svg";
 import { NAVLINKS } from "../utils/navLinks";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight, faSearch, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faChevronRight, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { AuthContext } from '../contexts/AuthContext';
 
 export function Sidebar() {
@@ -22,29 +23,31 @@ export function Sidebar() {
             </div>
             <div className="wrapper">
                 <div className="top__wrapper">
-                    <div className="header">
-                        <span className="header-logo">
-                            <img src={logo} alt="" />
-                        </span>
-                        {user && (
+                    {user && (
+                        <div className="header">
+                            <span className="header-logo">
+                                <img src={logo} alt="" />
+                            </span>
+
                             <div className="header-details">
                                 <span className="header-name">{user?.user ? user.user.first_name : user.first_name}</span>
                                 <span className="header-email">{user?.user ? user.user.email : user.email}</span>
                             </div>
-                        )}
-                    </div>
-                    <div className="search-box">
-                        <FontAwesomeIcon icon={faSearch} />
-                        <input type="text" name="searchBox" placeholder="Search..." />
-                    </div>
+                        </div>
+                    )}
                     <nav className="sidebar-nav">
                         <ul className="nav-menu">
-                            {NAVLINKS.map((item) => {
+                            {NAVLINKS.map((link) => {
+                                // Si el enlace no es público y el usuario no está logueado o el rol del usuario no está en los roles permitidos para este enlace, no lo mostramos
+                                if (!link.public && (!user || (link.roles && !link.roles.includes(user.user.role)))) {
+                                    return null;
+                                }
+
                                 return (
-                                    <li key={item.name} className="nav-menu__item">
-                                        <a href={item.path} className="nav-menu__link">
-                                            <FontAwesomeIcon icon={item.icon} className="material-symbols-outlined" />
-                                            <span className="text">{item.name}</span>
+                                    <li key={link.name} className="nav-menu__item">
+                                        <a href={link.path} className="nav-menu__link">
+                                            <FontAwesomeIcon icon={link.icon} className="material-symbols-outlined" />
+                                            <span className="text">{link.name}</span>
                                         </a>
                                     </li>
                                 );

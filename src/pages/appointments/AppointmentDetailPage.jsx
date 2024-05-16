@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAppointment, deleteAppointment, updateAppointment } from '../../api/appointments.api';
+import { Button } from 'react-bootstrap';
 
 export function AppointmentDetailPage() {
     const navigate = useNavigate();
@@ -101,8 +102,8 @@ export function AppointmentDetailPage() {
                     <input type="text" value={meeting_link} onChange={e => setMeetingLink(e.target.value)} />
                 </label>
             </form>
-            <button onClick={handleUpdate}>Update</button>
-            <button onClick={handleDelete}>Delete</button>
+            <Button variant="primary" onClick={handleUpdate}>Update</Button>
+            <Button variant="danger" onClick={handleDelete}>Delete</Button>
         </div>
     );
 }

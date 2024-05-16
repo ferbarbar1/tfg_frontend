@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 export function ServicesList() {
     const [services, setServices] = useState([]);
-    const navigate = useNavigate(); // Crea una instancia de useNavigate
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchServices() {

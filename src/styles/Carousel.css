@@ -1,0 +1,112 @@
+.service-image {
+  object-fit: cover; /* Mantiene la relación de aspecto de la imagen */
+}
+
+.carousel-item > div {
+  width: 70%;
+  margin: auto;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .carousel-item > div {
+    width: 90%; /* Aumenta el ancho en pantallas pequeñas */
+  }
+
+  .service-image {
+    min-height: 200px; /* Ajusta la altura mínima para pantallas pequeñas */
+    max-height: 500px; /* Ajusta la altura máxima para pantallas pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-item > div {
+    width: 100%; /* Utiliza todo el ancho disponible en pantallas muy pequeñas */
+  }
+
+  .service-image {
+    min-height: 150px; /* Ajusta aún más para pantallas muy pequeñas */
+    max-height: 300px; /* Ajusta aún más para pantallas muy pequeñas */
+  }
+}
+
+.carousel-item {
+  position: relative;
+}
+
+.carousel-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px; /* Ajusta el padding según sea necesario */
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: white;
+}
+
+.carousel-caption h3,
+.carousel-caption p,
+.carousel-caption button {
+  position: relative;
+  z-index: 2;
+}
+.service-image {
+  object-fit: cover; /* Mantiene la relación de aspecto de la imagen */
+}
+
+.carousel-item > div {
+  width: 70%;
+  margin: auto;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .carousel-item > div {
+    width: 90%; /* Aumenta el ancho en pantallas pequeñas */
+  }
+
+  .service-image {
+    min-height: 200px; /* Ajusta la altura mínima para pantallas pequeñas */
+    max-height: 500px; /* Ajusta la altura máxima para pantallas pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-item > div {
+    width: 100%; /* Utiliza todo el ancho disponible en pantallas muy pequeñas */
+  }
+
+  .service-image {
+    min-height: 150px; /* Ajusta aún más para pantallas muy pequeñas */
+    max-height: 300px; /* Ajusta aún más para pantallas muy pequeñas */
+  }
+}
+
+.carousel-item {
+  position: relative;
+}
+
+.carousel-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: 0; /* Asegura que no haya padding en la parte inferior que pueda empujar el contenido hacia arriba */
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  color: white;
+}
+
+.carousel-caption h3,
+.carousel-caption p,
+.carousel-caption button {
+  position: relative;
+  z-index: 2;
+}

@@ -14,12 +14,17 @@ export const AuthProvider = ({ children }) => {
   const setToken = async (newToken) => {
     localStorage.setItem('token', newToken);
 
-    if (newToken) {
+    if (newToken && newToken.trim() !== '') {
       try {
         const userData = await getUserData(newToken);
         setUser(userData);
       } catch (error) {
         console.error(error);
+        if (error.response && error.response.status === 401) {
+          // El token es inválido, borra el token del almacenamiento local
+          localStorage.removeItem('token');
+          setUser(null);
+        }
       }
     } else {
       setUser(null);
@@ -27,7 +32,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    setToken(savedToken);
+    if (savedToken) {
+      setToken(savedToken);
+    }
   }, []);
 
   return (
