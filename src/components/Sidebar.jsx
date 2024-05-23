@@ -1,15 +1,15 @@
-import React, { useState, useContext } from "react";
-import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import "../styles/Sidebar.css";
-import logo from "../assets/react.svg";
+import React, { useContext } from "react";
+import { List, ListItemIcon, ListItemText, ListItemButton, Divider, useTheme } from '@mui/material';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NAVLINKS } from "../utils/navLinks";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronRight, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { AuthContext } from '../contexts/AuthContext';
+import { Link, useLocation } from 'react-router-dom';
 
-export function Sidebar() {
-    const [isHover, setIsHover] = useState(true);
+export function Sidebar({ open }) {
+    const theme = useTheme();
     const { token, setToken, user } = useContext(AuthContext);
+    const location = useLocation();
 
     const handleLogout = () => {
         setToken(null);
@@ -17,54 +17,73 @@ export function Sidebar() {
     };
 
     return (
-        <aside className={`sidebar ${isHover ? "active" : ""}`}>
-            <div className="open-btn" onClick={() => setIsHover((prev) => !prev)}>
-                <FontAwesomeIcon icon={faChevronRight} />
-            </div>
-            <div className="wrapper">
-                <div className="top__wrapper">
-                    {user && (
-                        <div className="header">
-                            <span className="header-logo">
-                                <img src={logo} alt="" />
-                            </span>
+        <List sx={{
+            width: open ? 260 : 70,
+            transition: 'width 0.2s',
+            position: 'fixed',
+            top: 60, // Ajusta esto según la altura de tu banner
+            left: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            bgcolor: '#2c3e50',
+            boxShadow: '2px 0px 5px rgba(0,0,0,0.5)',
+            padding: '10px',
+            color: '#ecf0f1',
+            height: 'calc(100% - 60px)',
+            zIndex: theme.zIndex.drawer + 1
+        }}>
 
-                            <div className="header-details">
-                                <span className="header-name">{user?.user ? user.user.first_name : user.first_name}</span>
-                                <span className="header-email">{user?.user ? user.user.email : user.email}</span>
+            {NAVLINKS.map((link) => {
+                if (!link.public && (!user || (link.roles && !link.roles.includes(user.user.role)))) {
+                    return null;
+                }
+
+                const isActive = location.pathname === link.path;
+
+                return (
+                    <Link to={link.path} key={link.name} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <ListItemButton sx={{
+                            backgroundColor: isActive ? '#34495e' : 'transparent',
+                            '&:hover': {
+                                backgroundColor: '#34495e',
+                                cursor: 'pointer'
+                            },
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginTop: '12px',
+                            marginBottom: '12px'
+                        }}>
+                            <ListItemIcon>
+                                <FontAwesomeIcon icon={link.icon} size="lg" />
+                            </ListItemIcon>
+                            <div style={{ height: '20px', display: 'flex', alignItems: 'center' }}>
+                                {open && <ListItemText primary={link.name} />}
                             </div>
+                        </ListItemButton>
+                    </Link>
+                );
+            })}
+            {token && (
+                <div style={{ marginTop: 'auto' }}>
+                    <Divider sx={{ bgcolor: 'white' }} />
+                    <ListItemButton onClick={handleLogout} sx={{
+                        '&:hover': {
+                            backgroundColor: '#34495e',
+                            cursor: 'pointer',
+                        },
+                        display: 'flex',
+                        alignItems: 'center',
+                        marginTop: '12px',
+                    }}>
+                        <ListItemIcon>
+                            <ExitToAppIcon sx={{ fontSize: 24 }} />
+                        </ListItemIcon>
+                        <div style={{ height: '20px', display: 'flex', alignItems: 'center' }}>
+                            {open && <ListItemText primary="Logout" />}
                         </div>
-                    )}
-                    <nav className="sidebar-nav">
-                        <ul className="nav-menu">
-                            {NAVLINKS.map((link) => {
-                                // Si el enlace no es público y el usuario no está logueado o el rol del usuario no está en los roles permitidos para este enlace, no lo mostramos
-                                if (!link.public && (!user || (link.roles && !link.roles.includes(user.user.role)))) {
-                                    return null;
-                                }
-
-                                return (
-                                    <li key={link.name} className="nav-menu__item">
-                                        <a href={link.path} className="nav-menu__link">
-                                            <FontAwesomeIcon icon={link.icon} className="material-symbols-outlined" />
-                                            <span className="text">{link.name}</span>
-                                        </a>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </nav>
+                    </ListItemButton>
                 </div>
-
-                {token && (
-                    <div className="footer">
-                        <a href="/" className="nav-menu__link" onClick={handleLogout}>
-                            <FontAwesomeIcon icon={faSignOutAlt} />
-                            <span className="footer-text">Logout</span>
-                        </a>
-                    </div>
-                )}
-            </div>
-        </aside>
+            )}
+        </List>
     );
 }

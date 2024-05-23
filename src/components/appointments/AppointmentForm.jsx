@@ -67,6 +67,13 @@ export const AppointmentForm = ({ closeModal, serviceId }) => {
         }
     };
 
+    const handleZoomAuth = () => {
+        const clientId = 'd0NInwj3Q3SFiF09kf9c8w';
+        const redirectUri = encodeURIComponent('http://127.0.0.1:8000/api/oauth/callback');
+        const zoomAuthUrl = `https://zoom.us/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
+        window.location.href = zoomAuthUrl;
+    };
+
     const handleBook = async () => {
         try {
             const stripe = await stripePromise;
@@ -169,6 +176,9 @@ export const AppointmentForm = ({ closeModal, serviceId }) => {
                     <option value="IN_PERSON">In person</option>
                 </Form.Select>
             </Form.Group>
+            {modality === 'VIRTUAL' && (
+                <Button variant="secondary" onClick={handleZoomAuth}>Authenticate with Zoom</Button>
+            )}
             <div className="modalFooter">
                 <Button variant="primary" onClick={handleBook}>Book</Button>
                 <Button variant="danger" onClick={closeModal}>Cancel</Button>

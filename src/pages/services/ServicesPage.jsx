@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Carousel } from 'react-bootstrap';
+import { Card, CardContent, CardHeader, Button, Box, Typography, Paper, MobileStepper, Divider } from '@mui/material';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { getAllServices } from '../../api/services.api';
 import { AuthContext } from '../../contexts/AuthContext';
-import '../../styles/Carousel.css';
-
 
 export function ServicesPage() {
     const { user } = useContext(AuthContext);
     const [services, setServices] = useState([]);
-    const [index, setIndex] = useState(0);
+    const [activeStep, setActiveStep] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,12 +23,25 @@ export function ServicesPage() {
         fetchServices();
     }, []);
 
-    const handleCreateService = () => {
-        navigate('/services/create');
+    const maxSteps = services.length;
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setActiveStep((prevActiveStep) => (prevActiveStep + 1) % maxSteps);
+        }, 4000); // Cambia el slide cada 4 segundos
+        return () => clearTimeout(timer); // Limpia el timer si el componente se desmonta
+    }, [activeStep, maxSteps]);
+
+    const handleNext = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
-    const handleSelect = (selectedIndex) => {
-        setIndex(selectedIndex);
+    const handleBack = () => {
+        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    };
+
+    const handleCreateService = () => {
+        navigate('/services/create');
     };
 
     const handleClick = (serviceId) => {
@@ -42,38 +54,69 @@ export function ServicesPage() {
     };
 
     return (
-        <div>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100vh',
+            }}
+        >
             <div style={{ textAlign: 'center' }}>
-                <h1>Services Page</h1>
                 {user && user.user && user.user.role === 'owner' &&
                     <Button variant="primary" onClick={handleCreateService}>Create Service</Button>
                 }
             </div>
-            <Carousel activeIndex={index} onSelect={handleSelect}>
-                {services.map(service => (
-                    <Carousel.Item key={service.id}>
-                        <div style={{ width: '70%', marginLeft: 'auto', marginRight: 'auto', display: 'block' }}>
-                            <img
-                                className="service-image d-block w-100"
-                                src={service.image}
-                                alt={service.name}
+            <Card sx={{ maxWidth: { xs: '90%', sm: 800 }, flexGrow: 1, m: { xs: 'auto', sm: 4 } }}>
+                <CardHeader
+                    title={services[activeStep]?.name}
+                    titleTypographyProps={{ align: 'center' }}
+                />
+                <Divider />
+                <CardContent>
+                    <Box sx={{ maxWidth: 800, flexGrow: 1 }}>
+                        <Button onClick={() => handleClick(services[activeStep]?.id)} sx={{
+                            '&:hover': {
+                                backgroundColor: 'transparent',
+                            },
+                            '&:focus': {
+                                outline: 'none',
+                            },
+                        }}>
+                            <Box
+                                component="img"
+                                sx={{
+                                    height: { xs: '50vh', sm: 400 }, // Altura del 50% de la altura de la pantalla en pantallas pequeñas, 400 en pantallas más grandes
+                                    width: { xs: '100%', sm: 700 }, // Ancho del 100% en pantallas pequeñas, 700 en pantallas más grandes
+                                    display: 'block',
+                                    overflow: 'hidden',
+                                    objectFit: 'contain',
+                                }}
+                                src={services[activeStep]?.image}
+                                alt={services[activeStep]?.name}
                             />
-                            <Carousel.Caption >
-                                <h3>{service.name}</h3>
-                                <p>{service.description}</p>
-                                {user && user.user && user.user.role === 'owner' &&
-                                    <Button variant="primary" onClick={() => handleClick(service.id)}>Edit</Button>
-                                }
-                                {user && user.user && user.user.role === 'client' &&
-                                    <>
-                                        <Button variant="primary" onClick={() => handleClick(service.id)}>View</Button>
-                                    </>
-                                }
-                            </Carousel.Caption>
-                        </div>
-                    </Carousel.Item>
-                ))}
-            </Carousel>
-        </div>
+                        </Button>
+                        <MobileStepper
+                            steps={maxSteps}
+                            position="static"
+                            activeStep={activeStep}
+                            nextButton={
+                                <Button size="large" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                                    Next
+                                    <KeyboardArrowRight />
+                                </Button>
+                            }
+                            backButton={
+                                <Button size="large" onClick={handleBack} disabled={activeStep === 0}>
+                                    <KeyboardArrowLeft />
+                                    Back
+                                </Button>
+                            }
+                        />
+                    </Box>
+                </CardContent>
+            </Card>
+        </Box>
     );
 }
