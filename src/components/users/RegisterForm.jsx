@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from "../../api/users.api";
-import { Button } from "react-bootstrap";
+import { Button, TextField, Box, Typography } from "@mui/material";
 
 export const RegisterForm = ({ closeModal }) => {
   const [username, setUsername] = useState("");
@@ -42,62 +42,89 @@ export const RegisterForm = ({ closeModal }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Username"
-        className="input-field"
+    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+      <TextField
+        variant="outlined"
+        margin="normal"
         required
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="First Name"
-        className="input-field"
-        required
+        fullWidth
+        autoFocus
+        id="firstName"
+        label="First Name"
+        name="firstName"
+        autoComplete="firstName"
         value={firstName}
         onChange={(e) => setFirstName(e.target.value)}
       />
-      <input
-        type="text"
-        placeholder="Last Name"
-        className="input-field"
+      <TextField
+        variant="outlined"
+        margin="normal"
         required
+        fullWidth
+        id="lastName"
+        label="Last Name"
+        name="lastName"
+        autoComplete="lastName"
         value={lastName}
         onChange={(e) => setLastName(e.target.value)}
       />
-      <input
-        type="text"
-        placeholder="Email"
-        className="input-field"
+      <TextField
+        variant="outlined"
+        margin="normal"
         required
+        fullWidth
+        id="username"
+        label="Username"
+        name="username"
+        autoComplete="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <TextField
+        variant="outlined"
+        margin="normal"
+        required
+        fullWidth
+        id="email"
+        label="Email"
+        name="email"
+        autoComplete="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <input
-        type="password"
-        placeholder="Password"
-        className="input-field"
+      <TextField
+        variant="outlined"
+        margin="normal"
         required
+        fullWidth
+        name="password"
+        label="Password"
+        type="password"
+        id="password"
+        autoComplete="current-password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <input
-        type="password"
-        placeholder="Repeat password"
-        className="input-field"
+      <TextField
+        variant="outlined"
+        margin="normal"
         required
+        fullWidth
+        name="repeatPassword"
+        label="Repeat Password"
+        type="password"
+        id="repeatPassword"
+        autoComplete="current-password"
         value={repeatPassword}
         onChange={(e) => setRepeatPassword(e.target.value)}
       />
 
-      {passwordError && <p>{passwordError}</p>}
+      {passwordError && <Typography color="error">{passwordError}</Typography>}
 
-      <div className="modalFooter">
-        <Button type="submit" variant="primary">Register</Button>
-        <Button type="button" variant="danger" onClick={closeModal}>Close</Button>
-      </div>
-    </form>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary">Register</Button>
+        <Button type="button" variant="contained" color="secondary" onClick={closeModal} sx={{ ml: 2 }}>Close</Button>
+      </Box>
+    </Box>
   );
 };

@@ -7,21 +7,21 @@ export function Banner({ onMenuClick }) {
     const { user } = useContext(AuthContext);
 
     return (
-        <AppBar position="fixed" sx={{ height: '60px' }}>
+        <AppBar position="fixed" sx={{ height: '60px', zIndex: 1201, backgroundColor: '#2c3e50' }}>
             <Toolbar>
                 <IconButton
                     color="inherit"
-                    aria-label="open drawer"
+                    aria-label="menu"
                     edge="start"
                     onClick={onMenuClick}
                 >
                     <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" style={{ flexGrow: 1 }}>
+                <Typography variant="h6" style={{ flexGrow: 1, color: '#ecf0f1' }}>
                     FisioterAppIA Clinic
                 </Typography>
                 <Typography variant="subtitle1">
-                    Welcome, {user && user.user ? user.user.username : 'Guest'}
+                    Hello, {user && user.user ? user.user.username : 'Guest'}
                 </Typography>
             </Toolbar>
         </AppBar>

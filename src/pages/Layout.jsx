@@ -17,7 +17,7 @@ export function Layout({ children }) {
     };
 
     return (
-        <Box sx={{ display: 'flex', height: '100vh', overflow: 'auto' }}>
+        <Box sx={{ display: 'flex', height: '100vh' }}>
             <CssBaseline />
             <Banner onMenuClick={handleSidebarToggle} />
             <Sidebar open={sidebarOpen} />
@@ -32,6 +32,8 @@ export function Layout({ children }) {
                         duration: theme.transitions.duration.leavingScreen,
                     }),
                     marginTop: '60px', // Ajusta esto según la altura de tu banner
+                    height: 'calc(100vh - 60px)', // Ajusta esto según la altura de tu banner
+                    overflow: 'auto',
                 }}
             >
                 {children}

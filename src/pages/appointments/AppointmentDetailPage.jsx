@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAppointment, deleteAppointment, updateAppointment } from '../../api/appointments.api';
-import { Button } from 'react-bootstrap';
+import { Button, TextField, Box, Card, CardContent, Grid } from '@mui/material';
 
 export function AppointmentDetailPage() {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ export function AppointmentDetailPage() {
     const [status, setStatus] = useState('');
     const [client, setClient] = useState('');
     const [worker, setWorker] = useState('');
-    const [schedule, setSchedule] = useState({ date: '', start_time: '', end_time: '' });
+    const [schedule, setSchedule] = useState({ date: '', time: '' });
     const [modality, setModality] = useState('');
     const [meeting_link, setMeetingLink] = useState('');
 
@@ -25,7 +25,7 @@ export function AppointmentDetailPage() {
                 setStatus(appointmentData.status);
                 setClient(appointmentData.client);
                 setWorker(appointmentData.worker);
-                setSchedule(appointmentData.schedule);
+                setSchedule({ date: appointmentData.schedule.date, time: `${appointmentData.schedule.start_time} - ${appointmentData.schedule.end_time}` });
                 setModality(appointmentData.modality);
                 setMeetingLink(appointmentData.meeting_link);
             } catch (error) {
@@ -51,12 +51,13 @@ export function AppointmentDetailPage() {
 
     const handleUpdate = async () => {
         try {
+            const [start_time, end_time] = schedule.time.split(' - ');
             const updatedAppointment = {
                 description,
                 status,
                 client,
                 worker,
-                schedule,
+                schedule: { date: schedule.date, start_time, end_time },
                 modality,
                 meeting_link,
             };
@@ -69,41 +70,39 @@ export function AppointmentDetailPage() {
     };
 
     return (
-        <div>
-            <form>
-                <label>
-                    Description:
-                    <input type="text" value={description} onChange={e => setDescription(e.target.value)} />
-                </label>
-                <label>
-                    Status:
-                    <input type="text" value={status} onChange={e => setStatus(e.target.value)} />
-                </label>
-                <label>
-                    Client:
-                    <input type="text" value={client} onChange={e => setClient(e.target.value)} />
-                </label>
-                <label>
-                    Worker:
-                    <input type="text" value={worker} onChange={e => setWorker(e.target.value)} />
-                </label>
-                <label>
-                    Schedule:
-                    <input type="text" value={schedule.date} onChange={e => setSchedule(prev => ({ ...prev, date: e.target.value }))} />
-                    <input type="text" value={schedule.start_time} onChange={e => setSchedule(prev => ({ ...prev, start_time: e.target.value }))} />
-                    <input type="text" value={schedule.end_time} onChange={e => setSchedule(prev => ({ ...prev, end_time: e.target.value }))} />
-                </label>
-                <label>
-                    Modality:
-                    <input type="text" value={modality} onChange={e => setModality(e.target.value)} />
-                </label>
-                <label>
-                    Meeting Link:
-                    <input type="text" value={meeting_link} onChange={e => setMeetingLink(e.target.value)} />
-                </label>
-            </form>
-            <Button variant="primary" onClick={handleUpdate}>Update</Button>
-            <Button variant="danger" onClick={handleDelete}>Delete</Button>
-        </div>
+        <Card>
+            <CardContent>
+                <Grid container justifyContent="center">
+                    <Grid item xs={12} md={3}>
+                        <TextField label="Client" value={client.user.username} onChange={e => setClient(e.target.value)} />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <TextField label="Worker" value={worker.user.username} onChange={e => setWorker(e.target.value)} />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <TextField label="Reason" value={description} onChange={e => setDescription(e.target.value)} />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <TextField label="Status" value={status} onChange={e => setStatus(e.target.value)} />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <TextField label="Date" value={schedule.date} onChange={e => setSchedule(prev => ({ ...prev, date: e.target.value }))} />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <TextField label="Time" value={schedule.time} onChange={e => setSchedule(prev => ({ ...prev, time: e.target.value }))} />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <TextField label="Modality" value={modality} onChange={e => setModality(e.target.value)} />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <TextField label="Meeting Link" value={meeting_link} onChange={e => setMeetingLink(e.target.value)} />
+                    </Grid>
+                </Grid>
+                <Box sx={{ display: 'flex', justifyContent: 'center', p: 1 }}>
+                    <Button variant="contained" color="primary" onClick={handleUpdate}>Update</Button>
+                    <Button variant="contained" color="secondary" onClick={handleDelete}>Delete</Button>
+                </Box>
+            </CardContent>
+        </Card>
     );
 }

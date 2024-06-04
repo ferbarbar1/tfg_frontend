@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getClient, updateClient, createClient } from '../../api/clients.api';
+import { getClient, updateClient, createClient, deleteClient } from '../../api/clients.api';
+import { TextField, Button, Box, Typography, Card, CardContent, CardHeader, Divider } from '@mui/material';
 
 export function ClientForm({ isUpdate }) {
     const [username, setUsername] = useState("");
@@ -78,36 +79,114 @@ export function ClientForm({ isUpdate }) {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            await deleteClient(id);
+            navigate('/users?tab=clients');
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
-        <form onSubmit={handleSubmit}>
-            {error && <p>{error}</p>}
-            <label>
-                Username:
-                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
-            </label>
-            <label>
-                First Name:
-                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-            </label>
-            <label>
-                Last Name:
-                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-            </label>
-            <label>
-                Email:
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            </label>
-            <label>
-                Subscription Plan:
-                <input type="text" value={subscriptionPlan} onChange={(e) => setSubscriptionPlan(e.target.value)} required />
-            </label>
-            {!isUpdate && (
-                <label>
-                    Password:
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                </label>
-            )}
-            <button type="submit">{isUpdate ? 'Update' : 'Create'}</button>
-        </form>
+        <Card>
+            <CardHeader title={isUpdate ? 'Update Client' : 'Create Client'} sx={{ textAlign: 'center' }} />
+            <Divider sx={{ bgcolor: 'grey.800' }} />
+            <CardContent>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    {error && <Typography variant="body2" color="error">{error}</Typography>}
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
+                        autoFocus
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="firstName"
+                        label="First Name"
+                        name="firstName"
+                        autoComplete="firstName"
+                        autoFocus
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="lastName"
+                        label="Last Name"
+                        name="lastName"
+                        autoComplete="lastName"
+                        autoFocus
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email"
+                        name="email"
+                        autoComplete="email"
+                        autoFocus
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="subscriptionPlan"
+                        label="Subscription Plan"
+                        name="subscriptionPlan"
+                        autoComplete="subscriptionPlan"
+                        autoFocus
+                        value={subscriptionPlan}
+                        onChange={(e) => setSubscriptionPlan(e.target.value)}
+                    />
+                    {!isUpdate && (
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    )}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                        <Button variant="contained" color="primary" type="submit">
+                            {isUpdate ? 'Update' : 'Create'}
+                        </Button>
+                        {isUpdate &&
+                            <Button variant="contained" color="error" onClick={handleDelete} sx={{ ml: 2 }}>
+                                Delete
+                            </Button>
+                        }
+                    </Box>
+                </Box>
+            </CardContent>
+        </Card>
     );
 }

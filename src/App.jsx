@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 import AppRoutes from './AppRoutes';
 import { AuthProvider } from './contexts/AuthContext';
 

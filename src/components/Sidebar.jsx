@@ -4,16 +4,18 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NAVLINKS } from "../utils/navLinks";
 import { AuthContext } from '../contexts/AuthContext';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export function Sidebar({ open }) {
     const theme = useTheme();
     const { token, setToken, user } = useContext(AuthContext);
     const location = useLocation();
+    const navigate = useNavigate();
 
     const handleLogout = () => {
         setToken(null);
         localStorage.removeItem('token');
+        navigate('/');
     };
 
     return (
@@ -43,9 +45,9 @@ export function Sidebar({ open }) {
                 return (
                     <Link to={link.path} key={link.name} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <ListItemButton sx={{
-                            backgroundColor: isActive ? '#34495e' : 'transparent',
+                            backgroundColor: isActive ? '#1abc9c' : 'transparent',
                             '&:hover': {
-                                backgroundColor: '#34495e',
+                                backgroundColor: '#16a085',
                                 cursor: 'pointer'
                             },
                             display: 'flex',
@@ -53,7 +55,7 @@ export function Sidebar({ open }) {
                             marginTop: '12px',
                             marginBottom: '12px'
                         }}>
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ color: '#ecf0f1' }}>
                                 <FontAwesomeIcon icon={link.icon} size="lg" />
                             </ListItemIcon>
                             <div style={{ height: '20px', display: 'flex', alignItems: 'center' }}>
@@ -68,14 +70,14 @@ export function Sidebar({ open }) {
                     <Divider sx={{ bgcolor: 'white' }} />
                     <ListItemButton onClick={handleLogout} sx={{
                         '&:hover': {
-                            backgroundColor: '#34495e',
+                            backgroundColor: '#16a085',
                             cursor: 'pointer',
                         },
                         display: 'flex',
                         alignItems: 'center',
                         marginTop: '12px',
                     }}>
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ color: '#ecf0f1' }}>
                             <ExitToAppIcon sx={{ fontSize: 24 }} />
                         </ListItemIcon>
                         <div style={{ height: '20px', display: 'flex', alignItems: 'center' }}>

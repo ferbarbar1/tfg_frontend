@@ -1,19 +1,25 @@
 import React, { useState, useContext, useEffect } from "react";
+import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { createAppointment, createCheckoutSession } from '../../api/appointments.api';
 import { getSchedulesAvailablesByDate } from '../../api/schedules.api';
 import { loadStripe } from '@stripe/stripe-js';
-import { Button, Form } from "react-bootstrap";
 import { AuthContext } from '../../contexts/AuthContext';
+import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Box } from '@mui/material';
 
 const stripePromise = loadStripe('pk_test_51PFdYTGzZooPGUyPyarTnl6RMGFS0Zkll6iKQcpYRK0sICx2lokA4BEXIoxm1j4n1OmvkOP48mYaTaGBpsPfzs5Y0012QYjWvu');
 
-export const AppointmentForm = ({ closeModal, serviceId }) => {
+export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
     const { user } = useContext(AuthContext);
     const [description, setDescription] = useState("");
     const [client, setClient] = useState("");
     const [worker, setWorker] = useState("");
-    const [schedule, setSchedule] = useState({ id: null, date: '', start_time: '', end_time: '' });
+    const [schedule, setSchedule] = useState({
+        id: null,
+        date: selectedSlot ? moment(selectedSlot.start).format('YYYY-MM-DD') : '',
+        start_time: '',
+        end_time: ''
+    });
     const [modality, setModality] = useState("");
     const [availableTimes, setAvailableTimes] = useState([]);
 
@@ -99,51 +105,49 @@ export const AppointmentForm = ({ closeModal, serviceId }) => {
     };
 
     return (
-        <Form onSubmit={handleSubmit}>
-            <Form.Group className="mt-2 mb-2">
-                <Form.Control
-                    type="text"
-                    placeholder="Description"
-                    required
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
-            </Form.Group>
+        <Box component="form" onSubmit={handleSubmit}>
             {user.user.role === "owner" &&
                 <>
-                    <Form.Group className="mb-2">
-                        <Form.Control
-                            type="text"
-                            placeholder="Client"
+                    <FormControl fullWidth className="mb-2">
+                        <TextField
+                            label="Client"
                             required
                             value={client}
                             onChange={(e) => setClient(e.target.value)}
                         />
-                    </Form.Group>
-                    <Form.Group className="mb-2">
-                        <Form.Control
-                            type="text"
-                            placeholder="Worker"
+                    </FormControl>
+                    <FormControl fullWidth className="mb-2">
+                        <TextField
+                            label="Worker"
                             required
                             value={worker}
                             onChange={(e) => setWorker(e.target.value)}
                         />
-                    </Form.Group>
+                    </FormControl>
                 </>
             }
-            <Form.Group className="mb-2">
-                <Form.Control
+            <FormControl fullWidth className="mt-2 mb-2">
+                <TextField
+                    label="Reason"
+                    required
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
+            </FormControl>
+            <FormControl fullWidth className="mb-2">
+                <TextField
                     type="date"
                     required
                     value={schedule.date}
                     onChange={(e) => setSchedule(prev => ({ ...prev, date: e.target.value }))}
                 />
-            </Form.Group>
+            </FormControl>
             {/* Campo para seleccionar el horario disponible */}
-            {availableTimes.length > 0 && (
-                <Form.Group className="mb-2">
-                    <Form.Label>Available Schedules</Form.Label>
-                    <Form.Select
+            {schedule.date && (availableTimes.length > 0 ? (
+                <FormControl fullWidth className="mb-2">
+                    <InputLabel id="schedule-label">Available Schedules</InputLabel>
+                    <Select
+                        labelId="schedule-label"
                         required
                         value={schedule.start_time}
                         onChange={(e) => {
@@ -157,32 +161,42 @@ export const AppointmentForm = ({ closeModal, serviceId }) => {
                                 }));
                             }
                         }}
+                        label="Available Schedules"
                     >
-                        <option>Select a schedule</option>
+                        <MenuItem value="">
+                            <em>Select a schedule</em>
+                        </MenuItem>
                         {availableTimes.map((time, index) => (
-                            <option key={index} value={time.start_time}>{time.start_time} - {time.end_time}</option>
+
+                            <MenuItem key={index} value={time.start_time}>{time.start_time.split(':').slice(0, 2).join(':')} - {time.end_time.split(':').slice(0, 2).join(':')}</MenuItem>
                         ))}
-                    </Form.Select>
-                </Form.Group>
+                    </Select>
+                </FormControl>
+            ) : <p>No schedules available for this date.</p>
             )}
-            <Form.Group className="mb-2">
-                <Form.Select
+            <FormControl fullWidth className="mb-2">
+                <InputLabel id="modality-label">Select Modality</InputLabel>
+                <Select
+                    labelId="modality-label"
                     required
                     value={modality}
                     onChange={(e) => setModality(e.target.value)}
+                    label="Select Modality"
                 >
-                    <option value="">Select Modality</option>
-                    <option value="VIRTUAL">Virtual</option>
-                    <option value="IN_PERSON">In person</option>
-                </Form.Select>
-            </Form.Group>
+                    <MenuItem value="">
+                        <em>Select Modality</em>
+                    </MenuItem>
+                    <MenuItem value="VIRTUAL">Virtual</MenuItem>
+                    <MenuItem value="IN_PERSON">In person</MenuItem>
+                </Select>
+            </FormControl>
             {modality === 'VIRTUAL' && (
-                <Button variant="secondary" onClick={handleZoomAuth}>Authenticate with Zoom</Button>
+                <Button variant="contained" color="secondary" onClick={handleZoomAuth}>Authenticate with Zoom</Button>
             )}
-            <div className="modalFooter">
-                <Button variant="primary" onClick={handleBook}>Book</Button>
-                <Button variant="danger" onClick={closeModal}>Cancel</Button>
-            </div>
-        </Form>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                <Button variant="contained" color="primary" onClick={handleBook}>Book</Button>
+                <Button variant="contained" color="error" onClick={closeModal} sx={{ ml: 2 }}>Cancel</Button>
+            </Box>
+        </Box>
     );
 };

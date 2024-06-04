@@ -1,16 +1,12 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { AuthContext } from '../../contexts/AuthContext';
-import { Form, Button } from "react-bootstrap";
 import { createRating } from '../../api/ratings.api';
-import ReactStars from "react-rating-stars-component";
-
-
+import { Rating, Box, TextField, Button, Typography, Divider } from '@mui/material';
 
 export const RateServiceForm = ({ serviceId }) => {
     const { user } = useContext(AuthContext);
     const [rating, setRating] = useState(0);
     const [opinion, setOpinion] = useState("");
-
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -20,6 +16,7 @@ export const RateServiceForm = ({ serviceId }) => {
             service: serviceId,
             rate: parseInt(rating, 10),
             opinion,
+            date: new Date().toISOString(),
         };
 
         try {
@@ -30,30 +27,41 @@ export const RateServiceForm = ({ serviceId }) => {
     };
 
     return (
-        <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="rating">
-                <Form.Group controlId="rating">
-                    <Form.Label>Rating</Form.Label>
-                    <ReactStars
-                        count={5}
-                        onChange={setRating}
-                        size={24}
-                        activeColor="#ffd700"
-                        value={rating}
-                    />
-                </Form.Group>
-            </Form.Group>
-            <Form.Group controlId="opinion">
-                <Form.Label>Comment</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    value={opinion}
-                    onChange={(event) => setOpinion(event.target.value)}
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+            <Typography variant="h6" component="h2" align="center">
+                Rate Service
+            </Typography>
+            <Divider sx={{ my: 2, bgcolor: "grey" }} />
+            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+                <Rating
+                    name="rating"
+                    value={rating}
+                    onChange={(event, newValue) => {
+                        setRating(newValue);
+                    }}
                 />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-                Save Rating
-            </Button>
-        </Form>
+            </Box>
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="opinion"
+                label="Opinion"
+                name="opinion"
+                multiline
+                rows={4}
+                value={opinion}
+                onChange={(event) => setOpinion(event.target.value)}
+            />
+            <Box sx={{ mt: 3, mb: 2, display: 'flex', justifyContent: 'center' }}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                >
+                    Save
+                </Button>
+            </Box>
+        </Box>
     );
 }

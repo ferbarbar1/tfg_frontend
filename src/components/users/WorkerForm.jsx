@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getWorker, updateWorker, createWorker } from '../../api/workers.api';
+import { getWorker, updateWorker, createWorker, deleteWorker } from '../../api/workers.api';
+import { TextField, Button, Box, Typography, Card, CardContent, CardHeader, Divider } from '@mui/material';
 
 export function WorkerForm({ isUpdate }) {
     const [username, setUsername] = useState("");
@@ -82,40 +83,115 @@ export function WorkerForm({ isUpdate }) {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            await deleteWorker(id);
+            navigate('/users?tab=workers');
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
-        <form onSubmit={handleSubmit}>
-            {error && <p>{error}</p>}
-            <label>
-                Username:
-                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
-            </label>
-            <label>
-                First Name:
-                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-            </label>
-            <label>
-                Last Name:
-                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-            </label>
-            <label>
-                Email:
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            </label>
-            <label>
-                Salary:
-                <input type="text" value={salary} onChange={(e) => setSalary(e.target.value)} required />
-            </label>
-            <label>
-                Specialty:
-                <input type="text" value={specialty} onChange={(e) => setSpecialty(e.target.value)} required />
-            </label>
-            {!isUpdate && (
-                <label>
-                    Password:
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                </label>
-            )}
-            <button type="submit">{isUpdate ? 'Update' : 'Create'}</button>
-        </form>
+        <Card>
+            <CardHeader title={isUpdate ? 'Update Worker' : 'Create Worker'} sx={{ textAlign: 'center' }} />
+            <Divider sx={{ bgcolor: 'grey.800' }} />
+            <CardContent>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                    {error && <Typography variant="body2" color="error">{error}</Typography>}
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="username"
+                        label="Username"
+                        name="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="firstName"
+                        label="First Name"
+                        name="firstName"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="lastName"
+                        label="Last Name"
+                        name="lastName"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Email"
+                        name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="salary"
+                        label="Salary"
+                        name="salary"
+                        value={salary}
+                        onChange={(e) => setSalary(e.target.value)}
+                    />
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="specialty"
+                        label="Specialty"
+                        name="specialty"
+                        value={specialty}
+                        onChange={(e) => setSpecialty(e.target.value)}
+                    />
+                    {!isUpdate && (
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    )}
+
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                        <Button variant="contained" color="primary" type="submit">
+                            {isUpdate ? 'Update' : 'Create'}
+                        </Button>
+                        {isUpdate &&
+                            <Button variant="contained" color="error" onClick={handleDelete} sx={{ ml: 2 }}>
+                                Delete
+                            </Button>
+                        }
+                    </Box>
+                </Box>
+            </CardContent>
+        </Card>
     );
 }

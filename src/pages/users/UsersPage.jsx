@@ -20,7 +20,6 @@ export function UsersPage() {
 
     return (
         <div>
-            <h1>Users Page</h1>
             <Tabs defaultActiveKey={activeTab} id="uncontrolled-tab-example">
                 <Tab eventKey="workers" title="Workers">
                     <Button onClick={handleCreateWorker}>Create Worker</Button>

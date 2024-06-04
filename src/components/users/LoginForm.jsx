@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { loginUser, getUserByUsername } from '../../api/users.api';
 import { useNavigate } from 'react-router-dom';
-import { Button } from "react-bootstrap";
+import { Button, TextField, Box, Link } from "@mui/material";
 
 export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -36,30 +35,42 @@ export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Username"
-        className="input-field"
+    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+      <TextField
+        variant="outlined"
+        margin="normal"
         required
+        fullWidth
+        id="username"
+        label="Username"
+        name="username"
+        autoComplete="username"
+        autoFocus
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
 
-      <input
-        type="password"
-        placeholder="Password"
-        className="input-field"
+      <TextField
+        variant="outlined"
+        margin="normal"
         required
+        fullWidth
+        name="password"
+        label="Password"
+        type="password"
+        id="password"
+        autoComplete="current-password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <p>Don&apos;t have an account? <a className="register-link" onClick={() => { closeModal(); openRegisterModal(); }}>Sign up here</a></p>
-      <div className="modalFooter">
-        <Button type="submit" variant="primary">Login</Button>
-        <Button type="button" variant="danger" onClick={closeModal}>Close</Button>
-      </div>
-    </form>
+      <Box textAlign="center">
+        <p>Don&apos;t have an account? <Link href="#" onClick={() => { closeModal(); openRegisterModal(); }}>Sign up here</Link></p>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+        <Button type="submit" variant="contained" color="primary">Login</Button>
+        <Button type="button" variant="contained" color="secondary" onClick={closeModal} sx={{ ml: 2 }}>Close</Button>
+      </Box>
+    </Box>
   );
 };

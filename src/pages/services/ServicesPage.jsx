@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, Button, Box, Typography, Paper, MobileStepper, Divider } from '@mui/material';
+import { Card, CardContent, CardHeader, Button, Box, MobileStepper, Divider } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { getAllServices } from '../../api/services.api';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -60,20 +60,20 @@ export function ServicesPage() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                height: '100vh',
+                minHeight: '100vh',
             }}
         >
-            <div style={{ textAlign: 'center' }}>
-                {user && user.user && user.user.role === 'owner' &&
-                    <Button variant="primary" onClick={handleCreateService}>Create Service</Button>
-                }
-            </div>
+            {user && user.user && user.user.role === 'owner' &&
+                <div style={{ textAlign: 'center' }}>
+                    <Button variant="contained" color="primary" onClick={handleCreateService}>Create Service</Button>
+                </div>
+            }
             <Card sx={{ maxWidth: { xs: '90%', sm: 800 }, flexGrow: 1, m: { xs: 'auto', sm: 4 } }}>
                 <CardHeader
                     title={services[activeStep]?.name}
                     titleTypographyProps={{ align: 'center' }}
                 />
-                <Divider />
+                <Divider sx={{ bgcolor: 'grey.800' }} />
                 <CardContent>
                     <Box sx={{ maxWidth: 800, flexGrow: 1 }}>
                         <Button onClick={() => handleClick(services[activeStep]?.id)} sx={{

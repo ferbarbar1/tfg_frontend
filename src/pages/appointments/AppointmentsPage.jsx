@@ -4,7 +4,8 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { getAllAppointments } from '../../api/appointments.api';
 import { useNavigate } from 'react-router-dom';
-import Modal from 'react-modal';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
 import { AppointmentForm } from '../../components/appointments/AppointmentForm';
 
 const localizer = momentLocalizer(moment);
@@ -13,6 +14,7 @@ export function AppointmentsPage() {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
+    const [selectedSlot, setSelectedSlot] = useState(null);
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -55,8 +57,7 @@ export function AppointmentsPage() {
     };
 
     return (
-        <div>
-            <h1>Appointments</h1>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Calendar
                 localizer={localizer}
                 events={events}
@@ -70,22 +71,15 @@ export function AppointmentsPage() {
                 selectable={true}
             />
             <Modal
-                isOpen={appointmentModalOpen}
-                onRequestClose={closeModal}
-                style={{
-                    overlay: {
-                        zIndex: 1000,
-                    },
-                }}
-                className="modalContent"
+                open={appointmentModalOpen}
+                onClose={closeModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
             >
-                <div className="modalHeader">
-                    <h2>Create Appointment</h2>
-                </div>
-                <div className="modalBody">
-                    <AppointmentForm closeModal={closeModal} />
-                </div>
+                <Box sx={{ width: '100%', maxWidth: '400px', p: 2, bgcolor: 'background.paper', margin: 'auto', mt: 2 }}>
+                    <AppointmentForm closeModal={closeModal} selectedSlot={selectedSlot} />
+                </Box>
             </Modal>
-        </div>
+        </Box>
     );
 }
