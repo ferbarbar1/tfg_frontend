@@ -4,8 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { getAllAppointments } from '../../api/appointments.api';
 import { useNavigate } from 'react-router-dom';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
+import { Modal, Container, Paper, Typography } from '@mui/material';
 import { AppointmentForm } from '../../components/appointments/AppointmentForm';
 
 const localizer = momentLocalizer(moment);
@@ -57,13 +56,13 @@ export function AppointmentsPage() {
     };
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Container maxWidth="md" className='mt-3'>
             <Calendar
                 localizer={localizer}
                 events={events}
                 startAccessor="start"
                 endAccessor="end"
-                style={{ height: 500, width: 500 }}
+                style={{ height: 500, width: '100%' }}
                 onSelectEvent={event => {
                     navigate(`/appointments/${event.id}`);
                 }}
@@ -76,10 +75,10 @@ export function AppointmentsPage() {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={{ width: '100%', maxWidth: '400px', p: 2, bgcolor: 'background.paper', margin: 'auto', mt: 2 }}>
+                <Paper elevation={3} sx={{ width: '100%', maxWidth: '400px', p: 2, margin: 'auto', mt: 2 }}>
                     <AppointmentForm closeModal={closeModal} selectedSlot={selectedSlot} />
-                </Box>
+                </Paper>
             </Modal>
-        </Box>
+        </Container>
     );
 }

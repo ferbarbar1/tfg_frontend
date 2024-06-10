@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tab, Tabs, Button } from 'react-bootstrap';
+import { Box, Button, Tab, Tabs } from '@mui/material';
 import { WorkersList } from '../../components/users/WorkersList';
 import { ClientsList } from '../../components/users/ClientsList';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -18,18 +18,36 @@ export function UsersPage() {
         navigate('/workers/create');
     };
 
+    const handleChange = (event, newValue) => {
+        navigate(`?tab=${newValue}`);
+    };
+
     return (
         <div>
-            <Tabs defaultActiveKey={activeTab} id="uncontrolled-tab-example">
-                <Tab eventKey="workers" title="Workers">
-                    <Button onClick={handleCreateWorker}>Create Worker</Button>
-                    <WorkersList />
-                </Tab>
-                <Tab eventKey="clients" title="Clients">
-                    <Button onClick={handleCreateClient}>Create Client</Button>
-                    <ClientsList />
-                </Tab>
+            <Tabs value={activeTab} onChange={handleChange}>
+                <Tab value="workers" label="Workers" />
+                <Tab value="clients" label="Clients" />
             </Tabs>
+            {activeTab === 'workers' && (
+                <div>
+                    <WorkersList />
+                    <Box display="flex" justifyContent="center" marginTop={2}>
+                        <Button variant="contained" color="primary" onClick={handleCreateWorker}>
+                            Create Worker
+                        </Button>
+                    </Box>
+                </div>
+            )}
+            {activeTab === 'clients' && (
+                <div>
+                    <ClientsList />
+                    <Box display="flex" justifyContent="center" marginTop={2}>
+                        <Button variant="contained" color="primary" onClick={handleCreateClient}>
+                            Create Client
+                        </Button>
+                    </Box>
+                </div>
+            )}
         </div>
     );
 }

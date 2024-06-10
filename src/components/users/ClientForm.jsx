@@ -16,7 +16,7 @@ export function ClientForm({ isUpdate }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        async function fetchclient() {
+        async function fetchClient() {
             if (isUpdate) {
                 try {
                     const response = await getClient(id);
@@ -33,7 +33,7 @@ export function ClientForm({ isUpdate }) {
                 }
             }
         }
-        fetchclient();
+        fetchClient();
     }, [id, isUpdate]);
 
     const handleSubmit = async (event) => {

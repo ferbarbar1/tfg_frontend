@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getService } from '../../api/services.api';
-import { getRatingsByService } from '../../api/ratings.api';
+import { getRatingByAppointment } from '../../api/ratings.api';
+import { getAppointmentsByService } from '../../api/appointments.api';
 import { Container, Grid, Card, CardContent, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Divider } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import { AppointmentForm } from '../appointments/AppointmentForm';
@@ -32,13 +33,18 @@ export function ServiceDetail() {
                 setImage(service.image);
                 setPrice(service.price);
                 setWorkers(service.workers);
-                const ratingsResponse = await getRatingsByService(id);
-                setRatings(ratingsResponse.data);
-                if (ratingsResponse.data.length > 0) {
-                    const avgRating = ratingsResponse.data.reduce((acc, rating) => acc + Number(rating.rate), 0) / ratingsResponse.data.length;
+                const appointmentsResponse = await getAppointmentsByService(id);
+                const ratings = [];
+                for (let appointment of appointmentsResponse.data) {
+                    const ratingsResponse = await getRatingByAppointment(appointment.id);
+                    ratings.push(...ratingsResponse.data);
+                }
+                setRatings(ratings);
+                if (ratings.length > 0) {
+                    const avgRating = ratings.reduce((acc, rating) => acc + Number(rating.rate), 0) / ratings.length;
                     setAvgRating(avgRating);
                 }
-                setLoading(false); // Añade esta línea
+                setLoading(false);
             } catch (error) {
                 console.error(error);
                 setLoading(false);

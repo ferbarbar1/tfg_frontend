@@ -96,7 +96,7 @@ export function ServiceForm({ isUpdate }) {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            height="80vh" // Asegura que la caja ocupe toda la altura de la vista
+            height="80vh"
         >
             <Container>
                 <Grid container spacing={3}>

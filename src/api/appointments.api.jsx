@@ -30,6 +30,10 @@ export const getAppointmentsByClient = (clientId) => {
     return axios.get(`http://127.0.0.1:8000/api/appointments?client=${clientId}`)
 }
 
+export const getAppointmentsByService = (serviceId) => {
+    return axios.get(`http://127.0.0.1:8000/api/appointments?service=${serviceId}`)
+}
+
 export const createCheckoutSession = async (serviceId, clientId, scheduleId, description, modality) => {
     try {
         const response = await axios.post("http://127.0.0.1:8000/api/payments/checkout-session/", {

@@ -2,24 +2,23 @@ import React, { useState, useEffect, useContext } from 'react';
 import { getAppointmentsByWorker, getAppointmentsByClient } from '../../api/appointments.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Modal } from '@mui/material';
+import { Box, Button, Modal, useMediaQuery } from '@mui/material';
 import { styled } from '@mui/system';
-import { RateServiceForm } from '../../components/ratings/RateServiceForm';
+import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
+import { useTheme } from '@mui/material/styles';
 
 const StyledDataGrid = styled(DataGrid)({
-    '& .MuiDataGrid-row:nth-of-type(odd)': {
-        backgroundColor: '#f7f7f7', // color para filas impares
-    },
-    '& .MuiDataGrid-row:nth-of-type(even)': {
-        backgroundColor: '#FFFFFF', // color para filas pares
-    },
+    backgroundColor: '#FFFFFF',
 });
 
 export const MyAppointmentsPage = () => {
     const [appointments, setAppointments] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [serviceId, setServiceId] = useState(null);
+    const [appointmentId, setAppointmentId] = useState(null);
+    const [isUpdate, setIsUpdate] = useState(false);
     const { user } = useContext(AuthContext);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -35,9 +34,12 @@ export const MyAppointmentsPage = () => {
                     setAppointments(response.data.map((appointment, index) => ({
                         ...appointment,
                         id: index,
+                        appointmentId: appointment.id,
+                        serviceId: appointment.service.id,
                         service: appointment.service.name,
+                        status: appointment.status,
+                        modality: appointment.modality,
                         date: new Date(appointment.schedule.date).toLocaleDateString(),
-                        clientWorker: user.user.role === 'client' ? `${appointment.worker.user.first_name} ${appointment.worker.user.last_name}` : `${appointment.client.user.first_name} ${appointment.client.user.last_name}`,
                         time: `${appointment.schedule.start_time.split(':').slice(0, 2).join(':')} - ${appointment.schedule.end_time.split(':').slice(0, 2).join(':')}`
                     })));
                 }
@@ -49,60 +51,123 @@ export const MyAppointmentsPage = () => {
         fetchAppointments();
     }, [user.id, user.user.role]);
 
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
     const columns = [
-        { field: 'service', headerName: 'Service', width: 200, sortable: true, align: 'left' },
-        { field: 'date', headerName: 'Date', width: 100, sortable: true, align: 'left' },
-        { field: 'time', headerName: 'Time', width: 150, sortable: true, align: 'left' },
-        { field: 'clientWorker', headerName: user.user.role === 'client' ? 'Worker' : 'Client', width: 150, sortable: true, align: 'left' },
-        { field: 'description', headerName: 'Description', width: 200, align: 'left' },
-        { field: 'status', headerName: 'Status', width: 150, align: 'left' },
-        { field: 'modality', headerName: 'Modality', width: 150, align: 'left' },
+        {
+            field: 'service',
+            headerName: 'Service',
+            flex: 1,
+            minWidth: 150,
+            sortable: true,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => <div style={{ textAlign: 'center', wordWrap: 'break-word' }}>{params.value}</div>
+        },
+        {
+            field: 'date',
+            headerName: 'Date',
+            flex: 1,
+            minWidth: 120,
+            sortable: true,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => <div style={{ textAlign: 'center' }}>{params.value}</div>
+        },
+        {
+            field: 'time',
+            headerName: 'Time',
+            flex: 1,
+            minWidth: 150,
+            sortable: true,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => <div style={{ textAlign: 'center' }}>{params.value}</div>
+        },
+        !isMobile && {
+            field: 'status',
+            headerName: 'Status',
+            flex: 1,
+            minWidth: 100,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => <div style={{ textAlign: 'center' }}>{params.value}</div>
+        },
+        !isMobile && {
+            field: 'modality',
+            headerName: 'Modality',
+            flex: 1,
+            minWidth: 100,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => <div style={{ textAlign: 'center' }}>{params.value}</div>
+        },
         {
             field: 'actions',
             headerName: 'Actions',
-            width: 150,
-            align: 'left',
+            flex: 1,
+            minWidth: 150,
+            align: 'center',
+            headerAlign: 'center',
             renderCell: (params) => (
-                <>
+                <div style={{ textAlign: 'center' }}>
                     {params.row.modality === 'VIRTUAL' && params.row.status === 'PENDING' && (
-                        <Button variant="contained" href={params.row.meeting_link} target="_blank">Join Meeting</Button>
+                        <Button variant="contained" href={params.row.meeting_link} target="_blank">Join</Button>
                     )}
                     {user.user.role === 'client' && params.row.status === 'COMPLETED' && (
-                        <Button variant="contained" onClick={() => { setShowModal(true); setServiceId(params.row.id); }}>Rate</Button>
+                        <Button variant="contained" onClick={() => { setAppointmentId(params.row.appointmentId); setIsUpdate(true); setShowModal(true); }}>Rate</Button>
                     )}
-                </>
+                </div>
             )
         },
-    ];
+    ].filter(Boolean);
 
     return (
-        <Box sx={{ height: 350, width: '100%' }}>
-            <StyledDataGrid
-                rows={appointments}
-                columns={columns}
-                pageSize={5}
-                pageSizeOptions={[5, 10, 100]}
-                hideFooterSelectedRowCount
-            />
-            <Modal
-                open={showModal}
-                onClose={() => setShowModal(false)}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={{
+        <Box
+            sx={{
+                height: '75vh',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflowX: 'auto',
+            }}
+        >
+            <Box
+                sx={{
+                    height: 350,
                     width: '100%',
-                    maxWidth: '400px',
-                    margin: 'auto',
-                    bgcolor: 'background.paper',
-                    boxShadow: 24,
-                    p: 4,
-                    mt: 6
-                }}>
-
-                    <RateServiceForm serviceId={serviceId} />
-                </Box>
-            </Modal>
+                }}
+            >
+                <StyledDataGrid
+                    rows={appointments}
+                    columns={columns}
+                    pageSize={5}
+                    pageSizeOptions={[5, 10, 100]}
+                    hideFooterSelectedRowCount
+                    localeText={{ noRowsLabel: 'There are no appointments to display.' }}
+                />
+                <Modal
+                    open={showModal}
+                    onClose={closeModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={{
+                        width: '100%',
+                        maxWidth: '400px',
+                        margin: 'auto',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 4,
+                        mt: 6
+                    }}>
+                        <RateAppointmentForm appointmentId={appointmentId} closeModal={closeModal} isUpdate={isUpdate} />
+                    </Box>
+                </Modal>
+            </Box>
         </Box>
     );
 };

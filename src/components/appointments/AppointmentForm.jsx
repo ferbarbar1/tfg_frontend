@@ -5,7 +5,10 @@ import { createAppointment, createCheckoutSession } from '../../api/appointments
 import { getSchedulesAvailablesByDate } from '../../api/schedules.api';
 import { loadStripe } from '@stripe/stripe-js';
 import { AuthContext } from '../../contexts/AuthContext';
-import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Box } from '@mui/material';
+import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Box, Alert } from '@mui/material';
+import { getAllClients } from '../../api/clients.api';
+import { getAllWorkers } from '../../api/workers.api';
+
 
 const stripePromise = loadStripe('pk_test_51PFdYTGzZooPGUyPyarTnl6RMGFS0Zkll6iKQcpYRK0sICx2lokA4BEXIoxm1j4n1OmvkOP48mYaTaGBpsPfzs5Y0012QYjWvu');
 
@@ -22,6 +25,8 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
     });
     const [modality, setModality] = useState("");
     const [availableTimes, setAvailableTimes] = useState([]);
+    const [workers, setWorkers] = useState([]);
+    const [clients, setClients] = useState([]);
 
     const navigate = useNavigate();
 
@@ -46,6 +51,20 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
             loadAvailableTimes();
         }
     }, [schedule.date]);
+
+    useEffect(() => {
+        const fetchWorkersAndClients = async () => {
+            try {
+                const workersResponse = await getAllWorkers();
+                const clientsResponse = await getAllClients();
+                setWorkers(workersResponse.data);
+                setClients(clientsResponse.data);
+            } catch (error) {
+                console.error("Error al cargar los trabajadores y clientes:", error);
+            }
+        };
+        fetchWorkersAndClients();
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -108,21 +127,39 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
         <Box component="form" onSubmit={handleSubmit}>
             {user.user.role === "owner" &&
                 <>
-                    <FormControl fullWidth className="mb-2">
-                        <TextField
-                            label="Client"
+                    <FormControl fullWidth className="mb-2 mt-2">
+                        <InputLabel id="client-label">Client</InputLabel>
+                        <Select
+                            labelId="client-label"
                             required
                             value={client}
                             onChange={(e) => setClient(e.target.value)}
-                        />
+                            label="Client"
+                        >
+                            <MenuItem value="">
+                                <em>Select a client</em>
+                            </MenuItem>
+                            {clients.map((client) => (
+                                <MenuItem key={client.id} value={client.id}>{client.user.username}</MenuItem>
+                            ))}
+                        </Select>
                     </FormControl>
                     <FormControl fullWidth className="mb-2">
-                        <TextField
-                            label="Worker"
+                        <InputLabel id="worker-label">Worker</InputLabel>
+                        <Select
+                            labelId="worker-label"
                             required
                             value={worker}
                             onChange={(e) => setWorker(e.target.value)}
-                        />
+                            label="Worker"
+                        >
+                            <MenuItem value="">
+                                <em>Select a worker</em>
+                            </MenuItem>
+                            {workers.map((worker) => (
+                                <MenuItem key={worker.id} value={worker.id}>{worker.user.username}</MenuItem>
+                            ))}
+                        </Select>
                     </FormControl>
                 </>
             }
@@ -172,7 +209,7 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
                         ))}
                     </Select>
                 </FormControl>
-            ) : <p>No schedules available for this date.</p>
+            ) : <Alert severity="warning" className="mb-2">No schedules available for this date.</Alert>
             )}
             <FormControl fullWidth className="mb-2">
                 <InputLabel id="modality-label">Select Modality</InputLabel>
