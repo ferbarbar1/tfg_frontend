@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { Sidebar } from "./components/Sidebar";
 import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { HomePage } from "./pages/HomePage";
 import { UsersPage } from "./pages/users/UsersPage";
@@ -14,6 +13,7 @@ import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
 import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPage";
 import { MyAppointmentsPage } from "./pages/appointments/MyAppointmentsPage";
 import { RatingsPage } from "./pages/ratings/RatingsPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { AboutUsPage } from './pages/AboutUsPage';
 import { Layout } from './pages/Layout';
 import './styles/AppRoutes.css';
@@ -94,6 +94,7 @@ const AppRoutes = () => {
                             <RatingsPage />
                         </ProtectedRoute>
                     } />
+                    <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/about" element={<AboutUsPage />} />
                     <Route path="/unauthorized" element={<ForbiddenPage />} />
                 </Routes>

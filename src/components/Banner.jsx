@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import PersonIcon from '@mui/icons-material/Person';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
 export function Banner({ onMenuClick }) {
@@ -20,9 +22,19 @@ export function Banner({ onMenuClick }) {
                 <Typography variant="h6" style={{ flexGrow: 1, color: '#ecf0f1' }}>
                     FisioterAppIA Clinic
                 </Typography>
-                <Typography variant="subtitle1">
-                    Hello, {user && user.user ? user.user.username : 'Guest'}
-                </Typography>
+
+                {user && user.user && (
+                    <>
+                        <Typography variant="subtitle1">
+                            Hello,{' '}
+                            <Link to="/profile" style={{ color: '#ecf0f1', textDecoration: 'none' }}>
+                                {user.user.username}
+                                <PersonIcon sx={{ marginLeft: 1 }} />
+                            </Link>
+                        </Typography>
+                    </>
+                )}
+
             </Toolbar>
         </AppBar>
     );
