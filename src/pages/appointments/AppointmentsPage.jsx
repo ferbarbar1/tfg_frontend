@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { getAllAppointments } from '../../api/appointments.api';
 import { useNavigate } from 'react-router-dom';
-import { Modal, Container, Paper, Typography } from '@mui/material';
+import { Modal, Container, Paper } from '@mui/material';
 import { AppointmentForm } from '../../components/appointments/AppointmentForm';
 
 const localizer = momentLocalizer(moment);

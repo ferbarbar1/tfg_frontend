@@ -2,23 +2,22 @@ import React, { useState, useEffect, useContext } from 'react';
 import { getAppointmentsByWorker, getAppointmentsByClient } from '../../api/appointments.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Modal, useMediaQuery } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import { styled } from '@mui/system';
-import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 const StyledDataGrid = styled(DataGrid)({
     backgroundColor: '#FFFFFF',
+    cursor: 'pointer',
 });
 
 export const MyAppointmentsPage = () => {
     const [appointments, setAppointments] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [appointmentId, setAppointmentId] = useState(null);
-    const [isUpdate, setIsUpdate] = useState(false);
     const { user } = useContext(AuthContext);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -50,10 +49,6 @@ export const MyAppointmentsPage = () => {
 
         fetchAppointments();
     }, [user.id, user.user.role]);
-
-    const closeModal = () => {
-        setShowModal(false);
-    };
 
     const columns = [
         {
@@ -104,24 +99,6 @@ export const MyAppointmentsPage = () => {
             headerAlign: 'center',
             renderCell: (params) => <div style={{ textAlign: 'center' }}>{params.value}</div>
         },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            flex: 1,
-            minWidth: 150,
-            align: 'center',
-            headerAlign: 'center',
-            renderCell: (params) => (
-                <div style={{ textAlign: 'center' }}>
-                    {params.row.modality === 'VIRTUAL' && params.row.status === 'PENDING' && (
-                        <Button variant="contained" href={params.row.meeting_link} target="_blank">Join</Button>
-                    )}
-                    {user.user.role === 'client' && params.row.status === 'COMPLETED' && (
-                        <Button variant="contained" onClick={() => { setAppointmentId(params.row.appointmentId); setIsUpdate(true); setShowModal(true); }}>Rate</Button>
-                    )}
-                </div>
-            )
-        },
     ].filter(Boolean);
 
     return (
@@ -148,25 +125,8 @@ export const MyAppointmentsPage = () => {
                     pageSizeOptions={[5, 10, 100]}
                     hideFooterSelectedRowCount
                     localeText={{ noRowsLabel: 'There are no appointments to display.' }}
+                    onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
                 />
-                <Modal
-                    open={showModal}
-                    onClose={closeModal}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={{
-                        width: '100%',
-                        maxWidth: '400px',
-                        margin: 'auto',
-                        bgcolor: 'background.paper',
-                        boxShadow: 24,
-                        p: 4,
-                        mt: 6
-                    }}>
-                        <RateAppointmentForm appointmentId={appointmentId} closeModal={closeModal} isUpdate={isUpdate} />
-                    </Box>
-                </Modal>
             </Box>
         </Box>
     );

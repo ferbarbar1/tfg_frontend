@@ -12,6 +12,8 @@ import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
 import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
 import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPage";
 import { MyAppointmentsPage } from "./pages/appointments/MyAppointmentsPage";
+import { MyAppointmentsDetailPage } from "./pages/appointments/MyAppointmentsDetailPage";
+
 import { RatingsPage } from "./pages/ratings/RatingsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { AboutUsPage } from './pages/AboutUsPage';
@@ -59,6 +61,11 @@ const AppRoutes = () => {
                             <MyAppointmentsPage />
                         </ProtectedRoute>
                     } />
+                    <Route path="/my-appointments/:id/details" element={
+                        <ProtectedRoute roles={['worker', 'client']}>
+                            <MyAppointmentsDetailPage />
+                        </ProtectedRoute>
+                    } />
                     <Route path="/clients/create" element={
                         <ProtectedRoute roles={['owner']}>
                             <ClientDetailPage isUpdate={false} />
@@ -84,7 +91,7 @@ const AppRoutes = () => {
                             <AppointmentsPage />
                         </ProtectedRoute>
                     } />
-                    <Route path="/appointments/:id" element={
+                    <Route path="/appointments/:id/details" element={
                         <ProtectedRoute roles={['owner']}>
                             <AppointmentDetailPage />
                         </ProtectedRoute>

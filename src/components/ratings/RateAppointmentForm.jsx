@@ -11,7 +11,6 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
     const [ratingId, setRatingId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-
     useEffect(() => {
         const fetchRating = async () => {
             try {
@@ -50,10 +49,9 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
             }
             closeModal();
         } catch (error) {
-            console.error("Error creating rating: ", error);
+            console.error("Error creating/updating rating: ", error.response?.data || error.message);
         }
     };
-
 
     if (isLoading) {
         return <CircularProgress />;
@@ -62,7 +60,7 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
     return (
         <Box component="form" onSubmit={handleSubmit} noValidate>
             <Typography variant="h6" component="h2" align="center">
-                Add Rating
+                {isUpdate ? 'Update Rating' : 'Add Rating'}
             </Typography>
             <Divider sx={{ my: 2, bgcolor: "grey" }} />
             {isUpdate && (
@@ -98,7 +96,7 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
                     variant="contained"
                     color="primary"
                 >
-                    {isUpdate ? 'Edit' : 'Save'}
+                    {isUpdate ? 'Update' : 'Save'}
                 </Button>
                 <Button
                     variant="contained"
