@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getAppointment, updateAppointment } from '../../api/appointments.api';
 import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Select, MenuItem, InputLabel, FormControl, Modal } from '@mui/material';
 import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
+import { InformForm } from '../../components/informs/InformForm';
 import { AuthContext } from '../../contexts/AuthContext';
 
 export function MyAppointmentsDetailPage() {
@@ -24,7 +25,7 @@ export function MyAppointmentsDetailPage() {
             try {
                 const response = await getAppointment(id);
                 const appointmentData = response.data;
-                if (appointmentData && appointmentData.schedule) {
+                if (appointmentData) {
                     setAppointment({
                         id: appointmentData.id,
                         description: appointmentData.description,
@@ -37,9 +38,10 @@ export function MyAppointmentsDetailPage() {
                         },
                         modality: appointmentData.modality,
                         meeting_link: appointmentData.meeting_link,
+                        inform: appointmentData.inform,
                     });
                 } else {
-                    console.error('Appointment data or schedule is missing');
+                    console.error('Appointment data is missing');
                 }
             } catch (error) {
                 console.error('Error fetching appointment:', error);
@@ -63,7 +65,7 @@ export function MyAppointmentsDetailPage() {
             await updateAppointment(id, updatedAppointment);
             navigate('/my-appointments/');
         } catch (error) {
-            console.error(error);
+            console.error('Error updating appointment:', error);
         }
     };
 
@@ -156,17 +158,40 @@ export function MyAppointmentsDetailPage() {
                                 </Box>
                             </Modal>
                         </>
-
                     )}
                     {user.user.role === 'worker' && (
                         <>
-                            <Button variant="contained" color="inherit" sx={{ marginRight: 1 }}>Attach report
-                            </Button>
                             <Button variant="contained" color="primary" sx={{ marginRight: 1 }} onClick={handleUpdate}>Update</Button>
                             {appointment.modality === 'VIRTUAL' && appointment.status === 'CONFIRMED' && (
                                 <Button variant="contained" color="secondary" sx={{ marginRight: 1 }} onClick={handleZoomAuth}>Create Meeting</Button>
                             )}
+                            {appointment.status === 'COMPLETED' && (
+                                <>
+                                    <Button variant="contained" color="inherit" sx={{ marginRight: 1 }} onClick={() => { setAppointmentId(appointment.id); setShowModal(true); }}>Attach report</Button>
+                                    <Modal
+                                        open={showModal}
+                                        onClose={closeModal}
+                                        aria-labelledby="modal-modal-title"
+                                        aria-describedby="modal-modal-description"
+                                    >
+                                        <Box sx={{
+                                            width: '100%',
+                                            maxWidth: '600px',
+                                            margin: 'auto',
+                                            bgcolor: 'background.paper',
+                                            boxShadow: 24,
+                                            p: 4,
+                                            mt: 6
+                                        }}>
+                                            <InformForm appointmentId={appointmentId} closeModal={closeModal} />
+                                        </Box>
+                                    </Modal>
+                                </>
+                            )}
                         </>
+                    )}
+                    {appointment.inform && (
+                        <Button variant="contained" color="primary" sx={{ marginRight: 1 }}>Show Inform</Button>
                     )}
                     <Button variant="contained" color="error" onClick={() => navigate('/my-appointments')}>Back</Button>
                 </Box>

@@ -13,7 +13,6 @@ import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
 import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPage";
 import { MyAppointmentsPage } from "./pages/appointments/MyAppointmentsPage";
 import { MyAppointmentsDetailPage } from "./pages/appointments/MyAppointmentsDetailPage";
-
 import { RatingsPage } from "./pages/ratings/RatingsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { AboutUsPage } from './pages/AboutUsPage';
@@ -93,6 +92,11 @@ const AppRoutes = () => {
                     } />
                     <Route path="/appointments/:id/details" element={
                         <ProtectedRoute roles={['owner']}>
+                            <AppointmentDetailPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/appointments/:id/inform" element={
+                        <ProtectedRoute roles={['owner', 'worker', 'client']}>
                             <AppointmentDetailPage />
                         </ProtectedRoute>
                     } />
