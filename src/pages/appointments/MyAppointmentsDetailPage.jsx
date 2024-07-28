@@ -84,6 +84,10 @@ export function MyAppointmentsDetailPage() {
         setShowModal(false);
     };
 
+    const handleShowInform = () => {
+        navigate(`/appointments/${appointment.id}/inform`);
+    };
+
     return (
         <Card>
             <CardContent>
@@ -190,8 +194,8 @@ export function MyAppointmentsDetailPage() {
                             )}
                         </>
                     )}
-                    {appointment.inform && (
-                        <Button variant="contained" color="primary" sx={{ marginRight: 1 }}>Show Inform</Button>
+                    {appointment.inform !== null && (
+                        <Button variant="contained" color="primary" sx={{ marginRight: 1 }} onClick={handleShowInform}>Show Inform</Button>
                     )}
                     <Button variant="contained" color="error" onClick={() => navigate('/my-appointments')}>Back</Button>
                 </Box>

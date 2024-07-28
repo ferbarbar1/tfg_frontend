@@ -16,6 +16,7 @@ import { MyAppointmentsDetailPage } from "./pages/appointments/MyAppointmentsDet
 import { RatingsPage } from "./pages/ratings/RatingsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { AboutUsPage } from './pages/AboutUsPage';
+import { InformTemplate } from './components/informs/InformTemplate';
 import { Layout } from './pages/Layout';
 import './styles/AppRoutes.css';
 
@@ -97,7 +98,7 @@ const AppRoutes = () => {
                     } />
                     <Route path="/appointments/:id/inform" element={
                         <ProtectedRoute roles={['owner', 'worker', 'client']}>
-                            <AppointmentDetailPage />
+                            <InformTemplate />
                         </ProtectedRoute>
                     } />
                     <Route path="/analytics" element={

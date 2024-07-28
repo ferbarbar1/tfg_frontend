@@ -35,7 +35,6 @@ export const InformForm = ({ appointmentId, closeModal }) => {
 
         try {
             const informData = {
-                appointment: appointmentId,
                 medical_history: medicalHistory,
                 diagnostic,
                 treatment,
@@ -44,9 +43,9 @@ export const InformForm = ({ appointmentId, closeModal }) => {
             if (isUpdate) {
                 await updateInform(informId, informData);
             } else {
-                const createdInform = await createInform(informData);
+                const createdInform = await createInform({ ...informData, appointment: appointmentId });
                 const updatedAppointment = {
-                    inform: createdInform.data.id,
+                    inform_id: createdInform.data.id,
                 };
                 await updateAppointment(appointmentId, updatedAppointment);
             }
