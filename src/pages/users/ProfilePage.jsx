@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Avatar, Typography, Card, CardContent, Divider, Button, Grid, Box } from '@mui/material';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import EmailIcon from '@mui/icons-material/Email';
 import SubscriptionIcon from '@mui/icons-material/Subscriptions';
 import EngineeringIcon from '@mui/icons-material/Engineering';
@@ -46,8 +46,12 @@ export const ProfilePage = () => {
                                         <EngineeringIcon sx={{ marginRight: 1 }} /> Specialty: {user.specialty}
                                     </Typography>
                                 )}
-
-                                <Button variant="contained" color="primary" sx={{ marginTop: 8 }}>
+                            </Box>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <Button variant="contained" color="primary" sx={{ marginTop: 6, marginRight: 2 }}>
+                                    Add medical histories
+                                </Button>
+                                <Button variant="contained" color="primary" sx={{ marginTop: 6 }}>
                                     Update
                                 </Button>
                             </Box>

@@ -14,7 +14,7 @@ import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPag
 import { MyAppointmentsPage } from "./pages/appointments/MyAppointmentsPage";
 import { MyAppointmentsDetailPage } from "./pages/appointments/MyAppointmentsDetailPage";
 import { RatingsPage } from "./pages/ratings/RatingsPage";
-import { ProfilePage } from "./pages/ProfilePage";
+import { ProfilePage } from "./pages/users/ProfilePage";
 import { AboutUsPage } from './pages/AboutUsPage';
 import { InformTemplate } from './components/informs/InformTemplate';
 import { Layout } from './pages/Layout';

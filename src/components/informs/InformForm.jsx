@@ -5,7 +5,7 @@ import { Box, TextField, Button, Typography, Divider } from '@mui/material';
 
 export const InformForm = ({ appointmentId, closeModal }) => {
     const [informId, setInformId] = useState(null);
-    const [medicalHistory, setMedicalHistory] = useState('');
+    const [relevantInformation, setRelevantInformation] = useState('');
     const [diagnostic, setDiagnostic] = useState('');
     const [treatment, setTreatment] = useState('');
     const [isUpdate, setIsUpdate] = useState(false);
@@ -16,7 +16,7 @@ export const InformForm = ({ appointmentId, closeModal }) => {
                 const appointmentData = await getAppointment(appointmentId);
                 const existingInform = appointmentData.data.inform;
                 if (existingInform) {
-                    setMedicalHistory(existingInform.medical_history || '');
+                    setRelevantInformation(existingInform.relevant_information || '');
                     setDiagnostic(existingInform.diagnostic || '');
                     setTreatment(existingInform.treatment || '');
                     setIsUpdate(true);
@@ -35,7 +35,7 @@ export const InformForm = ({ appointmentId, closeModal }) => {
 
         try {
             const informData = {
-                medical_history: medicalHistory,
+                relevant_information: relevantInformation,
                 diagnostic,
                 treatment,
             };
@@ -64,15 +64,14 @@ export const InformForm = ({ appointmentId, closeModal }) => {
             <Divider sx={{ my: 2, bgcolor: "grey" }} />
             <TextField
                 margin="normal"
-                required
                 fullWidth
-                id="medicalHistory"
-                label="Medical History"
-                name="medicalHistory"
+                id="relevantInformation"
+                label="Relevant Information"
+                name="relevantInformation"
                 multiline
-                rows={4}
-                value={medicalHistory}
-                onChange={(event) => setMedicalHistory(event.target.value)}
+                rows={3}
+                value={relevantInformation}
+                onChange={(event) => setRelevantInformation(event.target.value)}
             />
             <TextField
                 margin="normal"
@@ -81,6 +80,8 @@ export const InformForm = ({ appointmentId, closeModal }) => {
                 id="diagnostic"
                 label="Diagnostic"
                 name="diagnostic"
+                multiline
+                rows={3}
                 value={diagnostic}
                 onChange={(event) => setDiagnostic(event.target.value)}
             />
@@ -91,6 +92,8 @@ export const InformForm = ({ appointmentId, closeModal }) => {
                 id="treatment"
                 label="Treatment"
                 name="treatment"
+                multiline
+                rows={3}
                 value={treatment}
                 onChange={(event) => setTreatment(event.target.value)}
             />

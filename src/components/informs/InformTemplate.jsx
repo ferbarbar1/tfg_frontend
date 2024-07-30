@@ -90,9 +90,9 @@ export function InformTemplate() {
                         </Grid>
                         <Grid item xs={12}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Historial médico relevante</Typography>
+                                <Typography variant="h6">Información médica relevante</Typography>
                                 <Divider sx={{ marginY: 2 }} />
-                                <Typography variant="body1">{appointment.inform?.medical_history || 'No disponible'}</Typography>
+                                <Typography variant="body1">{appointment.inform?.relevant_information || 'No disponible'}</Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={8}>
