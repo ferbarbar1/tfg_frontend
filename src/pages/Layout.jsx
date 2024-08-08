@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Box, CssBaseline, useMediaQuery, useTheme } from '@mui/material';
 import { Sidebar } from '../components/Sidebar';
 import { Banner } from '../components/Banner';
+import Stack from 'react-stackai';
+import { AuthContext } from '../contexts/AuthContext';
+
 
 export function Layout({ children }) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+    const { token } = useContext(AuthContext);
 
     useEffect(() => {
         setSidebarOpen(!isMobile);
@@ -38,6 +42,9 @@ export function Layout({ children }) {
             >
                 {children}
             </Box>
+            {token && (
+                <Stack project="https://www.stack-ai.com/embed/3ad9fa4b-8561-4519-a5cb-b961d1a88276/ad47d57e-7f0c-4b19-868c-a1b6952e519d/66b4df063918d7cf8f7d390a" />
+            )}
         </Box>
     );
 }

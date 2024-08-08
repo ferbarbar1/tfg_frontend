@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAppointment } from '../../api/appointments.api';
+import { getAllMedicalHistoriesByClient } from '../../api/medical_histories.api';
 import { Box, Grid, Paper, Typography, Divider, Button } from '@mui/material';
 import moment from 'moment';
 import jsPDF from 'jspdf';
@@ -9,6 +10,7 @@ import html2canvas from 'html2canvas';
 export function InformTemplate() {
     const { id: appointmentId } = useParams();
     const [appointment, setAppointment] = useState(null);
+    const [medicalHistories, setMedicalHistories] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,6 +24,21 @@ export function InformTemplate() {
         };
         fetchInform();
     }, [appointmentId]);
+
+    useEffect(() => {
+        const fetchMedicalHistories = async () => {
+            if (appointment && appointment.client) {
+                try {
+                    const response = await getAllMedicalHistoriesByClient(appointment.client.id);
+                    setMedicalHistories(response.data);
+                } catch (error) {
+                    console.error('Error fetching medical histories:', error);
+                    setMedicalHistories([]);
+                }
+            }
+        };
+        fetchMedicalHistories();
+    }, [appointment]);
 
     if (!appointment) {
         return <div>Loading...</div>;
@@ -86,6 +103,17 @@ export function InformTemplate() {
                                         <Typography variant="body1"><strong>Edad:</strong> {age} años</Typography>
                                     </Grid>
                                 </Grid>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
+                                <Typography variant="h6">Historial médico</Typography>
+                                <Divider sx={{ marginY: 2 }} />
+                                <Typography variant="body1">
+                                    {medicalHistories.length > 0 ? medicalHistories.map(history => (
+                                        <li key={history.id}>{history.description}</li>
+                                    )) : 'No procede'}
+                                </Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>
