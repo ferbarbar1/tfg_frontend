@@ -1,15 +1,20 @@
 import React from 'react';
-import '../styles/ForbiddenPage.css';
-import { Button } from 'react-bootstrap';
+import { Box, Typography, Button, Container } from '@mui/material';
 
 export const ForbiddenPage = () => {
     return (
-        <div className="forbidden-page-container">
-            <div className="forbidden-content">
-                <h1 className="forbidden-title">403 Forbidden</h1>
-                <p className="forbidden-message">Sorry, you don&apos;t have permission to access this page.</p>
-                <Button variant="secondary" onClick={() => window.location.replace("/")}>Back</Button>
-            </div>
-        </div>
+        <Container maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh' }}>
+            <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h2" component="h1" gutterBottom sx={{ marginBottom: 4 }}>
+                    403 Forbidden
+                </Typography>
+                <Typography variant="body1" gutterBottom sx={{ marginBottom: 6 }}>
+                    Sorry, you don&apos;t have permission to access this page.
+                </Typography>
+                <Button variant="contained" color="error" onClick={() => window.location.replace("/")}>
+                    Back
+                </Button>
+            </Box>
+        </Container>
     );
 };

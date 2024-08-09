@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { getAllClients } from '../../api/clients.api';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar } from '@mui/material';
+import { styled } from '@mui/system';
+
+const StyledTableRow = styled(TableRow)({
+    '&:hover': {
+        backgroundColor: '#f5f5f5',
+        cursor: 'pointer',
+    },
+});
 
 export function ClientsList() {
     const navigate = useNavigate();
@@ -78,13 +86,13 @@ export function ClientsList() {
                 </TableHead>
                 <TableBody>
                     {sortedClients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((client) => (
-                        <TableRow key={client.id} onClick={() => handleRowClick(client)}>
+                        <StyledTableRow key={client.id} onClick={() => handleRowClick(client)}>
                             <TableCell align="center" style={{ display: 'flex', justifyContent: 'center' }}>
                                 <Avatar src={client.user.image} />
                             </TableCell>
                             <TableCell align="center">{client.user.username}</TableCell>
                             <TableCell align="center">{client.user.first_name + ' ' + client.user.last_name}</TableCell>
-                        </TableRow>
+                        </StyledTableRow>
                     ))}
                     {sortedClients.length === 0 && (
                         <TableRow>

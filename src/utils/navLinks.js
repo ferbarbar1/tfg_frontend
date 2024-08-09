@@ -1,12 +1,11 @@
 import {
   faHome,
-  //faChartLine,
   faCalendarDays,
   faAddressBook,
   faChartBar,
-  //faBoxes,
   faNotesMedical,
   faQuestionCircle,
+  faFolder,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const NAVLINKS = [
@@ -41,6 +40,12 @@ export const NAVLINKS = [
     roles: ["worker", "client"],
   },
   {
+    name: "Resources",
+    path: "/resources",
+    icon: faFolder,
+    public: ["owner", "worker", "client"],
+  },
+  {
     name: "Analytics",
     path: "/analytics",
     icon: faChartBar,
@@ -52,16 +57,4 @@ export const NAVLINKS = [
     icon: faQuestionCircle,
     public: true,
   },
-  /*
-  {
-    name: "Revenue",
-    path: "/revenue",
-    icon: faChartLine,
-  },
-  {
-    name: "Inventory",
-    path: "/inventory",
-    icon: faBoxes,
-  },
-  */
 ];

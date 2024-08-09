@@ -18,6 +18,7 @@ import { ProfilePage } from "./pages/users/ProfilePage";
 import { AboutUsPage } from './pages/AboutUsPage';
 import { InformTemplate } from './components/informs/InformTemplate';
 import { Layout } from './pages/Layout';
+import { ErrorPage } from './pages/ErrorPage';
 import './styles/AppRoutes.css';
 
 const AppRoutes = () => {
@@ -109,6 +110,7 @@ const AppRoutes = () => {
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/about" element={<AboutUsPage />} />
                     <Route path="/unauthorized" element={<ForbiddenPage />} />
+                    <Route path="*" element={<ErrorPage />} />
                 </Routes>
             </Layout>
         </Router>

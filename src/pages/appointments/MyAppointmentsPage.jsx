@@ -2,22 +2,49 @@ import React, { useState, useEffect, useContext } from 'react';
 import { getAppointmentsByWorker, getAppointmentsByClient } from '../../api/appointments.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, useMediaQuery } from '@mui/material';
+import { Box, useMediaQuery, Tabs, Tab, Typography, TextField, MenuItem, InputLabel, FormControl, Select, Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const StyledDataGrid = styled(DataGrid)({
     backgroundColor: '#FFFFFF',
     cursor: 'pointer',
 });
 
+const TabPanel = (props) => {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`tabpanel-${index}`}
+            aria-labelledby={`tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+};
+
 export const MyAppointmentsPage = () => {
     const [appointments, setAppointments] = useState([]);
+    const [statusFilter, setStatusFilter] = useState('');
+    const [dateFilter, setDateFilter] = useState('');
+    const [modalityFilter, setModalityFilter] = useState('');
     const { user } = useContext(AuthContext);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const activeTab = queryParams.get('tab') || 'upcoming';
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -49,6 +76,22 @@ export const MyAppointmentsPage = () => {
 
         fetchAppointments();
     }, [user.id, user.user.role]);
+
+    const handleChange = (event, newValue) => {
+        navigate(`?tab=${newValue}`);
+    };
+
+    const handleStatusChange = (event) => {
+        setStatusFilter(event.target.value);
+    };
+
+    const handleDateChange = (event) => {
+        setDateFilter(event.target.value);
+    };
+
+    const handleModalityChange = (event) => {
+        setModalityFilter(event.target.value);
+    };
 
     const columns = [
         {
@@ -101,33 +144,184 @@ export const MyAppointmentsPage = () => {
         },
     ].filter(Boolean);
 
+    const filteredAppointments = appointments.filter(appointment => {
+        const formattedDate = new Date(dateFilter).toLocaleDateString();
+        return (
+            (!statusFilter || appointment.status === statusFilter) &&
+            (!dateFilter || appointment.date === formattedDate) &&
+            (!modalityFilter || appointment.modality === modalityFilter)
+        );
+    });
+
+    const upcomingAppointments = filteredAppointments.filter(appointment => new Date(appointment.schedule.date) >= new Date());
+    const pastAppointments = filteredAppointments.filter(appointment => new Date(appointment.schedule.date) < new Date());
+
     return (
-        <Box
-            sx={{
-                height: '75vh',
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                overflowX: 'auto',
-            }}
-        >
-            <Box
-                sx={{
-                    height: 350,
-                    width: '100%',
-                }}
-            >
-                <StyledDataGrid
-                    rows={appointments}
-                    columns={columns}
-                    pageSize={5}
-                    pageSizeOptions={[5, 10, 100]}
-                    hideFooterSelectedRowCount
-                    localeText={{ noRowsLabel: 'There are no appointments to display.' }}
-                    onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
-                />
-            </Box>
+        <Box sx={{ width: '100%' }}>
+            <Tabs value={activeTab} onChange={handleChange}>
+                <Tab value="upcoming" label="Upcoming Appointments" />
+                <Tab value="history" label="Appointment History" />
+            </Tabs>
+            {activeTab === 'upcoming' && (
+                <TabPanel value={activeTab} index="upcoming">
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="status-label">Status</InputLabel>
+                            <Select
+                                labelId="status-label"
+                                select
+                                value={statusFilter}
+                                onChange={handleStatusChange}
+                                label="Status"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="CONFIRMED">Confirmed</MenuItem>
+                                <MenuItem value="COMPLETED">Completed</MenuItem>
+                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <TextField
+                                type="date"
+                                value={dateFilter}
+                                onChange={handleDateChange}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="modality-label">Modality</InputLabel>
+                            <Select
+                                labelId="modality-label"
+                                select
+                                value={modalityFilter}
+                                onChange={handleModalityChange}
+                                label="Modality"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="VIRTUAL">Virtual</MenuItem>
+                                <MenuItem value="IN_PERSON">In person</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setStatusFilter('');
+                                setDateFilter('');
+                                setModalityFilter('');
+                            }}
+                            sx={{ mt: 2 }}
+                        >
+                            <DeleteIcon />
+                        </Button>
+                    </Box>
+                    <Box
+                        sx={{
+                            height: '75vh',
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            overflowX: 'auto',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                height: 350,
+                                width: '100%',
+                            }}
+                        >
+                            <StyledDataGrid
+                                rows={upcomingAppointments}
+                                columns={columns}
+                                pageSize={5}
+                                pageSizeOptions={[5, 10, 100]}
+                                hideFooterSelectedRowCount
+                                localeText={{ noRowsLabel: 'There are no appointments to display.' }}
+                                onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
+                            />
+                        </Box>
+                    </Box>
+                </TabPanel>
+            )}
+            {activeTab === 'history' && (
+                <TabPanel value={activeTab} index="history">
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="status-label">Status</InputLabel>
+                            <Select
+                                labelId="status-label"
+                                select
+                                value={statusFilter}
+                                onChange={handleStatusChange}
+                                label="Status"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="CONFIRMED">Confirmed</MenuItem>
+                                <MenuItem value="COMPLETED">Completed</MenuItem>
+                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <TextField
+                                type="date"
+                                value={dateFilter}
+                                onChange={handleDateChange}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="modality-label">Modality</InputLabel>
+                            <Select
+                                labelId="modality-label"
+                                select
+                                value={modalityFilter}
+                                onChange={handleModalityChange}
+                                label="Modality"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="VIRTUAL">Virtual</MenuItem>
+                                <MenuItem value="IN_PERSON">In person</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setStatusFilter('');
+                                setDateFilter('');
+                                setModalityFilter('');
+                            }}
+                            sx={{ mt: 2 }}
+                        >
+                            <DeleteIcon />
+                        </Button>
+                    </Box>
+                    <Box
+                        sx={{
+                            height: '75vh',
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            overflowX: 'auto',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                height: 350,
+                                width: '100%',
+                            }}
+                        >
+                            <StyledDataGrid
+                                rows={pastAppointments}
+                                columns={columns}
+                                pageSize={5}
+                                pageSizeOptions={[5, 10, 100]}
+                                hideFooterSelectedRowCount
+                                localeText={{ noRowsLabel: 'There are no appointments to display.' }}
+                                onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
+                            />
+                        </Box>
+                    </Box>
+                </TabPanel>
+            )}
         </Box>
     );
 };
