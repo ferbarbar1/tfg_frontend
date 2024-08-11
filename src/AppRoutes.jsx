@@ -1,24 +1,26 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { InformTemplate } from './components/informs/InformTemplate';
+import { OfferForm } from './components/offers/OfferForm';
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { AboutUsPage } from './pages/AboutUsPage';
+import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPage";
+import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
+import { MyAppointmentsDetailPage } from "./pages/appointments/MyAppointmentsDetailPage";
+import { MyAppointmentsPage } from "./pages/appointments/MyAppointmentsPage";
+import { ErrorPage } from './pages/ErrorPage';
 import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { HomePage } from "./pages/HomePage";
-import { UsersPage } from "./pages/users/UsersPage";
-import { ServicesPage } from "./pages/services/ServicesPage";
-import { ServiceFormPage } from "./pages/services/ServiceFormPage";
-import { ServiceDetailPage } from "./pages/services/ServiceDetailPage";
-import { ClientDetailPage } from "./pages/users/ClientDetailPage";
-import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
-import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
-import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPage";
-import { MyAppointmentsPage } from "./pages/appointments/MyAppointmentsPage";
-import { MyAppointmentsDetailPage } from "./pages/appointments/MyAppointmentsDetailPage";
-import { RatingsPage } from "./pages/ratings/RatingsPage";
-import { ProfilePage } from "./pages/users/ProfilePage";
-import { AboutUsPage } from './pages/AboutUsPage';
-import { InformTemplate } from './components/informs/InformTemplate';
 import { Layout } from './pages/Layout';
-import { ErrorPage } from './pages/ErrorPage';
+import { OffersPage } from './pages/offers/OffersPage';
+import { RatingsPage } from "./pages/ratings/RatingsPage";
+import { ServiceDetailPage } from "./pages/services/ServiceDetailPage";
+import { ServiceFormPage } from "./pages/services/ServiceFormPage";
+import { ServicesPage } from "./pages/services/ServicesPage";
+import { ClientDetailPage } from "./pages/users/ClientDetailPage";
+import { ProfilePage } from "./pages/users/ProfilePage";
+import { UsersPage } from "./pages/users/UsersPage";
+import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
 import './styles/AppRoutes.css';
 
 const AppRoutes = () => {
@@ -100,6 +102,21 @@ const AppRoutes = () => {
                     <Route path="/appointments/:id/inform" element={
                         <ProtectedRoute roles={['owner', 'worker', 'client']}>
                             <InformTemplate />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/offers" element={
+                        <ProtectedRoute roles={['owner']}>
+                            <OffersPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/offers/create" element={
+                        <ProtectedRoute roles={['owner']}>
+                            <OfferForm isUpdate={false} />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/offers/:id/update" element={
+                        <ProtectedRoute roles={['owner']}>
+                            <OfferForm isUpdate={true} />
                         </ProtectedRoute>
                     } />
                     <Route path="/analytics" element={

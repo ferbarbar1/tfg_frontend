@@ -6,6 +6,7 @@ import {
   faNotesMedical,
   faQuestionCircle,
   faFolder,
+  faPercent,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const NAVLINKS = [
@@ -38,6 +39,12 @@ export const NAVLINKS = [
     path: "/my-appointments",
     icon: faCalendarDays,
     roles: ["worker", "client"],
+  },
+  {
+    name: "Offers",
+    path: "/offers",
+    icon: faPercent,
+    roles: ["owner"],
   },
   {
     name: "Resources",

@@ -25,12 +25,12 @@ export function RatingsList() {
         },
         {
             name: 'Client',
-            selector: row => row.client,
+            selector: row => row.client?.user.username,
             sortable: true,
         },
         {
             name: 'Worker',
-            selector: row => row.worker,
+            selector: row => row.worker?.user.username,
             sortable: true,
         },
         {

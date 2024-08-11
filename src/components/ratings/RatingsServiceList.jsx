@@ -1,6 +1,5 @@
 import React from 'react';
-import { Typography, Box, Grid, Divider, Button } from '@mui/material';
-import ReactStars from 'react-rating-stars-component';
+import { Typography, Box, Grid, Divider, Button, Rating } from '@mui/material';
 
 export const RatingsServiceList = ({ ratings, closeModal }) => (
     <Box>
@@ -16,7 +15,7 @@ export const RatingsServiceList = ({ ratings, closeModal }) => (
                     </Grid>
                     <Box display="flex" alignItems="center" mt={1}>
                         <Box ml={1}>
-                            <ReactStars value={rating.rate} edit={false} size={24} activeColor="#ffd700" />
+                            <Rating value={rating.rate} readOnly precision={0.5} />
                         </Box>
                         <Typography variant="body1" ml={1}>{rating.rate}/5</Typography>
                     </Box>

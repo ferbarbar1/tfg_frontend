@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { getService } from '../../api/services.api';
 import { getRatingByAppointment } from '../../api/ratings.api';
 import { getAppointmentsByService } from '../../api/appointments.api';
-import { Container, Grid, Card, CardContent, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Divider } from '@mui/material';
+import { OffersContext } from '../../contexts/OffersContext';
+import { Container, Grid, Card, CardContent, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Divider, Rating } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import { AppointmentForm } from '../appointments/AppointmentForm';
-import ReactStars from "react-rating-stars-component";
 import { RatingsServiceList } from '../ratings/RatingsServiceList';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
@@ -14,6 +14,7 @@ export function ServiceDetail() {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
+    const [discountedPrice, setDiscountedPrice] = useState(null);
     const [image, setImage] = useState('');
     const [workers, setWorkers] = useState([]);
     const [ratings, setRatings] = useState([]);
@@ -22,6 +23,8 @@ export function ServiceDetail() {
     const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
     const [ratingsModalOpen, setRatingsModalOpen] = useState(false);
     const { id } = useParams();
+
+    const { activeOffer } = useContext(OffersContext);
 
     useEffect(() => {
         async function fetchService() {
@@ -33,6 +36,14 @@ export function ServiceDetail() {
                 setImage(service.image);
                 setPrice(service.price);
                 setWorkers(service.workers);
+
+                // Verificar si la oferta activa aplica a este servicio
+                if (activeOffer && activeOffer.services.includes(Number(id))) {
+                    const discount = activeOffer.discount / 100;
+                    const newPrice = (service.price * (1 - discount)).toFixed(2);
+                    setDiscountedPrice(newPrice);
+                }
+
                 const appointmentsResponse = await getAppointmentsByService(id);
                 const ratings = [];
                 for (let appointment of appointmentsResponse.data) {
@@ -51,7 +62,7 @@ export function ServiceDetail() {
             }
         }
         fetchService();
-    }, [id]);
+    }, [id, activeOffer]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -68,22 +79,36 @@ export function ServiceDetail() {
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={4} container justifyContent="center" alignItems="center" direction="column">
                                     <img src={image} alt={name} style={{ maxWidth: '100%', height: 'auto', marginBottom: '20px' }} />
-                                    <Typography variant="h6" align="center">Price: {price} €/hour</Typography>
+                                    {discountedPrice ? (
+                                        <>
+                                            <Typography variant="h6" align="center" style={{ textDecoration: 'line-through', color: 'red' }}>
+                                                Original Price: {price} €/hour
+                                            </Typography>
+                                            <Typography variant="h6" align="center" style={{ color: 'green' }}>
+                                                Discounted Price: {discountedPrice} €/hour
+                                            </Typography>
+                                        </>
+                                    ) : (
+                                        <Typography variant="h6" align="center">Price: {price} €/hour</Typography>
+                                    )}
                                 </Grid>
                                 <Grid item xs={12} md={8}>
                                     <Typography variant="body1" align="center" paragraph>{description}</Typography>
-                                    <Typography variant="body1" align="center" paragraph>
-                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            <ReactStars value={avgRating} edit={false} isHalf={true} size={24} activeColor="#ffd700" emptyIcon={<StarBorderIcon />} />
-                                            {ratings.length > 0 ? (
-                                                <Button onClick={() => setRatingsModalOpen(true)}>
-                                                    <Typography variant="body1" style={{ marginLeft: '10px' }}>{avgRating.toFixed(1)}/5</Typography>
-                                                </Button>
-                                            ) : (
-                                                <Typography variant="body1" style={{ marginLeft: '10px', color: 'grey' }}>No ratings yet</Typography>
-                                            )}
-                                        </div>
-                                    </Typography>
+                                    <Box display="flex" alignItems="center" justifyContent="center" mb={2}>
+                                        <Rating
+                                            value={avgRating}
+                                            precision={0.5}
+                                            readOnly
+                                            emptyIcon={<StarBorderIcon fontSize="inherit" />}
+                                        />
+                                        {ratings.length > 0 ? (
+                                            <Button onClick={() => setRatingsModalOpen(true)} style={{ marginLeft: '10px' }}>
+                                                <Typography variant="body1">{avgRating.toFixed(1)}/5</Typography>
+                                            </Button>
+                                        ) : (
+                                            <Typography variant="body1" style={{ marginLeft: '10px', color: 'grey' }}>No ratings yet</Typography>
+                                        )}
+                                    </Box>
                                     <Typography variant="body1" align="center" paragraph>Specialists working on this service:</Typography>
                                     <Box display="flex" justifyContent="center">
                                         <List>
