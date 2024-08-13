@@ -80,7 +80,7 @@ export function OfferForm({ isUpdate }) {
                             <CardHeader title={isUpdate ? 'Update offer' : 'Create offer'} sx={{ textAlign: 'center' }} />
                             <Divider sx={{ bgcolor: 'grey.800' }} />
                             <CardContent>
-                                <form onSubmit={handleSubmit}>
+                                <Box component="form" onSubmit={handleSubmit}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
                                             <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required fullWidth sx={{ mb: 2 }} />
@@ -116,7 +116,7 @@ export function OfferForm({ isUpdate }) {
                                             {isUpdate ? 'Update' : 'Create'}
                                         </Button>
                                     </Box>
-                                </form>
+                                </Box>
                             </CardContent>
                         </Card>
                     </Grid>
