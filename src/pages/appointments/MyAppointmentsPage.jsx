@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { getAppointmentsByWorker, getAppointmentsByClient } from '../../api/appointments.api';
+import { createConversation, getConversationsByParticipants } from '../../api/conversations.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, useMediaQuery, Tabs, Tab, Typography, TextField, MenuItem, InputLabel, FormControl, Select, Button } from '@mui/material';
+import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
@@ -26,7 +27,7 @@ const TabPanel = (props) => {
         >
             {value === index && (
                 <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                    <div>{children}</div>
                 </Box>
             )}
         </div>
@@ -93,6 +94,39 @@ export const MyAppointmentsPage = () => {
         setModalityFilter(event.target.value);
     };
 
+    const handleChat = async (event, appointment) => {
+        event.stopPropagation();
+        event.preventDefault();
+        try {
+            let participantIds;
+            if (user.user.role === 'client') {
+                // Si el usuario es un cliente, la conversación es con el trabajador
+                participantIds = [user.user.id, appointment.worker.user.id];
+            } else if (user.user.role === 'worker') {
+                // Si el usuario es un trabajador, la conversación es con el cliente
+                participantIds = [user.user.id, appointment.client.user.id];
+            }
+
+            const response = await getConversationsByParticipants(participantIds);
+            let conversationId;
+
+            if (response.data.length > 0) {
+                // Si ya existe una conversación, usa su ID
+                conversationId = response.data[0].id;
+            } else {
+                // Si no existe, crea una nueva conversación
+                const newConversation = await createConversation({ participants: participantIds });
+                conversationId = newConversation.data.id;
+            }
+
+            // Navega a la página de chat con el ID de la conversación
+            navigate(`/chat/${conversationId}`);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     const columns = [
         {
             field: 'service',
@@ -142,6 +176,23 @@ export const MyAppointmentsPage = () => {
             headerAlign: 'center',
             renderCell: (params) => <div style={{ textAlign: 'center' }}>{params.value}</div>
         },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            flex: 1,
+            minWidth: 100,
+            align: 'center',
+            headerAlign: 'center',
+            renderCell: (params) => (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={(event) => handleChat(event, params.row)}
+                >
+                    Chat
+                </Button>
+            )
+        }
     ].filter(Boolean);
 
     const filteredAppointments = appointments.filter(appointment => {
@@ -169,7 +220,6 @@ export const MyAppointmentsPage = () => {
                             <InputLabel id="status-label">Status</InputLabel>
                             <Select
                                 labelId="status-label"
-                                select
                                 value={statusFilter}
                                 onChange={handleStatusChange}
                                 label="Status"
@@ -191,7 +241,6 @@ export const MyAppointmentsPage = () => {
                             <InputLabel id="modality-label">Modality</InputLabel>
                             <Select
                                 labelId="modality-label"
-                                select
                                 value={modalityFilter}
                                 onChange={handleModalityChange}
                                 label="Modality"
@@ -249,7 +298,6 @@ export const MyAppointmentsPage = () => {
                             <InputLabel id="status-label">Status</InputLabel>
                             <Select
                                 labelId="status-label"
-                                select
                                 value={statusFilter}
                                 onChange={handleStatusChange}
                                 label="Status"
@@ -271,7 +319,6 @@ export const MyAppointmentsPage = () => {
                             <InputLabel id="modality-label">Modality</InputLabel>
                             <Select
                                 labelId="modality-label"
-                                select
                                 value={modalityFilter}
                                 onChange={handleModalityChange}
                                 label="Modality"

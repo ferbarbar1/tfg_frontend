@@ -8,6 +8,7 @@ import { AppointmentDetailPage } from "./pages/appointments/AppointmentDetailPag
 import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
 import { MyAppointmentsDetailPage } from "./pages/appointments/MyAppointmentsDetailPage";
 import { MyAppointmentsPage } from "./pages/appointments/MyAppointmentsPage";
+import { ChatPage } from './pages/chat/ChatPage';
 import { ErrorPage } from './pages/ErrorPage';
 import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { HomePage } from "./pages/HomePage";
@@ -122,6 +123,11 @@ const AppRoutes = () => {
                     <Route path="/analytics" element={
                         <ProtectedRoute roles={['owner']}>
                             <RatingsPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/chat/:conversationId" element={
+                        <ProtectedRoute roles={['owner', 'worker', 'client']}>
+                            <ChatPage />
                         </ProtectedRoute>
                     } />
                     <Route path="/profile" element={<ProfilePage />} />

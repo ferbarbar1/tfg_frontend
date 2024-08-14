@@ -105,7 +105,7 @@ export function ServiceForm({ isUpdate }) {
                             <CardHeader title={isUpdate ? 'Update service' : 'Create service'} sx={{ textAlign: 'center' }} />
                             <Divider sx={{ bgcolor: 'grey.800' }} />
                             <CardContent>
-                                <Box component="form" onSubmit={handleSubmit}>
+                                <form onSubmit={handleSubmit}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
                                             <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required fullWidth sx={{ mb: 2 }} />
@@ -143,7 +143,7 @@ export function ServiceForm({ isUpdate }) {
                                             </Button>
                                         }
                                     </Box>
-                                </Box>
+                                </form>
                             </CardContent>
                         </Card>
                     </Grid>
