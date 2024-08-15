@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, TextField, Button, List, ListItem, ListItemText, Divider, Typography, Paper } from '@mui/material';
+import { Box, TextField, Button, List, ListItem, ListItemText, Divider, Typography, Paper, IconButton } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { getMessagesByConversationId, createMessage, getConversationById } from '../../api/conversations.api';
 import { AuthContext } from '../../contexts/AuthContext';
 
@@ -27,7 +28,6 @@ export const ChatPage = () => {
             try {
                 const response = await getConversationById(conversationId);
                 const receiver_user = response.data.participants.filter(participant => participant !== user.user.id)[0];
-                console.log(receiver_user);
                 setReciever(receiver_user);
             } catch (error) {
                 console.error(error);
@@ -57,6 +57,10 @@ export const ChatPage = () => {
         }
     };
 
+    const handleReload = () => {
+        window.location.reload();
+    };
+
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         return new Date(dateString).toLocaleDateString(undefined, options);
@@ -64,8 +68,13 @@ export const ChatPage = () => {
 
     return (
         <Box display="flex" flexDirection="column" height="85vh" maxWidth="md" mx="auto">
-            <Box flex="1" overflow="auto" padding={2} bgcolor="#f5f5f5">
+            <Box display="flex" justifyContent="space-between" alignItems="center" padding={2} bgcolor="#f5f5f5">
                 <Typography variant="h5" textAlign="center" gutterBottom> Conversation with: {reciever}</Typography>
+                <IconButton onClick={handleReload} aria-label="reload">
+                    <RefreshIcon />
+                </IconButton>
+            </Box>
+            <Box flex="1" overflow="auto" padding={2} bgcolor="#f5f5f5">
                 <Box maxWidth="lg" mx="auto">
                     <List>
                         {messages.length === 0 ? (

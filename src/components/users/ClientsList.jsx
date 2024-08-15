@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { getAllClients } from '../../api/clients.api';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton } from '@mui/material';
+import ChatIcon from '@mui/icons-material/Chat';
 import { styled } from '@mui/system';
+import { getConversationsByParticipants, createConversation } from '../../api/conversations.api';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const StyledTableRow = styled(TableRow)({
     '&:hover': {
@@ -18,6 +21,7 @@ export function ClientsList() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('username');
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
         async function fetchClients() {
@@ -48,6 +52,26 @@ export function ClientsList() {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
+    };
+
+    const handleChat = async (event, client) => {
+        event.stopPropagation();
+        event.preventDefault();
+        try {
+            const participantIds = [user.user.id, client.user.id];
+            const response = await getConversationsByParticipants(participantIds);
+            let conversationId;
+
+            if (response.data.length > 0) {
+                conversationId = response.data[0].id;
+            } else {
+                const newConversation = await createConversation({ participants: participantIds });
+                conversationId = newConversation.data.id;
+            }
+            navigate(`/chat/${conversationId}`);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const sortedClients = [...clients].sort((a, b) => {
@@ -82,6 +106,9 @@ export function ClientsList() {
                                 <div style={{ textAlign: 'center' }}>Name</div>
                             </TableSortLabel>
                         </TableCell>
+                        <TableCell align="center">
+                            Actions
+                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -92,6 +119,11 @@ export function ClientsList() {
                             </TableCell>
                             <TableCell align="center">{client.user.username}</TableCell>
                             <TableCell align="center">{client.user.first_name + ' ' + client.user.last_name}</TableCell>
+                            <TableCell align="center">
+                                <IconButton aria-label="chat">
+                                    <ChatIcon onClick={(event) => handleChat(event, client)} />
+                                </IconButton>
+                            </TableCell>
                         </StyledTableRow>
                     ))}
                     {sortedClients.length === 0 && (

@@ -3,8 +3,9 @@ import { getAppointmentsByWorker, getAppointmentsByClient } from '../../api/appo
 import { createConversation, getConversationsByParticipants } from '../../api/conversations.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, Button } from '@mui/material';
+import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, Button, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ChatIcon from '@mui/icons-material/Chat';
 import { styled } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -114,12 +115,10 @@ export const MyAppointmentsPage = () => {
                 // Si ya existe una conversación, usa su ID
                 conversationId = response.data[0].id;
             } else {
-                // Si no existe, crea una nueva conversación
                 const newConversation = await createConversation({ participants: participantIds });
                 conversationId = newConversation.data.id;
             }
 
-            // Navega a la página de chat con el ID de la conversación
             navigate(`/chat/${conversationId}`);
         } catch (error) {
             console.error(error);
@@ -184,13 +183,9 @@ export const MyAppointmentsPage = () => {
             align: 'center',
             headerAlign: 'center',
             renderCell: (params) => (
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={(event) => handleChat(event, params.row)}
-                >
-                    Chat
-                </Button>
+                <IconButton aria-label="chat">
+                    <ChatIcon onClick={(event) => handleChat(event, params.row)} />
+                </IconButton>
             )
         }
     ].filter(Boolean);
