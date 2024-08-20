@@ -24,7 +24,6 @@ export function AppointmentDetailPage() {
                             time: `${appointmentData.schedule.start_time.split(':').slice(0, 2).join(':')} - ${appointmentData.schedule.end_time.split(':').slice(0, 2).join(':')}`
                         },
                         modality: appointmentData.modality,
-                        meeting_link: appointmentData.meeting_link,
                     });
                 } else {
                     console.error('Appointment data or schedule is missing');
@@ -97,9 +96,6 @@ export function AppointmentDetailPage() {
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <TextField fullWidth label="Modality" value={appointment.modality} onChange={e => handleChange('modality', e.target.value)} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField fullWidth label="Meeting Link" value={appointment.meeting_link} onChange={e => handleChange('meeting_link', e.target.value)} />
                     </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 1, marginTop: 2 }}>

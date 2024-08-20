@@ -183,8 +183,8 @@ export const MyAppointmentsPage = () => {
             align: 'center',
             headerAlign: 'center',
             renderCell: (params) => (
-                <IconButton aria-label="chat">
-                    <ChatIcon onClick={(event) => handleChat(event, params.row)} />
+                <IconButton aria-label="chat" onClick={(event) => handleChat(event, params.row)}>
+                    <ChatIcon />
                 </IconButton>
             )
         }

@@ -50,7 +50,9 @@ export const InformForm = ({ appointmentId, closeModal }) => {
                 await updateAppointment(appointmentId, updatedAppointment);
             }
 
-            closeModal();
+            if (closeModal) {
+                closeModal();
+            }
         } catch (error) {
             console.error('Error creating or updating inform:', error);
         }
@@ -105,14 +107,16 @@ export const InformForm = ({ appointmentId, closeModal }) => {
                 >
                     {isUpdate ? 'Update' : 'Save'}
                 </Button>
-                <Button
-                    variant="contained"
-                    color="error"
-                    onClick={closeModal}
-                    sx={{ ml: 2 }}
-                >
-                    Cancel
-                </Button>
+                {closeModal && (
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={closeModal}
+                        sx={{ ml: 2 }}
+                    >
+                        Cancel
+                    </Button>
+                )}
             </Box>
         </Box>
     );

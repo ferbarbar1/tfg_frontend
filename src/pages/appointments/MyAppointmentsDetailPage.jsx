@@ -14,11 +14,6 @@ export function MyAppointmentsDetailPage() {
     const [appointmentId, setAppointmentId] = useState(null);
     const [isUpdate, setIsUpdate] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const statusOptions = [
-        { value: 'CONFIRMED', label: 'Confirmed' },
-        { value: 'CANCELLED', label: 'Cancelled' },
-        { value: 'COMPLETED', label: 'Completed' },
-    ];
 
     useEffect(() => {
         const fetchAppointment = async () => {
@@ -37,7 +32,6 @@ export function MyAppointmentsDetailPage() {
                             time: `${appointmentData.schedule.start_time.split(':').slice(0, 2).join(':')} - ${appointmentData.schedule.end_time.split(':').slice(0, 2).join(':')}`
                         },
                         modality: appointmentData.modality,
-                        meeting_link: appointmentData.meeting_link,
                         inform: appointmentData.inform,
                     });
                 } else {
@@ -69,23 +63,16 @@ export function MyAppointmentsDetailPage() {
         }
     };
 
-    const handleZoomAuth = () => {
-        const clientId = 'd0NInwj3Q3SFiF09kf9c8w';
-        const redirectUri = encodeURIComponent('http://127.0.0.1:8000/api/oauth/callback');
-        const zoomAuthUrl = `https://zoom.us/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`;
-        window.location.href = zoomAuthUrl;
-    };
-
-    const handleChange = (field, value) => {
-        setAppointment(prev => ({ ...prev, [field]: value }));
-    };
-
     const closeModal = () => {
         setShowModal(false);
     };
 
     const handleShowInform = () => {
         navigate(`/appointments/${appointment.id}/inform`);
+    };
+
+    const handleStartVideoCall = () => {
+        navigate(`/appointments/${id}/video-call`);
     };
 
     return (
@@ -112,32 +99,11 @@ export function MyAppointmentsDetailPage() {
                         <TextField fullWidth label="Time" value={appointment.schedule.time} disabled />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <FormControl fullWidth>
-                            <InputLabel id="status-label">Status</InputLabel>
-                            <Select
-                                labelId="status-label"
-                                id="status"
-                                value={appointment.status}
-                                label="Status"
-                                onChange={(e) => handleChange('status', e.target.value)}
-                                disabled={user.user.role !== 'worker'}
-                            >
-                                {statusOptions.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                        <TextField fullWidth label="Status" value={appointment.status} disabled />
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <TextField fullWidth label="Modality" value={appointment.modality} disabled />
                     </Grid>
-                    {appointment.modality === 'VIRTUAL' && appointment.meeting_link && (
-                        <Grid item xs={12}>
-                            <TextField fullWidth label="Meeting Link" value={appointment.meeting_link} disabled />
-                        </Grid>
-                    )}
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 1, marginTop: 2 }}>
                     {user.user.role === 'client' && appointment.status === 'COMPLETED' && (
@@ -163,13 +129,30 @@ export function MyAppointmentsDetailPage() {
                             </Modal>
                         </>
                     )}
+                    {user.user.role === 'client' && appointment.modality === 'VIRTUAL' && appointment.status === 'CONFIRMED' && (
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={handleStartVideoCall}
+                            sx={{ marginRight: 1 }}
+                        >
+                            Join Video Call
+                        </Button>
+                    )}
                     {user.user.role === 'worker' && (
                         <>
                             <Button variant="contained" color="primary" sx={{ marginRight: 1 }} onClick={handleUpdate}>Update</Button>
                             {appointment.modality === 'VIRTUAL' && appointment.status === 'CONFIRMED' && (
-                                <Button variant="contained" color="secondary" sx={{ marginRight: 1 }} onClick={handleZoomAuth}>Create Meeting</Button>
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={handleStartVideoCall}
+                                    sx={{ marginRight: 1 }}
+                                >
+                                    Start Video Call
+                                </Button>
                             )}
-                            {appointment.status === 'COMPLETED' && (
+                            {appointment.modality === 'IN_PERSON' && (
                                 <>
                                     <Button variant="contained" color="inherit" sx={{ marginRight: 1 }} onClick={() => { setAppointmentId(appointment.id); setShowModal(true); }}>Attach report</Button>
                                     <Modal

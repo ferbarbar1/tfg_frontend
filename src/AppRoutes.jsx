@@ -23,6 +23,7 @@ import { ProfilePage } from "./pages/users/ProfilePage";
 import { UsersPage } from "./pages/users/UsersPage";
 import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
 import './styles/AppRoutes.css';
+import { VideoCallPage } from './pages/appointments/VideoCallPage';
 
 const AppRoutes = () => {
     return (
@@ -103,6 +104,11 @@ const AppRoutes = () => {
                     <Route path="/appointments/:id/inform" element={
                         <ProtectedRoute roles={['owner', 'worker', 'client']}>
                             <InformTemplate />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/appointments/:id/video-call" element={
+                        <ProtectedRoute roles={['owner', 'worker', 'client']}>
+                            <VideoCallPage />
                         </ProtectedRoute>
                     } />
                     <Route path="/offers" element={
