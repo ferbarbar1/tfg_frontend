@@ -3,7 +3,7 @@ import { createInform, updateInform } from '../../api/informs.api';
 import { getAppointment, updateAppointment } from '../../api/appointments.api';
 import { Box, TextField, Button, Typography, Divider } from '@mui/material';
 
-export const InformForm = ({ appointmentId, closeModal }) => {
+export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
     const [informId, setInformId] = useState(null);
     const [relevantInformation, setRelevantInformation] = useState('');
     const [diagnostic, setDiagnostic] = useState('');
@@ -48,6 +48,10 @@ export const InformForm = ({ appointmentId, closeModal }) => {
                     inform_id: createdInform.data.id,
                 };
                 await updateAppointment(appointmentId, updatedAppointment);
+            }
+
+            if (onInformSaved) {
+                onInformSaved();
             }
 
             if (closeModal) {

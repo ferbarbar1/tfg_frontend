@@ -4,12 +4,13 @@ import { Box, TextField, Button, List, ListItem, ListItemText, Divider, Typograp
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { getMessagesByConversationId, createMessage, getConversationById } from '../../api/conversations.api';
 import { AuthContext } from '../../contexts/AuthContext';
+import { getUserById } from '../../api/users.api';
 
 export const ChatPage = () => {
     const { conversationId } = useParams();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const [reciever, setReciever] = useState('');
+    const [receiver, setReceiver] = useState(null);
 
     const { user } = useContext(AuthContext);
     const messagesEndRef = useRef(null);
@@ -27,8 +28,9 @@ export const ChatPage = () => {
         const fetchConversationDetails = async () => {
             try {
                 const response = await getConversationById(conversationId);
-                const receiver_user = response.data.participants.filter(participant => participant !== user.user.id)[0];
-                setReciever(receiver_user);
+                const receiverId = response.data.participants.find(participant => participant !== user.user.id);
+                const receiverData = await getUserById(receiverId);
+                setReceiver(receiverData.data[0]);
             } catch (error) {
                 console.error(error);
             }
@@ -36,7 +38,7 @@ export const ChatPage = () => {
 
         fetchMessages();
         fetchConversationDetails();
-    }, [conversationId]);
+    }, [conversationId, user.user.id]);
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -69,7 +71,9 @@ export const ChatPage = () => {
     return (
         <Box display="flex" flexDirection="column" height="85vh" maxWidth="md" mx="auto">
             <Box display="flex" justifyContent="space-between" alignItems="center" padding={2} bgcolor="#f5f5f5">
-                <Typography variant="h5" textAlign="center" gutterBottom> Conversation with: {reciever}</Typography>
+                <Typography variant="h5" textAlign="center" gutterBottom>
+                    Conversation with: {receiver ? receiver.username : 'Loading...'}
+                </Typography>
                 <IconButton onClick={handleReload} aria-label="reload">
                     <RefreshIcon />
                 </IconButton>

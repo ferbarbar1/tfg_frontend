@@ -4,6 +4,10 @@ export const getUserByUsername = async (username) => {
     return axios.get(`http://127.0.0.1:8000/api/users?username=${username}`);
 }
 
+export const getUserById = async (id) => {
+    return axios.get(`http://127.0.0.1:8000/api/users/?id=${id}`);
+}
+
 export const loginUser = async (username, password, userType) => {
     const response = await axios.post(`http://127.0.0.1:8000/api/login/${userType}/`, {
         username,

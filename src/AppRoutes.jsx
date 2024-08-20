@@ -22,8 +22,9 @@ import { ClientDetailPage } from "./pages/users/ClientDetailPage";
 import { ProfilePage } from "./pages/users/ProfilePage";
 import { UsersPage } from "./pages/users/UsersPage";
 import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
-import './styles/AppRoutes.css';
 import { VideoCallPage } from './pages/appointments/VideoCallPage';
+import { ConversationsList } from './components/chat/ConversationsList';
+import './styles/AppRoutes.css';
 
 const AppRoutes = () => {
     return (
@@ -134,6 +135,11 @@ const AppRoutes = () => {
                     <Route path="/chat/:conversationId" element={
                         <ProtectedRoute roles={['owner', 'worker', 'client']}>
                             <ChatPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/my-chats" element={
+                        <ProtectedRoute roles={['owner', 'worker', 'client']}>
+                            <ConversationsList />
                         </ProtectedRoute>
                     } />
                     <Route path="/profile" element={<ProfilePage />} />

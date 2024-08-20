@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getAppointment, updateAppointment } from '../../api/appointments.api';
-import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Select, MenuItem, InputLabel, FormControl, Modal } from '@mui/material';
+import { getAppointment } from '../../api/appointments.api';
+import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Modal } from '@mui/material';
 import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
 import { InformForm } from '../../components/informs/InformForm';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -48,20 +48,6 @@ export function MyAppointmentsDetailPage() {
     if (!appointment) {
         return <div>Loading...</div>;
     }
-
-    const handleUpdate = async () => {
-        try {
-            const updatedAppointment = {
-                ...appointment,
-                status: appointment.status,
-            };
-
-            await updateAppointment(id, updatedAppointment);
-            navigate('/my-appointments/');
-        } catch (error) {
-            console.error('Error updating appointment:', error);
-        }
-    };
 
     const closeModal = () => {
         setShowModal(false);
@@ -129,7 +115,7 @@ export function MyAppointmentsDetailPage() {
                             </Modal>
                         </>
                     )}
-                    {user.user.role === 'client' && appointment.modality === 'VIRTUAL' && appointment.status === 'CONFIRMED' && (
+                    {appointment.modality === 'VIRTUAL' && appointment.status === 'CONFIRMED' && (
                         <Button
                             variant="contained"
                             color="secondary"
@@ -141,17 +127,6 @@ export function MyAppointmentsDetailPage() {
                     )}
                     {user.user.role === 'worker' && (
                         <>
-                            <Button variant="contained" color="primary" sx={{ marginRight: 1 }} onClick={handleUpdate}>Update</Button>
-                            {appointment.modality === 'VIRTUAL' && appointment.status === 'CONFIRMED' && (
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    onClick={handleStartVideoCall}
-                                    sx={{ marginRight: 1 }}
-                                >
-                                    Start Video Call
-                                </Button>
-                            )}
                             {appointment.modality === 'IN_PERSON' && (
                                 <>
                                     <Button variant="contained" color="inherit" sx={{ marginRight: 1 }} onClick={() => { setAppointmentId(appointment.id); setShowModal(true); }}>Attach report</Button>

@@ -5,22 +5,16 @@ import { Box, Typography, Paper, Grid, Button, IconButton } from '@mui/material'
 import { getAppointment, updateAppointment } from '../../api/appointments.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import CallEndIcon from '@mui/icons-material/CallEnd';
-import MicOffIcon from '@mui/icons-material/MicOff';
-import MicIcon from '@mui/icons-material/Mic';
-import VideocamOffIcon from '@mui/icons-material/VideocamOff';
-import VideocamIcon from '@mui/icons-material/Videocam';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { useNavigate } from 'react-router-dom';
 
-export function VirtualAppointment({ appointmentId, role }) {
+export function VirtualAppointment({ appointmentId, role, informSaved }) {
     const [peerId, setPeerId] = useState('');
     const [remotePeerId, setRemotePeerId] = useState('');
     const [isRemotePeerAvailable, setIsRemotePeerAvailable] = useState(false);
     const [clientName, setClientName] = useState('');
     const [workerName, setWorkerName] = useState('');
-    const [callInProgress, setCallInProgress] = useState(false);
-    const [isMuted, setIsMuted] = useState(false);
-    const [isCameraOff, setIsCameraOff] = useState(false);
+    const [appointment, setAppointment] = useState(null);
     const localWebcamRef = useRef(null);
     const remoteWebcamRef = useRef(null);
     const peerInstance = useRef(null);
@@ -37,12 +31,13 @@ export function VirtualAppointment({ appointmentId, role }) {
                 setWorkerName(response.data.worker.user.username);
                 setRemotePeerId(remoteId);
                 setIsRemotePeerAvailable(!!remoteId);
+                setAppointment(response.data);
             } catch (error) {
                 console.error('Error fetching appointment:', error);
             }
         };
         fetchAppointment();
-    }, [appointmentId, role]);
+    }, [appointmentId, role, informSaved]);
 
     useEffect(() => {
         const initializePeer = () => {
@@ -55,6 +50,11 @@ export function VirtualAppointment({ appointmentId, role }) {
                     await updateAppointment(appointmentId, updatedPeerId);
                 } catch (error) {
                     console.error('Error updating appointment with peer ID:', error);
+                }
+
+                // Intentar conectar si el peer remoto ya está disponible
+                if (isRemotePeerAvailable) {
+                    initiateCall(remotePeerId);
                 }
             });
 
@@ -73,7 +73,7 @@ export function VirtualAppointment({ appointmentId, role }) {
         };
 
         initializePeer();
-    }, [appointmentId, role]);
+    }, [appointmentId, role, isRemotePeerAvailable]);
 
     useEffect(() => {
         const checkRemotePeer = async () => {
@@ -84,9 +84,8 @@ export function VirtualAppointment({ appointmentId, role }) {
                     if (remoteId) {
                         setRemotePeerId(remoteId);
                         setIsRemotePeerAvailable(true);
-                        if (role === 'client') {
-                            initiateCall(remoteId);
-                        }
+                        // Iniciar la llamada si el peer remoto ya está disponible
+                        initiateCall(remoteId);
                     }
                 } catch (error) {
                     console.error('Error fetching remote peer ID:', error);
@@ -94,7 +93,7 @@ export function VirtualAppointment({ appointmentId, role }) {
             }
         };
 
-        const interval = setInterval(checkRemotePeer, 3000);
+        const interval = setInterval(checkRemotePeer, 2000);
         return () => clearInterval(interval);
     }, [appointmentId, role, isRemotePeerAvailable]);
 
@@ -129,7 +128,6 @@ export function VirtualAppointment({ appointmentId, role }) {
                 remoteWebcamRef.current.video.srcObject = remoteStream;
                 remoteWebcamRef.current.video.play();
             }
-            setCallInProgress(true);
         });
         call.on('close', endCall);
     };
@@ -155,8 +153,6 @@ export function VirtualAppointment({ appointmentId, role }) {
         if (peerInstance.current) {
             peerInstance.current.destroy();
         }
-        setCallInProgress(false);
-        navigate('/my-appointments');
 
         if (role === 'worker') {
             try {
@@ -164,6 +160,7 @@ export function VirtualAppointment({ appointmentId, role }) {
             } catch (error) {
                 console.error('Error updating appointment status:', error);
             }
+            navigate(`/my-appointments/${appointmentId}/details`);
         }
     };
 
@@ -180,37 +177,33 @@ export function VirtualAppointment({ appointmentId, role }) {
                         elevation={3}
                         sx={{
                             p: 2,
-                            width: role === 'worker' ? '75%' : '100%',
-                            margin: role === 'worker' ? '0 auto' : 'inherit',
-                            height: role === 'worker' ? '275px' : 'auto',
+                            width: '100%',
+                            margin: '0 auto',
+                            height: 'auto',
                             display: 'flex',
-                            flexDirection: role === 'worker' ? 'row' : 'column',
-                            alignItems: role === 'worker' ? 'center' : 'initial',
+                            flexDirection: 'row',
+                            alignItems: 'center',
                         }}>
-                        <Typography variant="h6" align="center">
-                            {user.user.username}
-                        </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '80%' }}>
+                            <Typography variant="h6" align="center">
+                                {user.user.username}
+                            </Typography>
+                            <Typography variant="body2" align="center" sx={{ color: 'gray' }}>
+                                {peerId}
+                            </Typography>
                             <Webcam
-                                audio={true}
+                                audio={false}
                                 ref={localWebcamRef}
                                 videoConstraints={{ facingMode: 'user' }}
                                 style={{
-                                    width: role === 'worker' ? '80%' : '100%',
-                                    height: role === 'worker' ? '200px' : 'auto',
+                                    width: '100%',
+                                    height: '200px',
                                     borderRadius: '8px',
+                                    marginTop: '8px',
                                 }}
                             />
                         </Box>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                flexDirection: 'row',
-                                alignItems: role === 'worker' ? 'center' : 'initial',
-                                mt: role === 'client' ? 2 : 0,
-                                ml: role === 'worker' ? 2 : 0,
-                            }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ml: 2 }}>
                             <IconButton onClick={() => toggleFullscreen(localWebcamRef)} color="primary">
                                 <FullscreenIcon />
                             </IconButton>
@@ -222,55 +215,53 @@ export function VirtualAppointment({ appointmentId, role }) {
                         elevation={3}
                         sx={{
                             p: 2,
-                            width: role === 'worker' ? '75%' : '100%',
-                            margin: role === 'worker' ? '0 auto' : 'inherit',
-                            height: role === 'worker' ? '275px' : 'auto',
+                            width: '100%',
+                            margin: '0 auto',
+                            height: 'auto',
                             display: 'flex',
-                            flexDirection: role === 'worker' ? 'row' : 'column',
-                            alignItems: role === 'worker' ? 'center' : 'initial',
+                            flexDirection: 'row',
+                            alignItems: 'center',
                         }}>
-                        <Typography variant="h6" align="center">
-                            {role === 'client' ? workerName : clientName}
-                        </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
-                            {isRemotePeerAvailable ? (
-                                <Webcam
-                                    audio={true}
-                                    ref={remoteWebcamRef}
-                                    videoConstraints={{ facingMode: 'user' }}
-                                    style={{
-                                        width: role === 'worker' ? '80%' : '100%',
-                                        height: role === 'worker' ? '200px' : 'auto',
-                                        borderRadius: '8px',
-                                    }}
-                                />
-                            ) : (
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        height: '100%',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        border: '2px dashed gray',
-                                        borderRadius: '8px',
-                                    }}
-                                >
-                                    <Typography variant="body1" align="center">
-                                        Remote user has not joined yet
-                                    </Typography>
-                                </Box>
-                            )}
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '80%' }}>
+                            <Typography variant="h6" align="center">
+                                {role === 'client' ? workerName : clientName}
+                            </Typography>
+                            <Typography variant="body2" align="center" sx={{ color: 'gray' }}>
+                                {remotePeerId}
+                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                {isRemotePeerAvailable ? (
+                                    <Webcam
+                                        audio={true}
+                                        ref={remoteWebcamRef}
+                                        videoConstraints={{ facingMode: 'user' }}
+                                        style={{
+                                            width: '100%',
+                                            height: '200px',
+                                            borderRadius: '8px',
+                                            marginTop: '8px',
+                                        }}
+                                    />
+                                ) : (
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            height: '100%',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            border: '2px dashed gray',
+                                            borderRadius: '8px',
+                                        }}
+                                    >
+                                        <Typography variant="body1" align="center">
+                                            Remote user has not joined yet
+                                        </Typography>
+                                    </Box>
+                                )}
+                            </Box>
                         </Box>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                flexDirection: role === 'worker' ? 'column' : 'row',
-                                alignItems: role === 'worker' ? 'center' : 'initial',
-                                mt: role === 'client' ? 2 : 0,
-                                ml: role === 'worker' ? 2 : 0,
-                            }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', ml: 2 }}>
                             <IconButton onClick={() => toggleFullscreen(remoteWebcamRef)} color="primary">
                                 <FullscreenIcon />
                             </IconButton>
@@ -278,7 +269,7 @@ export function VirtualAppointment({ appointmentId, role }) {
                     </Paper>
                 </Grid>
             </Grid>
-            {role === 'worker' &&
+            {role === 'worker' && appointment && appointment.inform &&
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                     <Button onClick={endCall} variant="contained" color="error" startIcon={<CallEndIcon />}>
                         End Call

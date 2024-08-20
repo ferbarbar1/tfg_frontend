@@ -19,3 +19,7 @@ export const getConversationsByParticipants = async (participantIds) => {
 export const getConversationById = async (conversationId) => {
     return axios.get(`http://127.0.0.1:8000/api/conversations/${conversationId}`);
 }
+
+export const deleteConversation = async (conversationId) => {
+    return axios.delete(`http://127.0.0.1:8000/api/conversations/${conversationId}`);
+}
