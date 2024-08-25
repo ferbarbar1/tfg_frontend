@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { getAllClients } from '../../api/clients.api';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/system';
 import { getConversationsByParticipants, createConversation } from '../../api/conversations.api';
-import { AuthContext } from '../../contexts/AuthContext';
+import { deleteUser } from '../../api/users.api';
+
 
 const StyledTableRow = styled(TableRow)({
     '&:hover': {
@@ -14,32 +16,31 @@ const StyledTableRow = styled(TableRow)({
     },
 });
 
-export function ClientsList() {
+export function UsersList({ userType, fetchUsers }) {
     const navigate = useNavigate();
-    const [clients, setClients] = useState([]);
+    const [users, setUsers] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('username');
-    const { user } = useContext(AuthContext);
 
     useEffect(() => {
-        async function fetchClients() {
+        async function fetchData() {
             try {
-                const response = await getAllClients();
-                setClients(response.data);
+                const response = await fetchUsers();
+                setUsers(response.data);
             } catch (error) {
                 console.error(error);
             }
         }
-        fetchClients();
-    }, []);
+        fetchData();
+    }, [fetchUsers]);
 
     const handleRowClick = (row) => {
-        navigate(`/clients/${row.id}/update/`);
+        navigate(`/${userType}/${row.id}/update/`);
     };
 
-    const handleChangePage = (event, newPage) => {
+    const handleChangePage = (newPage) => {
         setPage(newPage);
     };
 
@@ -48,17 +49,17 @@ export function ClientsList() {
         setPage(0);
     };
 
-    const handleSort = (property) => (event) => {
+    const handleSort = (property) => () => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
         setOrderBy(property);
     };
 
-    const handleChat = async (event, client) => {
+    const handleChat = async (event, user) => {
         event.stopPropagation();
         event.preventDefault();
         try {
-            const participantIds = [user.user.id, client.user.id];
+            const participantIds = [user.user.id, user.user.id];
             const response = await getConversationsByParticipants(participantIds);
             let conversationId;
 
@@ -74,7 +75,23 @@ export function ClientsList() {
         }
     };
 
-    const sortedClients = [...clients].sort((a, b) => {
+    const handleEdit = (event, user) => {
+        event.stopPropagation();
+        navigate(`/${userType}/${user.id}/update/`);
+    };
+
+    const handleDelete = async (event, user) => {
+        event.stopPropagation();
+        try {
+            await deleteUser(user.user.id);
+
+            setUsers(users.filter(u => u.id !== user.id));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const sortedUsers = [...users].sort((a, b) => {
         if (order === 'asc') {
             return a[orderBy] < b[orderBy] ? -1 : 1;
         } else {
@@ -112,24 +129,30 @@ export function ClientsList() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {sortedClients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((client) => (
-                        <StyledTableRow key={client.id} onClick={() => handleRowClick(client)}>
+                    {sortedUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
+                        <StyledTableRow key={user.id} onClick={() => handleRowClick(user)}>
                             <TableCell align="center" style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Avatar src={client.user.image} />
+                                <Avatar src={user.user.image} />
                             </TableCell>
-                            <TableCell align="center">{client.user.username}</TableCell>
-                            <TableCell align="center">{client.user.first_name + ' ' + client.user.last_name}</TableCell>
+                            <TableCell align="center">{user.user.username}</TableCell>
+                            <TableCell align="center">{user.user.first_name + ' ' + user.user.last_name}</TableCell>
                             <TableCell align="center">
-                                <IconButton aria-label="chat">
-                                    <ChatIcon onClick={(event) => handleChat(event, client)} />
+                                <IconButton aria-label="chat" onClick={(event) => handleChat(event, user)}>
+                                    <ChatIcon />
+                                </IconButton>
+                                <IconButton aria-label="edit" onClick={(event) => handleEdit(event, user)}>
+                                    <EditIcon />
+                                </IconButton>
+                                <IconButton aria-label="delete" onClick={(event) => handleDelete(event, user)}>
+                                    <DeleteIcon />
                                 </IconButton>
                             </TableCell>
                         </StyledTableRow>
                     ))}
-                    {sortedClients.length === 0 && (
+                    {sortedUsers.length === 0 && (
                         <TableRow>
                             <TableCell colSpan={3} align="center">
-                                There are no clients to display.
+                                There are no {userType} to display.
                             </TableCell>
                         </TableRow>
                     )}
@@ -138,7 +161,7 @@ export function ClientsList() {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={clients.length}
+                count={users.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

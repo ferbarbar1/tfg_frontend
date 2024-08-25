@@ -1,18 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Box, Button, Divider, Grid, IconButton, Paper, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getConversationsByParticipants, deleteConversation } from '../../api/conversations.api';
 import { getUserById } from '../../api/users.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export function ConversationsList() {
-    const [conversations, setConversations] = useState([]);
     const { user } = useContext(AuthContext);
+    const [conversations, setConversations] = useState([]);
     const [receivers, setReceivers] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const conversationsPerPage = 4;
-    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchConversationsAndReceivers() {

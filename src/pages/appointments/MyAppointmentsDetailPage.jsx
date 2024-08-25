@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getAppointment } from '../../api/appointments.api';
 import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Modal } from '@mui/material';
 import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
@@ -69,12 +69,52 @@ export function MyAppointmentsDetailPage() {
                 </Typography>
                 <Divider sx={{ marginBottom: 3, bgcolor: 'black' }} />
                 <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                        <TextField fullWidth label="Client" value={appointment.client.user.username} disabled />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <TextField fullWidth label="Worker" value={appointment.worker.user.username} disabled />
-                    </Grid>
+                    {user.user.role === 'worker' &&
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                fullWidth
+                                label="Client"
+                                value={appointment.client.user.username}
+                                disabled
+                                InputProps={{
+                                    endAdornment: (
+                                        <Button
+                                            component={Link}
+                                            to={`/profile/${appointment.client.id}`}
+                                            variant="contained"
+                                            color="primary"
+                                            size="small"
+                                        >
+                                            View Profile
+                                        </Button>
+                                    ),
+                                }}
+                            />
+                        </Grid>
+                    }
+                    {user.user.role === 'client' &&
+                        <Grid item xs={12} md={6}>
+                            <TextField
+                                fullWidth
+                                label="Worker"
+                                value={appointment.worker.user.username}
+                                disabled
+                                InputProps={{
+                                    endAdornment: (
+                                        <Button
+                                            component={Link}
+                                            to={`/profile/${appointment.worker.id}`}
+                                            variant="contained"
+                                            color="primary"
+                                            size="small"
+                                        >
+                                            View Profile
+                                        </Button>
+                                    ),
+                                }}
+                            />
+                        </Grid>
+                    }
                     <Grid item xs={12}>
                         <TextField fullWidth label="Reason" value={appointment.description} disabled />
                     </Grid>

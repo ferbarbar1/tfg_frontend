@@ -34,3 +34,7 @@ export const registerUser = async (userData) => {
     );
     return response.data;
 };
+
+export const deleteUser = async (id) => {
+    return axios.delete(`http://127.0.0.1:8000/api/users/${id}/`);
+}

@@ -24,7 +24,9 @@ import { UsersPage } from "./pages/users/UsersPage";
 import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
 import { VideoCallPage } from './pages/appointments/VideoCallPage';
 import { ConversationsList } from './components/chat/ConversationsList';
+import { UpdateProfileForm } from './components/users/UpdateProfileForm';
 import './styles/AppRoutes.css';
+import { ProfileInformationPage } from './pages/users/ProfileInformationPage';
 
 const AppRoutes = () => {
     return (
@@ -142,7 +144,21 @@ const AppRoutes = () => {
                             <ConversationsList />
                         </ProtectedRoute>
                     } />
-                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/profile/:userId" element={
+                        <ProtectedRoute roles={['owner', 'worker', 'client']}>
+                            <ProfileInformationPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/my-profile" element={
+                        <ProtectedRoute roles={['owner', 'worker', 'client']}>
+                            <ProfilePage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/my-profile/update" element={
+                        <ProtectedRoute roles={['client', 'worker']}>
+                            <UpdateProfileForm />
+                        </ProtectedRoute>
+                    } />
                     <Route path="/about" element={<AboutUsPage />} />
                     <Route path="/unauthorized" element={<ForbiddenPage />} />
                     <Route path="*" element={<ErrorPage />} />

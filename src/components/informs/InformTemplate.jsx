@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAppointment } from '../../api/appointments.api';
-import { getAllMedicalHistoriesByClient } from '../../api/medical_histories.api';
+import { getAllMedicalHistoriesByClient } from '../../api/medicalHistories.api';
 import { Box, Grid, Paper, Typography, Divider, Button } from '@mui/material';
 import moment from 'moment';
 import jsPDF from 'jspdf';
@@ -111,7 +111,7 @@ export function InformTemplate() {
                                 <Divider sx={{ marginY: 2 }} />
                                 <Typography variant="body1">
                                     {medicalHistories.length > 0 ? medicalHistories.map(history => (
-                                        <li key={history.id}>{history.description}</li>
+                                        <li key={history.id}>{history.title}</li>
                                     )) : 'No procede'}
                                 </Typography>
                             </Paper>

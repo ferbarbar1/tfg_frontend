@@ -205,8 +205,8 @@ export const MyAppointmentsPage = () => {
     return (
         <Box sx={{ width: '100%' }}>
             <Tabs value={activeTab} onChange={handleChange}>
-                <Tab value="upcoming" label="Upcoming Appointments" />
-                <Tab value="history" label="Appointment History" />
+                <Tab value="upcoming" label="Upcoming" />
+                <Tab value="history" label="History" />
             </Tabs>
             {activeTab === 'upcoming' && (
                 <TabPanel value={activeTab} index="upcoming">

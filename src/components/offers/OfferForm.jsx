@@ -88,8 +88,8 @@ export function OfferForm({ isUpdate }) {
                                             <TextField label="Discount" type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} required fullWidth sx={{ mb: 2 }} />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <TextField label="Start Date" type="datetime-local" value={startDate} onChange={(e) => setStartDate(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label="End Date" type="datetime-local" value={endDate} onChange={(e) => setEndDate(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label="Start Date" type="datetime-local" InputLabelProps={{ shrink: true }} value={startDate} onChange={(e) => setStartDate(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label="End Date" type="datetime-local" InputLabelProps={{ shrink: true }} value={endDate} onChange={(e) => setEndDate(e.target.value)} required fullWidth sx={{ mb: 2 }} />
                                             <FormControl fullWidth required sx={{ mb: 2 }}>
                                                 <InputLabel id="services-label">Services</InputLabel>
                                                 <Select

@@ -29,7 +29,7 @@ export function Banner({ onMenuClick }) {
                     <>
                         <Typography variant="subtitle1">
                             Hello,{' '}
-                            <Link to="/profile" style={{ color: '#ecf0f1', textDecoration: 'none' }}>
+                            <Link to="/my-profile" style={{ color: '#ecf0f1', textDecoration: 'none' }}>
                                 {user.user.username}
                                 <PersonIcon sx={{ marginLeft: 2 }} />
                             </Link>

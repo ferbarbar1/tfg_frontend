@@ -1,13 +1,30 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useDropzone } from 'react-dropzone';
 import { AuthContext } from '../../contexts/AuthContext';
-import { createMedicalHistory } from '../../api/medical_histories.api';
+import { createMedicalHistory, updateMedicalHistory, getMedicalHistory } from '../../api/medicalHistories.api';
 import { Box, TextField, Button, Typography, Divider } from '@mui/material';
 
-export const MedicalHistoryForm = ({ closeModal }) => {
+export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
     const { user } = useContext(AuthContext);
+    const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
+
+    useEffect(() => {
+        if (isUpdate) {
+            const fetchMedicalHistory = async () => {
+                try {
+                    const response = await getMedicalHistory(historyId);
+                    const medicalHistory = response.data;
+                    setTitle(medicalHistory.title);
+                    setDescription(medicalHistory.description);
+                } catch (error) {
+                    console.error("Error fetching medical history:", error);
+                }
+            }
+            fetchMedicalHistory();
+        }
+    }, [isUpdate, historyId]);
 
     const onDrop = (acceptedFiles) => {
         setSelectedFile(acceptedFiles[0]);
@@ -24,23 +41,40 @@ export const MedicalHistoryForm = ({ closeModal }) => {
 
         try {
             const formData = new FormData();
+            formData.append('title', title);
             formData.append('description', description);
-            formData.append('medical_report', selectedFile);
+            if (selectedFile) {
+                formData.append('medical_report', selectedFile);
+            }
             formData.append('client', user.id);
 
-            await createMedicalHistory(formData);
+            if (isUpdate) {
+                await updateMedicalHistory(historyId, formData);
+            } else {
+                await createMedicalHistory(formData);
+            }
             closeModal();
         } catch (error) {
-            console.error('Error creating medical history:', error);
+            console.error('Error creating/updating medical history:', error);
         }
     };
 
     return (
         <Box component="form" onSubmit={handleSubmit} noValidate>
             <Typography variant="h6" component="h2" align="center">
-                Add Medical History
+                {isUpdate ? 'Update Medical History' : 'Add Medical History'}
             </Typography>
             <Divider sx={{ my: 2, bgcolor: "grey" }} />
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="title"
+                label="Title"
+                name="title"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+            />
             <TextField
                 margin="normal"
                 required
@@ -67,7 +101,7 @@ export const MedicalHistoryForm = ({ closeModal }) => {
                     variant="contained"
                     color="primary"
                 >
-                    Save
+                    {isUpdate ? 'Update' : 'Save'}
                 </Button>
                 <Button
                     variant="contained"

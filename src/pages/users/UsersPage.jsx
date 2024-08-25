@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Button, Tab, Tabs } from '@mui/material';
-import { WorkersList } from '../../components/users/WorkersList';
-import { ClientsList } from '../../components/users/ClientsList';
+import { UsersList } from '../../components/users/UsersList';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getAllClients } from '../../api/clients.api';
+import { getAllWorkers } from '../../api/workers.api';
 
 export function UsersPage() {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ export function UsersPage() {
             </Tabs>
             {activeTab === 'workers' && (
                 <div>
-                    <WorkersList />
+                    <UsersList userType="workers" fetchUsers={getAllWorkers} />
                     <Box display="flex" justifyContent="center" marginTop={2}>
                         <Button variant="contained" color="primary" onClick={handleCreateWorker}>
                             Create Worker
@@ -40,7 +41,7 @@ export function UsersPage() {
             )}
             {activeTab === 'clients' && (
                 <div>
-                    <ClientsList />
+                    <UsersList userType="clients" fetchUsers={getAllClients} />
                     <Box display="flex" justifyContent="center" marginTop={2}>
                         <Button variant="contained" color="primary" onClick={handleCreateClient}>
                             Create Client

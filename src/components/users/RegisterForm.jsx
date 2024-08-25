@@ -30,7 +30,6 @@ export const RegisterForm = ({ closeModal }) => {
           email,
           password,
         },
-        subscription_plan: "FREE",
       };
 
       await registerUser(userData);
