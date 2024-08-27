@@ -3,8 +3,8 @@ import { getAppointmentsByWorker, getAppointmentsByClient } from '../../api/appo
 import { createConversation, getConversationsByParticipants } from '../../api/conversations.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, Button, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, IconButton } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 import ChatIcon from '@mui/icons-material/Chat';
 import { styled } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
@@ -46,7 +46,6 @@ export const MyAppointmentsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const activeTab = queryParams.get('tab') || 'upcoming';
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -79,6 +78,11 @@ export const MyAppointmentsPage = () => {
         fetchAppointments();
     }, [user.id, user.user.role]);
 
+    const today = new Date().toLocaleDateString();
+    const todayAppointments = appointments.filter(appointment => appointment.date === today);
+
+    const activeTab = queryParams.get('tab') || 'today';
+
     const handleChange = (event, newValue) => {
         navigate(`?tab=${newValue}`);
     };
@@ -95,16 +99,20 @@ export const MyAppointmentsPage = () => {
         setModalityFilter(event.target.value);
     };
 
+    const handleClearFilters = () => {
+        setStatusFilter('');
+        setDateFilter('');
+        setModalityFilter('');
+    };
+
     const handleChat = async (event, appointment) => {
         event.stopPropagation();
         event.preventDefault();
         try {
             let participantIds;
             if (user.user.role === 'client') {
-                // Si el usuario es un cliente, la conversación es con el trabajador
                 participantIds = [user.user.id, appointment.worker.user.id];
             } else if (user.user.role === 'worker') {
-                // Si el usuario es un trabajador, la conversación es con el cliente
                 participantIds = [user.user.id, appointment.client.user.id];
             }
 
@@ -112,7 +120,6 @@ export const MyAppointmentsPage = () => {
             let conversationId;
 
             if (response.data.length > 0) {
-                // Si ya existe una conversación, usa su ID
                 conversationId = response.data[0].id;
             } else {
                 const newConversation = await createConversation({ participants: participantIds });
@@ -124,7 +131,6 @@ export const MyAppointmentsPage = () => {
             console.error(error);
         }
     };
-
 
     const columns = [
         {
@@ -205,6 +211,7 @@ export const MyAppointmentsPage = () => {
     return (
         <Box sx={{ width: '100%' }}>
             <Tabs value={activeTab} onChange={handleChange}>
+                <Tab value="today" label="Today" />
                 <Tab value="upcoming" label="Upcoming" />
                 <Tab value="history" label="History" />
             </Tabs>
@@ -245,17 +252,14 @@ export const MyAppointmentsPage = () => {
                                 <MenuItem value="IN_PERSON">In person</MenuItem>
                             </Select>
                         </FormControl>
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                                setStatusFilter('');
-                                setDateFilter('');
-                                setModalityFilter('');
-                            }}
-                            sx={{ mt: 2 }}
-                        >
-                            <DeleteIcon />
-                        </Button>
+                        {(statusFilter || dateFilter || modalityFilter) && (
+                            <IconButton
+                                onClick={handleClearFilters}
+                                sx={{ mt: 2 }}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        )}
                     </Box>
                     <Box
                         sx={{
@@ -323,17 +327,14 @@ export const MyAppointmentsPage = () => {
                                 <MenuItem value="IN_PERSON">In person</MenuItem>
                             </Select>
                         </FormControl>
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                                setStatusFilter('');
-                                setDateFilter('');
-                                setModalityFilter('');
-                            }}
-                            sx={{ mt: 2 }}
-                        >
-                            <DeleteIcon />
-                        </Button>
+                        {(statusFilter || dateFilter || modalityFilter) && (
+                            <IconButton
+                                onClick={handleClearFilters}
+                                sx={{ mt: 2 }}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        )}
                     </Box>
                     <Box
                         sx={{
@@ -358,6 +359,74 @@ export const MyAppointmentsPage = () => {
                                 pageSizeOptions={[5, 10, 100]}
                                 hideFooterSelectedRowCount
                                 localeText={{ noRowsLabel: 'There are no appointments to display.' }}
+                                onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
+                            />
+                        </Box>
+                    </Box>
+                </TabPanel>
+            )}
+            {activeTab === 'today' && (
+                <TabPanel value={activeTab} index="today">
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="status-label">Status</InputLabel>
+                            <Select
+                                labelId="status-label"
+                                value={statusFilter}
+                                onChange={handleStatusChange}
+                                label="Status"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="CONFIRMED">Confirmed</MenuItem>
+                                <MenuItem value="COMPLETED">Completed</MenuItem>
+                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="modality-label">Modality</InputLabel>
+                            <Select
+                                labelId="modality-label"
+                                value={modalityFilter}
+                                onChange={handleModalityChange}
+                                label="Modality"
+                            >
+                                <MenuItem value="">All</MenuItem>
+                                <MenuItem value="VIRTUAL">Virtual</MenuItem>
+                                <MenuItem value="IN_PERSON">In person</MenuItem>
+                            </Select>
+                        </FormControl>
+                        {(statusFilter || modalityFilter) && (
+                            <IconButton
+                                onClick={handleClearFilters}
+                                sx={{ mt: 2 }}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        )}
+                    </Box>
+                    <Box
+                        sx={{
+                            height: '75vh',
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            overflowX: 'auto',
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                height: 350,
+                                width: '100%',
+                            }}
+                        >
+                            <StyledDataGrid
+                                rows={todayAppointments}
+                                columns={columns}
+                                pageSize={5}
+                                pageSizeOptions={[5, 10, 100]}
+                                hideFooterSelectedRowCount
+                                localeText={{ noRowsLabel: 'No appointments for today.' }}
                                 onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
                             />
                         </Box>

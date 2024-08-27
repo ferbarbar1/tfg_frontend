@@ -23,8 +23,8 @@ import { ProfilePage } from "./pages/users/ProfilePage";
 import { UsersPage } from "./pages/users/UsersPage";
 import { WorkerDetailPage } from "./pages/users/WorkerDetailPage";
 import { VideoCallPage } from './pages/appointments/VideoCallPage';
-import { ConversationsList } from './components/chat/ConversationsList';
 import { UpdateProfileForm } from './components/users/UpdateProfileForm';
+import { NotificationsList } from './components/notifications/NotificationsList';
 import './styles/AppRoutes.css';
 import { ProfileInformationPage } from './pages/users/ProfileInformationPage';
 
@@ -134,14 +134,9 @@ const AppRoutes = () => {
                             <RatingsPage />
                         </ProtectedRoute>
                     } />
-                    <Route path="/chat/:conversationId" element={
+                    <Route path="/chat/:conversationId?" element={
                         <ProtectedRoute roles={['owner', 'worker', 'client']}>
                             <ChatPage />
-                        </ProtectedRoute>
-                    } />
-                    <Route path="/my-chats" element={
-                        <ProtectedRoute roles={['owner', 'worker', 'client']}>
-                            <ConversationsList />
                         </ProtectedRoute>
                     } />
                     <Route path="/profile/:userId" element={
@@ -159,6 +154,12 @@ const AppRoutes = () => {
                             <UpdateProfileForm />
                         </ProtectedRoute>
                     } />
+                    <Route path="/my-notifications" element={
+                        <ProtectedRoute roles={['owner', 'client', 'worker']}>
+                            <NotificationsList />
+                        </ProtectedRoute>
+                    } />
+
                     <Route path="/about" element={<AboutUsPage />} />
                     <Route path="/unauthorized" element={<ForbiddenPage />} />
                     <Route path="*" element={<ErrorPage />} />

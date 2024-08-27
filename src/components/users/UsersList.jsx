@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton, TextField, Box, InputAdornment } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
 import { styled } from '@mui/system';
 import { getConversationsByParticipants, createConversation } from '../../api/conversations.api';
 import { deleteUser } from '../../api/users.api';
-
 
 const StyledTableRow = styled(TableRow)({
     '&:hover': {
@@ -23,6 +24,7 @@ export function UsersList({ userType, fetchUsers }) {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('username');
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         async function fetchData() {
@@ -40,7 +42,7 @@ export function UsersList({ userType, fetchUsers }) {
         navigate(`/${userType}/${row.id}/update/`);
     };
 
-    const handleChangePage = (newPage) => {
+    const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
 
@@ -84,14 +86,23 @@ export function UsersList({ userType, fetchUsers }) {
         event.stopPropagation();
         try {
             await deleteUser(user.user.id);
-
             setUsers(users.filter(u => u.id !== user.id));
         } catch (error) {
             console.error(error);
         }
     };
 
-    const sortedUsers = [...users].sort((a, b) => {
+    const handleClearSearch = () => {
+        setSearchTerm('');
+    };
+
+    const filteredUsers = users.filter(user =>
+        user.user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.user.last_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const sortedUsers = [...filteredUsers].sort((a, b) => {
         if (order === 'asc') {
             return a[orderBy] < b[orderBy] ? -1 : 1;
         } else {
@@ -100,73 +111,101 @@ export function UsersList({ userType, fetchUsers }) {
     });
 
     return (
-        <TableContainer component={Paper}>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center">
-                            <TableSortLabel
-                                active={orderBy === 'username'}
-                                direction={orderBy === 'username' ? order : 'asc'}
-                                onClick={handleSort('username')}
-                            >
-                                <div style={{ textAlign: 'center' }}>Username</div>
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell align="center">
-                            <TableSortLabel
-                                active={orderBy === 'name'}
-                                direction={orderBy === 'name' ? order : 'asc'}
-                                onClick={handleSort('name')}
-                            >
-                                <div style={{ textAlign: 'center' }}>Name</div>
-                            </TableSortLabel>
-                        </TableCell>
-                        <TableCell align="center">
-                            Actions
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {sortedUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
-                        <StyledTableRow key={user.id} onClick={() => handleRowClick(user)}>
-                            <TableCell align="center" style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Avatar src={user.user.image} />
-                            </TableCell>
-                            <TableCell align="center">{user.user.username}</TableCell>
-                            <TableCell align="center">{user.user.first_name + ' ' + user.user.last_name}</TableCell>
-                            <TableCell align="center">
-                                <IconButton aria-label="chat" onClick={(event) => handleChat(event, user)}>
-                                    <ChatIcon />
-                                </IconButton>
-                                <IconButton aria-label="edit" onClick={(event) => handleEdit(event, user)}>
-                                    <EditIcon />
-                                </IconButton>
-                                <IconButton aria-label="delete" onClick={(event) => handleDelete(event, user)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                            </TableCell>
-                        </StyledTableRow>
-                    ))}
-                    {sortedUsers.length === 0 && (
+        <Box>
+            <Box display="flex" alignItems="center" sx={{ mt: 2, mb: 2, ml: 1 }}>
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    margin="normal"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    size="small"
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <SearchIcon />
+                            </InputAdornment>
+                        ),
+                    }}
+                    sx={{ width: '300px' }}
+                />
+                {searchTerm && (
+                    <IconButton
+                        onClick={handleClearSearch}
+                        sx={{ ml: 1, mt: 1 }}
+                    >
+                        <ClearIcon />
+                    </IconButton>
+                )}
+            </Box>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
                         <TableRow>
-                            <TableCell colSpan={3} align="center">
-                                There are no {userType} to display.
+                            <TableCell align="center"></TableCell>
+                            <TableCell align="center">
+                                <TableSortLabel
+                                    active={orderBy === 'username'}
+                                    direction={orderBy === 'username' ? order : 'asc'}
+                                    onClick={handleSort('username')}
+                                >
+                                    <div style={{ textAlign: 'center' }}>Username</div>
+                                </TableSortLabel>
+                            </TableCell>
+                            <TableCell align="center">
+                                <TableSortLabel
+                                    active={orderBy === 'name'}
+                                    direction={orderBy === 'name' ? order : 'asc'}
+                                    onClick={handleSort('name')}
+                                >
+                                    <div style={{ textAlign: 'center' }}>Name</div>
+                                </TableSortLabel>
+                            </TableCell>
+                            <TableCell align="center">
+                                Actions
                             </TableCell>
                         </TableRow>
-                    )}
-                </TableBody>
-            </Table>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={users.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {sortedUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
+                            <StyledTableRow key={user.id} onClick={() => handleRowClick(user)}>
+                                <TableCell align="center" style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Avatar src={user.user.image} />
+                                </TableCell>
+                                <TableCell align="center">{user.user.username}</TableCell>
+                                <TableCell align="center">{user.user.first_name + ' ' + user.user.last_name}</TableCell>
+                                <TableCell align="center">
+                                    <IconButton aria-label="chat" onClick={(event) => handleChat(event, user)}>
+                                        <ChatIcon color='action' />
+                                    </IconButton>
+                                    <IconButton aria-label="edit" onClick={(event) => handleEdit(event, user)}>
+                                        <EditIcon color='info' />
+                                    </IconButton>
+                                    <IconButton aria-label="delete" onClick={(event) => handleDelete(event, user)}>
+                                        <DeleteIcon color='error' />
+                                    </IconButton>
+                                </TableCell>
+                            </StyledTableRow>
+                        ))}
+                        {sortedUsers.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={4} align="center">
+                                    There are no {userType} to display.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={filteredUsers.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </TableContainer>
+        </Box>
     );
 }

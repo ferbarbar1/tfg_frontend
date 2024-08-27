@@ -1,16 +1,21 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Box, Button, Divider, Grid, IconButton, Paper, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Box, Button, Grid, IconButton, Paper, Typography, TextField, InputAdornment } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { getConversationsByParticipants, deleteConversation } from '../../api/conversations.api';
 import { getUserById } from '../../api/users.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ClearIcon from '@mui/icons-material/Clear';
 
-export function ConversationsList() {
+export function ConversationsList({ onConversationsLoaded }) {
     const { user } = useContext(AuthContext);
     const [conversations, setConversations] = useState([]);
     const [receivers, setReceivers] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedConversationId, setSelectedConversationId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
+
     const conversationsPerPage = 4;
 
     useEffect(() => {
@@ -30,28 +35,30 @@ export function ConversationsList() {
                         acc[conversationId] = receiver;
                         return acc;
                     }, {});
-                    setConversations(conversationsResponse.data);
-                    setReceivers(receiversMap);
+
+                    // Solo actualizar el estado si las conversaciones han cambiado
+                    if (JSON.stringify(conversationsResponse.data) !== JSON.stringify(conversations)) {
+                        setConversations(conversationsResponse.data);
+                        setReceivers(receiversMap);
+                        onConversationsLoaded(conversationsResponse.data);
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching conversations", error);
             }
         }
         fetchConversationsAndReceivers();
-    }, [user.user.id]);
+    }, [user.user.id, onConversationsLoaded]);
 
     const handleDelete = async (id) => {
         try {
             await deleteConversation(id);
-            setConversations(conversations.filter(conversation => conversation.id !== id));
+            const updatedConversations = conversations.filter(conversation => conversation.id !== id);
+            setConversations(updatedConversations);
+            onConversationsLoaded(updatedConversations);
         } catch (error) {
             console.error("Error deleting conversation", error);
         }
-    };
-
-    const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
     const indexOfLastOffer = currentPage * conversationsPerPage;
@@ -70,60 +77,99 @@ export function ConversationsList() {
         }
     };
 
+    const handleConversationClick = (conversationId) => {
+        setSelectedConversationId(conversationId);
+        navigate(`/chat/${conversationId}`);
+    };
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleClearSearch = () => {
+        setSearchTerm('');
+    };
+
+    const filteredConversations = currentConversations.filter(conversation => {
+        const receiver = receivers[conversation.id];
+        return receiver && receiver.username.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
     return (
         <Box sx={{ mr: 3, ml: 3 }}>
-            <Typography variant="h3" align="center" gutterBottom sx={{ color: '#333', fontWeight: 'bold' }}>
-                Conversations
-            </Typography>
-            <Divider sx={{ marginBottom: 3, bgcolor: 'black', height: 2 }} />
-            {currentConversations.length > 0 ? (
-                currentConversations.map((conversation, index) => (
-                    <Paper
-                        key={index}
-                        elevation={3}
-                        sx={{
-                            padding: 3,
-                            marginBottom: 3,
-                            borderRadius: 2,
-                            backgroundColor: '#fff',
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-                        }}
-                    >
-                        <Grid container alignItems="center" spacing={2}>
-                            <Grid item xs={12} sm={9}>
-                                <Typography
-                                    variant="h5"
-                                    sx={{ fontWeight: 'bold', color: '#1976d2', cursor: 'pointer', textDecoration: 'none' }}
-                                    component={Link}
-                                    to={`/chat/${conversation.id}`}
-                                >
-                                    {receivers[conversation.id] ? receivers[conversation.id].username : 'Unknown'}
-                                </Typography>
-                                <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }}>
-                                    Started on {formatDate(conversation.created_at)}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={3} container justifyContent="flex-end">
-                                <IconButton color="default" aria-label="delete offer" onClick={() => handleDelete(conversation.id)}>
-                                    <DeleteIcon />
+            {filteredConversations.length > 1 && (
+                <TextField
+                    label="Buscar usuario"
+                    variant="outlined"
+                    fullWidth
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    sx={{ mb: 3 }}
+                    InputProps={{
+                        endAdornment: searchTerm && (
+                            <InputAdornment position="end">
+                                <IconButton onClick={handleClearSearch}>
+                                    <ClearIcon />
                                 </IconButton>
+                            </InputAdornment>
+                        )
+                    }}
+                />
+            )}
+            {filteredConversations.length > 0 ? (
+                filteredConversations.map((conversation, index) => {
+                    const isSelected = selectedConversationId === conversation.id;
+
+                    return (
+                        <Paper
+                            key={index}
+                            elevation={3}
+                            sx={{
+                                padding: 3,
+                                marginBottom: 3,
+                                borderRadius: 2,
+                                backgroundColor: isSelected ? '#e3f2fd' : '#fff',
+                                boxShadow: isSelected ? '0 4px 12px rgba(0, 0, 0, 0.2)' : '0 4px 8px rgba(0, 0, 0, 0.1)',
+                                cursor: 'pointer'
+                            }}
+                            onClick={() => handleConversationClick(conversation.id)}
+                        >
+                            <Grid container alignItems="center" spacing={2}>
+                                <Grid item xs={12} sm={9}>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{ fontWeight: 'bold', color: '#1976d2', textDecoration: 'none' }}
+                                    >
+                                        {receivers[conversation.id] ? receivers[conversation.id].username : 'Unknown'}
+                                    </Typography>
+                                    <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }}>
+                                        {new Date(conversation.last_message).toLocaleString()}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={3} container justifyContent="flex-end">
+                                    <IconButton color="default" aria-label="delete offer" onClick={() => handleDelete(conversation.id)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Paper>
-                ))
+                        </Paper>
+                    );
+                })
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>
                     No conversations yet.
                 </Typography>
             )}
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                <Button variant="contained" onClick={handlePreviousPage} disabled={currentPage === 1} sx={{ mr: 2 }}>
-                    Previous
-                </Button>
-                <Button variant="contained" onClick={handleNextPage} disabled={currentPage === Math.ceil(conversations.length / conversationsPerPage)}>
-                    Next
-                </Button>
-            </Box>
+            {filteredConversations.length > 0 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                    <Button variant="contained" onClick={handlePreviousPage} disabled={currentPage === 1} sx={{ mr: 2 }}>
+                        Previous
+                    </Button>
+                    <Button variant="contained" onClick={handleNextPage} disabled={currentPage === Math.ceil(conversations.length / conversationsPerPage)}>
+                        Next
+                    </Button>
+                </Box>
+            )}
         </Box>
     );
 }

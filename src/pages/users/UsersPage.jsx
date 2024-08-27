@@ -24,31 +24,31 @@ export function UsersPage() {
     };
 
     return (
-        <div>
+        <>
             <Tabs value={activeTab} onChange={handleChange}>
                 <Tab value="workers" label="Workers" />
                 <Tab value="clients" label="Clients" />
             </Tabs>
             {activeTab === 'workers' && (
-                <div>
+                <>
                     <UsersList userType="workers" fetchUsers={getAllWorkers} />
                     <Box display="flex" justifyContent="center" marginTop={2}>
                         <Button variant="contained" color="primary" onClick={handleCreateWorker}>
                             Create Worker
                         </Button>
                     </Box>
-                </div>
+                </>
             )}
             {activeTab === 'clients' && (
-                <div>
+                <>
                     <UsersList userType="clients" fetchUsers={getAllClients} />
                     <Box display="flex" justifyContent="center" marginTop={2}>
                         <Button variant="contained" color="primary" onClick={handleCreateClient}>
                             Create Client
                         </Button>
                     </Box>
-                </div>
+                </>
             )}
-        </div>
+        </>
     );
 }
