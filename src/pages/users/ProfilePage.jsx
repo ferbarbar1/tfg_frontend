@@ -18,7 +18,7 @@ export const ProfilePage = ({ userData }) => {
         return <Typography variant="h4">Please, log in to see your profile.</Typography>;
     }
 
-    if (user.user.role === 'worker') {
+    if (user.user.role === 'worker' || user.user.role === 'owner') {
         return <UserInformation user={user} />;
     }
 

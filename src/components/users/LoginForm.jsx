@@ -66,6 +66,7 @@ export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
 
       <Box textAlign="center">
         <p>Don&apos;t have an account? <Link href="#" onClick={() => { closeModal(); openRegisterModal(); }}>Sign up here</Link></p>
+        <p>Forgot your password? <Link href="#" onClick={() => { closeModal(); navigate('/password-reset'); }}>Reset it here</Link></p>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
         <Button type="submit" variant="contained" color="primary">Login</Button>

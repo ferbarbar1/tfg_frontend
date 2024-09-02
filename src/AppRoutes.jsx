@@ -14,7 +14,7 @@ import { ForbiddenPage } from "./pages/ForbiddenPage";
 import { HomePage } from "./pages/HomePage";
 import { Layout } from './pages/Layout';
 import { OffersPage } from './pages/offers/OffersPage';
-import { RatingsPage } from "./pages/ratings/RatingsPage";
+import { AnalyticsPage } from './pages/analytics/AnalyticsPage';
 import { ServiceDetailPage } from "./pages/services/ServiceDetailPage";
 import { ServiceFormPage } from "./pages/services/ServiceFormPage";
 import { ServicesPage } from "./pages/services/ServicesPage";
@@ -27,6 +27,11 @@ import { UpdateProfileForm } from './components/users/UpdateProfileForm';
 import { NotificationsList } from './components/notifications/NotificationsList';
 import './styles/AppRoutes.css';
 import { ProfileInformationPage } from './pages/users/ProfileInformationPage';
+import { ResourcesPage } from './pages/clinical_resources/ResourcesPage';
+import { ResourceForm } from './components/clinical_resources/ResourceForm';
+import { ChangePasswordAuth } from './components/profile/ChangePasswordAuth';
+import { ChangePasswordUnauth } from './components/profile/ChangePasswordUnauth';
+import { PasswordResetRequest } from './components/profile/PasswordResetRequest';
 
 const AppRoutes = () => {
     return (
@@ -131,7 +136,7 @@ const AppRoutes = () => {
                     } />
                     <Route path="/analytics" element={
                         <ProtectedRoute roles={['owner']}>
-                            <RatingsPage />
+                            <AnalyticsPage />
                         </ProtectedRoute>
                     } />
                     <Route path="/chat/:conversationId?" element={
@@ -154,12 +159,33 @@ const AppRoutes = () => {
                             <UpdateProfileForm />
                         </ProtectedRoute>
                     } />
+                    <Route path="/my-profile/password-reset" element={
+                        <ProtectedRoute roles={['owner', 'client', 'worker']}>
+                            <ChangePasswordAuth />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/password-reset" element={<PasswordResetRequest />} />
+                    <Route path="/reset/:uid/:token" element={<ChangePasswordUnauth />} />
                     <Route path="/my-notifications" element={
                         <ProtectedRoute roles={['owner', 'client', 'worker']}>
                             <NotificationsList />
                         </ProtectedRoute>
                     } />
-
+                    <Route path="/resources" element={
+                        <ProtectedRoute roles={['owner', 'client', 'worker']}>
+                            <ResourcesPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/resources/create" element={
+                        <ProtectedRoute roles={['owner', 'worker']}>
+                            <ResourceForm isUpdate={false} />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/resources/:id/update" element={
+                        <ProtectedRoute roles={['owner', 'worker']}>
+                            <ResourceForm isUpdate={true} />
+                        </ProtectedRoute>
+                    } />
                     <Route path="/about" element={<AboutUsPage />} />
                     <Route path="/unauthorized" element={<ForbiddenPage />} />
                     <Route path="*" element={<ErrorPage />} />

@@ -19,6 +19,10 @@ export const UserInformation = ({ user }) => {
         navigate('/my-profile/update');
     };
 
+    const handlePasswordChange = () => {
+        navigate('/my-profile/password-reset');
+    };
+
     return (
         <Grid container spacing={3} justifyContent="center" sx={{ padding: 3 }}>
             <Grid item xs={12} md={8} lg={6}>
@@ -95,7 +99,10 @@ export const UserInformation = ({ user }) => {
                             {authenticatedUser?.user?.id === user?.user?.id && (
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <Button variant="contained" color="primary" sx={{ mt: 5 }} onClick={handleUpdate}>
-                                        Update
+                                        Edit
+                                    </Button>
+                                    <Button variant="contained" color="primary" sx={{ mt: 5, ml: 2 }} onClick={handlePasswordChange}>
+                                        Change Password
                                     </Button>
                                 </Box>
                             )}

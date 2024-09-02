@@ -29,7 +29,7 @@ export const getUserData = async (token) => {
 
 export const registerUser = async (userData) => {
     const response = await axios.post(
-        "http://127.0.0.1:8000/api/register/client/",
+        'http://127.0.0.1:8000/api/register/client/',
         userData
     );
     return response.data;
