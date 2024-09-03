@@ -4,8 +4,10 @@ import { VirtualAppointment } from '../../components/appointments/VirtualAppoint
 import { InformForm } from '../../components/informs/InformForm';
 import { Box, Typography, Grid } from '@mui/material';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export function VideoCallPage() {
+    const { t } = useTranslation();
     const { id } = useParams();
     const { user } = useContext(AuthContext);
     const role = user.user.role;
@@ -17,8 +19,8 @@ export function VideoCallPage() {
 
     return (
         <Box display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-            <Typography variant="h4" >
-                Videocall for Appointment ID: {id}
+            <Typography variant="h4">
+                {t('videocall_for_appointment_id', { id })}
             </Typography>
             <Grid container spacing={2} direction={role === 'worker' ? 'row' : 'column'}>
                 <Grid item xs={role === 'worker' ? 6 : 12}>
@@ -30,6 +32,6 @@ export function VideoCallPage() {
                     </Grid>
                 )}
             </Grid>
-        </Box >
+        </Box>
     );
 }

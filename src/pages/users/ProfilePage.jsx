@@ -4,8 +4,10 @@ import { AuthContext } from '../../contexts/AuthContext';
 import { UserInformation } from '../../components/profile/UserInformation';
 import { MedicalHistoriesList } from '../../components/profile/MedicalHistoriesList';
 import { InformsList } from '../../components/profile/InformsList';
+import { useTranslation } from 'react-i18next';
 
 export const ProfilePage = ({ userData }) => {
+    const { t } = useTranslation();
     const { user: authUser } = useContext(AuthContext);
     const user = userData || authUser;
     const [activeTab, setActiveTab] = useState(0);
@@ -15,20 +17,19 @@ export const ProfilePage = ({ userData }) => {
     };
 
     if (!user) {
-        return <Typography variant="h4">Please, log in to see your profile.</Typography>;
+        return <Typography variant="h4">{t('please_log_in')}</Typography>;
     }
 
     if (user.user.role === 'worker' || user.user.role === 'owner') {
         return <UserInformation user={user} />;
     }
 
-
     return (
         <>
             <Tabs value={activeTab} onChange={handleTabChange} centered>
-                <Tab label="Profile" />
-                <Tab label="Medical Histories" />
-                <Tab label="Informs" />
+                <Tab label={t('profile_tab')} />
+                <Tab label={t('medical_histories_tab')} />
+                <Tab label={t('informs_tab')} />
             </Tabs>
             {activeTab === 0 && <UserInformation user={user} />}
             {activeTab === 1 && <MedicalHistoriesList user={user} />}

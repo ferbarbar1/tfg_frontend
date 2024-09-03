@@ -32,6 +32,7 @@ import { ResourceForm } from './components/clinical_resources/ResourceForm';
 import { ChangePasswordAuth } from './components/profile/ChangePasswordAuth';
 import { ChangePasswordUnauth } from './components/profile/ChangePasswordUnauth';
 import { PasswordResetRequest } from './components/profile/PasswordResetRequest';
+import { ServicesRatingsPage } from './pages/services/ServicesRatingsPage';
 
 const AppRoutes = () => {
     return (
@@ -67,6 +68,11 @@ const AppRoutes = () => {
                     <Route path="/services/:id/details" element={
                         <ProtectedRoute roles={['client']}>
                             <ServiceDetailPage />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/services/:id/ratings" element={
+                        <ProtectedRoute roles={['client']}>
+                            <ServicesRatingsPage />
                         </ProtectedRoute>
                     } />
                     <Route path="/my-appointments" element={

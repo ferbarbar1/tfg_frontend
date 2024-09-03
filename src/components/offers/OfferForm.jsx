@@ -3,8 +3,10 @@ import { Box, Container, Grid, Card, CardHeader, Divider, CardContent, TextField
 import { useParams, useNavigate } from 'react-router-dom';
 import { createOffer, updateOffer, getOffer } from '../../api/offers.api';
 import { getAllServices } from '../../api/services.api';
+import { useTranslation } from 'react-i18next';
 
 export function OfferForm({ isUpdate }) {
+    const { t } = useTranslation();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [discount, setDiscount] = useState("");
@@ -77,21 +79,21 @@ export function OfferForm({ isUpdate }) {
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <Card>
-                            <CardHeader title={isUpdate ? 'Update offer' : 'Create offer'} sx={{ textAlign: 'center' }} />
+                            <CardHeader title={isUpdate ? t('update_offer') : t('create_offer')} sx={{ textAlign: 'center' }} />
                             <Divider sx={{ bgcolor: 'grey.800' }} />
                             <CardContent>
                                 <form onSubmit={handleSubmit}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
-                                            <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label="Description" value={description} onChange={(e) => setDescription(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label="Discount" type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('name_label')} value={name} onChange={(e) => setName(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('description_label')} value={description} onChange={(e) => setDescription(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('discount_label')} type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} required fullWidth sx={{ mb: 2 }} />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <TextField label="Start Date" type="datetime-local" InputLabelProps={{ shrink: true }} value={startDate} onChange={(e) => setStartDate(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label="End Date" type="datetime-local" InputLabelProps={{ shrink: true }} value={endDate} onChange={(e) => setEndDate(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('start_date')} type="datetime-local" InputLabelProps={{ shrink: true }} value={startDate} onChange={(e) => setStartDate(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('end_date')} type="datetime-local" InputLabelProps={{ shrink: true }} value={endDate} onChange={(e) => setEndDate(e.target.value)} required fullWidth sx={{ mb: 2 }} />
                                             <FormControl fullWidth required sx={{ mb: 2 }}>
-                                                <InputLabel id="services-label">Services</InputLabel>
+                                                <InputLabel id="services-label">{t('services_label')}</InputLabel>
                                                 <Select
                                                     labelId="services-label"
                                                     multiple
@@ -101,7 +103,7 @@ export function OfferForm({ isUpdate }) {
                                                         const selectedServices = availableServices.filter(service => selectedIds.includes(service.id));
                                                         setServices(selectedServices);
                                                     }}
-                                                    label="Services"
+                                                    label={t('services_label')}
                                                 >
                                                     {availableServices.map(service => (
                                                         <MenuItem key={service.id} value={service.id}>{service.name}</MenuItem>
@@ -113,7 +115,10 @@ export function OfferForm({ isUpdate }) {
                                     </Grid>
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                                         <Button variant="contained" color="primary" type="submit">
-                                            {isUpdate ? 'Update' : 'Create'}
+                                            {isUpdate ? t('update_button') : t('create_button')}
+                                        </Button>
+                                        <Button variant="contained" color="error" sx={{ ml: 2 }} onClick={() => navigate('/offers')}>
+                                            {t('cancel_button')}
                                         </Button>
                                     </Box>
                                 </form>

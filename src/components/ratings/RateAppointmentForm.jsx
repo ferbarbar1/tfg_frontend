@@ -2,8 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from '../../contexts/AuthContext';
 import { createRating, getRatingByAppointment, updateRating } from '../../api/ratings.api';
 import { Rating, Box, TextField, Button, Typography, Divider, CircularProgress, Alert } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const [rate, setRate] = useState(0);
     const [opinion, setOpinion] = useState("");
@@ -60,16 +62,16 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
     return (
         <Box component="form" onSubmit={handleSubmit} noValidate>
             <Typography variant="h6" component="h2" align="center">
-                {isUpdate ? 'Update Rating' : 'Add Rating'}
+                {isUpdate ? t('update_button') : t('add_button')}
             </Typography>
             <Divider sx={{ my: 2, bgcolor: "grey" }} />
             {isUpdate && (
                 <Alert severity="info" className="mb-3">
-                    You have already rated this service. You can update your rating.
+                    {t('update_rating_info')}
                 </Alert>
             )}
             <Box sx={{ mb: 2, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="subtitle1" sx={{ mr: 2 }}>Rate:</Typography>
+                <Typography variant="subtitle1" sx={{ mr: 2 }}>{t('rate_label')}:</Typography>
                 <Rating
                     name="rate"
                     value={rate}
@@ -83,7 +85,7 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
                 required
                 fullWidth
                 id="opinion"
-                label="Opinion"
+                label={t('opinion_label')}
                 name="opinion"
                 multiline
                 rows={4}
@@ -96,7 +98,7 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
                     variant="contained"
                     color="primary"
                 >
-                    {isUpdate ? 'Update' : 'Save'}
+                    {isUpdate ? t('update_button') : t('save_button')}
                 </Button>
                 <Button
                     variant="contained"
@@ -104,7 +106,7 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
                     onClick={closeModal}
                     sx={{ ml: 2 }}
                 >
-                    Cancel
+                    {t('cancel')}
                 </Button>
             </Box>
         </Box>

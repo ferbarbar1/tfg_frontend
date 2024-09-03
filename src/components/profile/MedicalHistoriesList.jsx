@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Typography, Button, Box, Modal, IconButton, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Typography, Button, Box, Modal, IconButton, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Tooltip } from '@mui/material';
 import { MedicalHistoryForm } from '../informs/MedicalHistoryForm';
 import { getAllMedicalHistoriesByClient, deleteMedicalHistory } from '../../api/medicalHistories.api';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -8,8 +8,10 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ClearIcon from '@mui/icons-material/Clear';
 import { truncateText } from '../../utils/auxFunctions';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export const MedicalHistoriesList = ({ user }) => {
+    const { t } = useTranslation();
     const { user: authenticatedUser } = useContext(AuthContext);
     const [showModal, setShowModal] = useState(false);
     const [medicalHistories, setMedicalHistories] = useState([]);
@@ -101,15 +103,11 @@ export const MedicalHistoriesList = ({ user }) => {
         setEndDate(null);
     };
 
-    if (!user) {
-        return <Typography variant="h4">Please, log in to see your profile.</Typography>;
-    }
-
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 3 }}>
             {authenticatedUser.id === user.user.id && (
                 <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={() => { setIsUpdate(false); setShowModal(true); }}>
-                    Add
+                    {t('add_button')}
                 </Button>
             )}
             {currentHistories.length > 0 ? (
@@ -117,19 +115,19 @@ export const MedicalHistoriesList = ({ user }) => {
                     <>
                         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
                             <FormControl sx={{ mr: 2 }}>
-                                <InputLabel id="sort-label">Order by</InputLabel>
+                                <InputLabel id="sort-label">{t('order_by')}</InputLabel>
                                 <Select
                                     labelId="sort-label"
                                     value={sortCriteria}
                                     onChange={handleSortChange}
-                                    label="Ordenar por"
+                                    label={t('order_by')}
                                 >
-                                    <MenuItem value="date">Date</MenuItem>
-                                    <MenuItem value="title">Title</MenuItem>
+                                    <MenuItem value="date">{t('date')}</MenuItem>
+                                    <MenuItem value="title">{t('title')}</MenuItem>
                                 </Select>
                             </FormControl>
                             <TextField
-                                label="Start Date"
+                                label={t('start_date')}
                                 type="date"
                                 InputLabelProps={{ shrink: true }}
                                 value={startDate || ''}
@@ -137,16 +135,18 @@ export const MedicalHistoriesList = ({ user }) => {
                                 sx={{ mr: 2 }}
                             />
                             <TextField
-                                label="End Date"
+                                label={t('end_date')}
                                 type="date"
                                 InputLabelProps={{ shrink: true }}
                                 value={endDate || ''}
                                 onChange={(e) => setEndDate(e.target.value)}
                                 sx={{ mr: 2 }}
                             />
-                            <IconButton color="default" onClick={handleClearFilters}>
-                                <ClearIcon />
-                            </IconButton>
+                            <Tooltip title={t('clear_button')}>
+                                <IconButton color="default" onClick={handleClearFilters}>
+                                    <ClearIcon />
+                                </IconButton>
+                            </Tooltip>
                         </Box>
                         <Paper
                             key={index}
@@ -182,22 +182,28 @@ export const MedicalHistoriesList = ({ user }) => {
                                 </Grid>
                                 <Grid item xs={12} sm={4} container justifyContent="flex-end">
                                     {history.medical_report && (
-                                        <IconButton
-                                            color="primary"
-                                            aria-label="view report"
-                                            onClick={() => window.open(history.medical_report, '_blank')}
-                                        >
-                                            <PictureAsPdfIcon />
-                                        </IconButton>
+                                        <Tooltip title={t('view_report')}>
+                                            <IconButton
+                                                color="primary"
+                                                aria-label={t('view_report')}
+                                                onClick={() => window.open(history.medical_report, '_blank')}
+                                            >
+                                                <PictureAsPdfIcon />
+                                            </IconButton>
+                                        </Tooltip>
                                     )}
                                     {authenticatedUser.user.id === user.user.id && (
                                         <>
-                                            <IconButton color="primary" aria-label="edit offer" onClick={() => { setHistoryId(history.id); setIsUpdate(true); setShowModal(true); }}>
-                                                <EditIcon />
-                                            </IconButton>
-                                            <IconButton color="default" aria-label="delete offer" onClick={() => handleDelete(history.id)}>
-                                                <DeleteIcon />
-                                            </IconButton>
+                                            <Tooltip title={t('edit')}>
+                                                <IconButton color="primary" aria-label={t('edit')} onClick={() => { setHistoryId(history.id); setIsUpdate(true); setShowModal(true); }}>
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title={t('delete')}>
+                                                <IconButton color="default" aria-label={t('delete')} onClick={() => handleDelete(history.id)}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </Tooltip>
                                         </>
                                     )}
                                 </Grid>
@@ -207,17 +213,17 @@ export const MedicalHistoriesList = ({ user }) => {
                 ))
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>
-                    No histories yet.
+                    {t('no_histories')}
                 </Typography>
             )}
 
             {filteredHistories.length > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                     <Button variant="contained" onClick={handlePreviousPage} disabled={currentPage === 1} sx={{ mr: 2 }}>
-                        Previous
+                        {t('previous')}
                     </Button>
                     <Button variant="contained" onClick={handleNextPage} disabled={currentPage === Math.ceil(filteredHistories.length / historiesPerPage)}>
-                        Next
+                        {t('next')}
                     </Button>
                 </Box>
             )}

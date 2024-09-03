@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { loginUser, getUserByUsername } from '../../api/users.api';
 import { useNavigate } from 'react-router-dom';
 import { Button, TextField, Box, Link } from "@mui/material";
+import { useTranslation } from 'react-i18next';
 
 export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -42,7 +44,7 @@ export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
         required
         fullWidth
         id="username"
-        label="Username"
+        label={t('username_label')}
         name="username"
         autoComplete="username"
         autoFocus
@@ -56,7 +58,7 @@ export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
         required
         fullWidth
         name="password"
-        label="Password"
+        label={t('password_label')}
         type="password"
         id="password"
         autoComplete="current-password"
@@ -65,12 +67,12 @@ export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
       />
 
       <Box textAlign="center">
-        <p>Don&apos;t have an account? <Link href="#" onClick={() => { closeModal(); openRegisterModal(); }}>Sign up here</Link></p>
-        <p>Forgot your password? <Link href="#" onClick={() => { closeModal(); navigate('/password-reset'); }}>Reset it here</Link></p>
+        <p>{t('dont_have_account')} <Link href="#" onClick={() => { closeModal(); openRegisterModal(); }}>{t('sign_up_here')}</Link></p>
+        <p>{t('forgot_password')} <Link href="#" onClick={() => { closeModal(); navigate('/password-reset'); }}>{t('reset_it_here')}</Link></p>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-        <Button type="submit" variant="contained" color="primary">Login</Button>
-        <Button type="button" variant="contained" color="secondary" onClick={closeModal} sx={{ ml: 2 }}>Close</Button>
+        <Button type="submit" variant="contained" color="primary">{t('login_button')}</Button>
+        <Button type="button" variant="contained" color="error" onClick={closeModal} sx={{ ml: 2 }}>{t('cancel_button')}</Button>
       </Box>
     </Box>
   );

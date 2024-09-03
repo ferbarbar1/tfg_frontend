@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getClient, updateClient, createClient } from '../../api/clients.api';
 import { TextField, Button, Box, Card, CardContent, Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export function ClientForm({ isUpdate }) {
+    const { t } = useTranslation();
     const [username, setUsername] = useState("");
     const [originalUsername, setOriginalUsername] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -90,7 +92,7 @@ export function ClientForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="firstName"
-                                label="First Name"
+                                label={t('first_name_label')}
                                 name="firstName"
                                 autoComplete="firstName"
                                 value={firstName}
@@ -104,7 +106,7 @@ export function ClientForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="lastName"
-                                label="Last Name"
+                                label={t('last_name_label')}
                                 name="lastName"
                                 autoComplete="lastName"
                                 value={lastName}
@@ -118,7 +120,7 @@ export function ClientForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="username"
-                                label="Username"
+                                label={t('username_label')}
                                 name="username"
                                 autoComplete="username"
                                 value={username}
@@ -132,7 +134,7 @@ export function ClientForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="dateOfBirth"
-                                label="Date of Birth"
+                                label={t('date_of_birth_label')}
                                 name="dateOfBirth"
                                 type="date"
                                 value={dateOfBirth}
@@ -149,7 +151,7 @@ export function ClientForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="email"
-                                label="Email"
+                                label={t('email_label')}
                                 name="email"
                                 autoComplete="email"
                                 value={email}
@@ -165,7 +167,7 @@ export function ClientForm({ isUpdate }) {
                                         required
                                         fullWidth
                                         name="password"
-                                        label="Password"
+                                        label={t('password_label')}
                                         type="password"
                                         id="password"
                                         autoComplete="current-password"
@@ -180,7 +182,7 @@ export function ClientForm({ isUpdate }) {
                                         required
                                         fullWidth
                                         name="repeatPassword"
-                                        label="Repeat Password"
+                                        label={t('repeat_password_label')}
                                         type="password"
                                         id="repeatPassword"
                                         value={repeatPassword}
@@ -192,10 +194,10 @@ export function ClientForm({ isUpdate }) {
                     </Grid>
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                         <Button variant="contained" color="primary" type="submit">
-                            {isUpdate ? 'Update' : 'Create'}
+                            {isUpdate ? t('update_button') : t('create_button')}
                         </Button>
                         <Button variant="contained" color="error" sx={{ ml: 2 }} onClick={() => navigate(-1)}>
-                            Cancel
+                            {t('cancel')}
                         </Button>
                     </Box>
                 </Box>

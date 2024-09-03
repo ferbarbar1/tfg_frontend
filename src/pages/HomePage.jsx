@@ -4,8 +4,10 @@ import { RegisterForm } from "../components/users/RegisterForm";
 import { Typography, Button, Box, Divider, Modal } from "@mui/material";
 import { AuthContext } from '../contexts/AuthContext';
 import logo from '../assets/logo.png';
+import { useTranslation } from 'react-i18next';
 
 export function HomePage() {
+  const { t } = useTranslation();
   const { token, setToken } = useContext(AuthContext);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
@@ -13,17 +15,17 @@ export function HomePage() {
   return (
     <>
       <Typography variant="h4" component="h1" align="center" gutterBottom>
-        Welcome to FisioterAppIA Clinic!
+        {t('welcome_message')}
       </Typography>
       <Divider sx={{ marginBottom: 4, bgcolor: 'grey' }} />
       <Typography variant="body1" align="center" paragraph>
-        Your journey to a pain-free life starts here. Access quality physiotherapy from the comfort of your home with our intuitive platform and expert physiotherapists. Get started today!
+        {t('intro_message')}
       </Typography>
-      <Box component="img" src={logo} alt="Application logo" sx={{ width: '100%', maxWidth: '330px', display: 'block', mx: 'auto' }} />
+      <Box component="img" src={logo} alt={t('logo_alt')} sx={{ width: '100%', maxWidth: '330px', display: 'block', mx: 'auto' }} />
 
       {!token && (
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: '20px', mt: 3 }}>
-          <Button variant="contained" color="primary" onClick={() => setRegisterModalOpen(true)}>Sign Up</Button>
+          <Button variant="contained" color="primary" onClick={() => setRegisterModalOpen(true)}>{t('sign_up')}</Button>
           <Modal
             open={registerModalOpen}
             onClose={() => setRegisterModalOpen(false)}
@@ -35,7 +37,7 @@ export function HomePage() {
             </Box>
           </Modal>
 
-          <Button variant="contained" color="primary" onClick={() => setLoginModalOpen(true)}>Login</Button>
+          <Button variant="contained" color="primary" onClick={() => setLoginModalOpen(true)}>{t('login')}</Button>
           <Modal
             open={loginModalOpen}
             onClose={() => setLoginModalOpen(false)}
@@ -48,7 +50,6 @@ export function HomePage() {
           </Modal>
         </Box>
       )}
-
     </>
   );
 }

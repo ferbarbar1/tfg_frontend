@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { getAllRatings } from '../../api/ratings.api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts';
 import { Box, Typography, Select, MenuItem, FormControl, InputLabel, Rating, Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export function WorkersRatingsChart() {
+    const { t } = useTranslation();
     const [ratings, setRatings] = useState([]);
     const [selectedWorker, setSelectedWorker] = useState('');
     const [workerRatings, setWorkerRatings] = useState({});
@@ -15,7 +17,7 @@ export function WorkersRatingsChart() {
                 const response = await getAllRatings();
                 setRatings(response.data);
                 const ratingsByWorker = response.data.reduce((acc, rating) => {
-                    const workerName = rating.appointment?.worker?.user?.username || 'Desconocido';
+                    const workerName = rating.appointment?.worker?.user?.username || t('unknown');
                     const ratingValue = rating.rate;
                     const ratingDate = new Date(rating.date).toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
 
@@ -41,7 +43,7 @@ export function WorkersRatingsChart() {
             }
         }
         fetchRatings();
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         if (selectedWorker && workerRatings[selectedWorker]) {
@@ -66,11 +68,11 @@ export function WorkersRatingsChart() {
     return (
         <Box sx={{ width: '100%', height: 800 }}>
             <FormControl sx={{ mb: 2, width: 200 }}>
-                <InputLabel>Trabajador</InputLabel>
+                <InputLabel>{t('worker_label')}</InputLabel>
                 <Select
                     value={selectedWorker}
                     onChange={handleWorkerChange}
-                    label="Trabajador"
+                    label={t('worker_label')}
                 >
                     {Object.keys(workerRatings).map(worker => (
                         <MenuItem key={worker} value={worker}>
@@ -84,11 +86,11 @@ export function WorkersRatingsChart() {
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={4}>
                         <Box sx={{ mb: 4 }}>
-                            <Typography variant="h6">Resumen de valoraciones</Typography>
-                            <Typography variant="body1">Total de valoraciones: {workerRatings[selectedWorker]?.count}</Typography>
+                            <Typography variant="h6">{t('ratings_summary')}</Typography>
+                            <Typography variant="body1">{t('total_ratings')}: {workerRatings[selectedWorker]?.count}</Typography>
 
                             <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                                <Typography variant="body1" sx={{ mr: 1 }}>Valoración media:</Typography>
+                                <Typography variant="body1" sx={{ mr: 1 }}>{t('average_rating')}:</Typography>
                                 <Rating name="average-rating" value={parseFloat(averageRating)} precision={0.1} readOnly />
                                 <Typography sx={{ ml: 1 }}>({averageRating})</Typography>
                             </Box>
@@ -97,7 +99,7 @@ export function WorkersRatingsChart() {
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <Box key={star} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                         <Rating name="read-only" value={star} readOnly />
-                                        <Typography sx={{ ml: 1 }}>{ratingCounts[star]} valoraciones</Typography>
+                                        <Typography sx={{ ml: 1 }}>{ratingCounts[star]} {t('ratings')}</Typography>
                                     </Box>
                                 ))}
                             </Box>
@@ -105,7 +107,7 @@ export function WorkersRatingsChart() {
                     </Grid>
 
                     <Grid item xs={12} md={8}>
-                        <Typography variant="h6" >Tendencias de Calificaciones</Typography>
+                        <Typography variant="h6">{t('ratings_trends')}</Typography>
                         <ResponsiveContainer width="100%" height={400}>
                             <LineChart data={trendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                                 <CartesianGrid strokeDasharray="3 3" />

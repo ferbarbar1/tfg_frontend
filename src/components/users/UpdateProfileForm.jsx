@@ -4,8 +4,10 @@ import { getClient, updateClient } from '../../api/clients.api';
 import { getWorker, updateWorker } from '../../api/workers.api';
 import { TextField, Button, Box, Card, CardContent, Grid, Avatar } from '@mui/material';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export function UpdateProfileForm() {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const [username, setUsername] = useState("");
     const [originalUsername, setOriginalUsername] = useState("");
@@ -140,7 +142,7 @@ export function UpdateProfileForm() {
                                 component="label"
                                 fullWidth
                             >
-                                Upload Profile Picture
+                                {t('upload_profile_picture')}
                                 <input
                                     type="file"
                                     hidden
@@ -152,7 +154,7 @@ export function UpdateProfileForm() {
                                 <Grid container justifyContent="center" sx={{ mt: 2 }}>
                                     <Grid item>
                                         <Avatar
-                                            alt="Profile Preview"
+                                            alt={t('profile_preview')}
                                             src={imagePreviewUrl}
                                             sx={{ width: 160, height: 160 }}
                                         />
@@ -164,7 +166,7 @@ export function UpdateProfileForm() {
                                             fullWidth
                                             onClick={handleCancelImageChange}
                                         >
-                                            Cancel Change
+                                            {t('cancel_button')}
                                         </Button>
                                     </Grid>
                                 </Grid>
@@ -177,7 +179,7 @@ export function UpdateProfileForm() {
                                 required
                                 fullWidth
                                 id="firstName"
-                                label="First Name"
+                                label={t('first_name_label')}
                                 name="firstName"
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
@@ -190,7 +192,7 @@ export function UpdateProfileForm() {
                                 required
                                 fullWidth
                                 id="lastName"
-                                label="Last Name"
+                                label={t('last_name_label')}
                                 name="lastName"
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
@@ -203,7 +205,7 @@ export function UpdateProfileForm() {
                                 required
                                 fullWidth
                                 id="username"
-                                label="Username"
+                                label={t('username_label')}
                                 name="username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
@@ -216,7 +218,7 @@ export function UpdateProfileForm() {
                                 required
                                 fullWidth
                                 id="dateOfBirth"
-                                label="Date of Birth"
+                                label={t('date_of_birth_label')}
                                 name="dateOfBirth"
                                 type="date"
                                 value={dateOfBirth}
@@ -233,7 +235,7 @@ export function UpdateProfileForm() {
                                 required
                                 fullWidth
                                 id="email"
-                                label="Email"
+                                label={t('email_label')}
                                 name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -248,7 +250,7 @@ export function UpdateProfileForm() {
                                         required
                                         fullWidth
                                         id="specialty"
-                                        label="Specialty"
+                                        label={t('specialty_label')}
                                         name="specialty"
                                         value={specialty}
                                         onChange={(e) => setSpecialty(e.target.value)}
@@ -262,7 +264,7 @@ export function UpdateProfileForm() {
                                         required
                                         fullWidth
                                         id="experience"
-                                        label="Experience (years)"
+                                        label={t('experience_label')}
                                         name="experience"
                                         value={experience}
                                         onChange={(e) => setExperience(e.target.value)}
@@ -273,10 +275,10 @@ export function UpdateProfileForm() {
                     </Grid>
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                         <Button variant="contained" color="primary" type="submit">
-                            Save
+                            {t('update_button')}
                         </Button>
                         <Button variant="contained" color="error" sx={{ ml: 2 }} onClick={() => navigate(-1)}>
-                            Cancel
+                            {t('cancel_button')}
                         </Button>
                     </Box>
                 </Box>

@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from "../../api/users.api";
 import { Button, TextField, Box, Typography } from "@mui/material";
+import { useTranslation } from 'react-i18next';
 
 export const RegisterForm = ({ closeModal }) => {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -17,7 +19,7 @@ export const RegisterForm = ({ closeModal }) => {
     event.preventDefault();
 
     if (password !== repeatPassword) {
-      setPasswordError("Passwords do not match");
+      setPasswordError(t("passwords_do_not_match"));
       return;
     }
 
@@ -49,7 +51,7 @@ export const RegisterForm = ({ closeModal }) => {
         fullWidth
         autoFocus
         id="firstName"
-        label="First Name"
+        label={t("first_name_label")}
         name="firstName"
         autoComplete="firstName"
         value={firstName}
@@ -61,7 +63,7 @@ export const RegisterForm = ({ closeModal }) => {
         required
         fullWidth
         id="lastName"
-        label="Last Name"
+        label={t("last_name_label")}
         name="lastName"
         autoComplete="lastName"
         value={lastName}
@@ -73,7 +75,7 @@ export const RegisterForm = ({ closeModal }) => {
         required
         fullWidth
         id="username"
-        label="Username"
+        label={t("username_label")}
         name="username"
         autoComplete="username"
         value={username}
@@ -85,7 +87,7 @@ export const RegisterForm = ({ closeModal }) => {
         required
         fullWidth
         id="email"
-        label="Email"
+        label={t("email_label")}
         name="email"
         autoComplete="email"
         value={email}
@@ -97,7 +99,7 @@ export const RegisterForm = ({ closeModal }) => {
         required
         fullWidth
         name="password"
-        label="Password"
+        label={t("password_label")}
         type="password"
         id="password"
         autoComplete="current-password"
@@ -110,7 +112,7 @@ export const RegisterForm = ({ closeModal }) => {
         required
         fullWidth
         name="repeatPassword"
-        label="Repeat Password"
+        label={t("repeat_password_label")}
         type="password"
         id="repeatPassword"
         autoComplete="current-password"
@@ -121,8 +123,8 @@ export const RegisterForm = ({ closeModal }) => {
       {passwordError && <Typography color="error">{passwordError}</Typography>}
 
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-        <Button type="submit" variant="contained" color="primary">Register</Button>
-        <Button type="button" variant="contained" color="secondary" onClick={closeModal} sx={{ ml: 2 }}>Close</Button>
+        <Button type="submit" variant="contained" color="primary">{t("create_button")}</Button>
+        <Button type="button" variant="contained" color="error" onClick={closeModal} sx={{ ml: 2 }}>{t("cancel_button")}</Button>
       </Box>
     </Box>
   );

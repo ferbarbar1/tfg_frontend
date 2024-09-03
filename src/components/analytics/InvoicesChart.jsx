@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { getAllInvoices } from '../../api/invoices.api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { Box, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export function InvoicesChart() {
+    const { t } = useTranslation();
     const [invoices, setInvoices] = useState([]);
     const [selectedYear, setSelectedYear] = useState('2024');
     const [years, setYears] = useState([]);
@@ -15,13 +17,9 @@ export function InvoicesChart() {
                 const data = response.data;
                 console.log(data);
 
-                // Extract unique years
                 const uniqueYears = [...new Set(data.map(invoice => new Date(invoice.date).getFullYear()))];
                 setYears(uniqueYears);
 
-                console.log(uniqueYears);
-
-                // Filter data for the selected year
                 const filteredData = data.filter(invoice => new Date(invoice.date).getFullYear().toString() === selectedYear);
                 setInvoices(filteredData);
 
@@ -36,7 +34,6 @@ export function InvoicesChart() {
         setSelectedYear(event.target.value);
     };
 
-    // Aggregate data by month
     const monthlyData = invoices.reduce((acc, invoice) => {
         const month = new Date(invoice.date).toLocaleString('es-ES', { month: 'short' });
         if (!acc[month]) {
@@ -51,15 +48,15 @@ export function InvoicesChart() {
     return (
         <Box sx={{ width: '100%', height: 600 }}>
             <Typography variant="h6" gutterBottom>
-                Facturación de la Clínica
+                {t('clinic_billing')}
             </Typography>
 
             <FormControl sx={{ mb: 2, width: 200 }}>
-                <InputLabel>Año</InputLabel>
+                <InputLabel>{t('year')}</InputLabel>
                 <Select
                     value={selectedYear}
                     onChange={handleYearChange}
-                    label="Año"
+                    label={t('year')}
                 >
                     {years.map(year => (
                         <MenuItem key={year} value={year}>
@@ -80,7 +77,7 @@ export function InvoicesChart() {
                 </BarChart>
             </ResponsiveContainer>
 
-            <Typography variant="h6" sx={{ mt: 4 }}>Tendencia de Facturación Anual</Typography>
+            <Typography variant="h6" sx={{ mt: 4 }}>{t('annual_billing_trend')}</Typography>
             <ResponsiveContainer width="100%" height="40%">
                 <LineChart data={monthlyArray} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />

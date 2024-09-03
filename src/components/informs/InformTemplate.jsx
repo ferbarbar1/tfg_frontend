@@ -6,8 +6,10 @@ import { Box, Grid, Paper, Typography, Divider, Button } from '@mui/material';
 import moment from 'moment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { useTranslation } from 'react-i18next';
 
 export function InformTemplate() {
+    const { t } = useTranslation();
     const { id: appointmentId } = useParams();
     const [appointment, setAppointment] = useState(null);
     const [medicalHistories, setMedicalHistories] = useState([]);
@@ -41,7 +43,7 @@ export function InformTemplate() {
     }, [appointment]);
 
     if (!appointment) {
-        return <div>Loading...</div>;
+        return <div>{t('loading')}</div>;
     }
 
     const handleBackClick = () => {
@@ -93,83 +95,83 @@ export function InformTemplate() {
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Datos del paciente</Typography>
+                                <Typography variant="h6">{t('patient_data')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
                                 <Grid container spacing={2}>
                                     <Grid item xs={8}>
-                                        <Typography variant="body1"><strong>Nombre:</strong> {appointment.client.user.first_name} {appointment.client.user.last_name}</Typography>
+                                        <Typography variant="body1"><strong>{t('name_label')}:</strong> {appointment.client.user.first_name} {appointment.client.user.last_name}</Typography>
                                     </Grid>
                                     <Grid item xs={4}>
-                                        <Typography variant="body1"><strong>Edad:</strong> {age} años</Typography>
+                                        <Typography variant="body1"><strong>{t('age_label')}:</strong> {age} {t('years')}</Typography>
                                     </Grid>
                                 </Grid>
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Historial médico</Typography>
+                                <Typography variant="h6">{t('medical_history')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
                                 <Typography variant="body1">
                                     {medicalHistories.length > 0 ? medicalHistories.map(history => (
                                         <li key={history.id}>{history.title}</li>
-                                    )) : 'No procede'}
+                                    )) : t('not_applicable')}
                                 </Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Información médica relevante</Typography>
+                                <Typography variant="h6">{t('relevant_medical_information')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
-                                <Typography variant="body1">{appointment.inform?.relevant_information || 'No disponible'}</Typography>
+                                <Typography variant="body1">{appointment.inform?.relevant_information || t('not_available')}</Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={8}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Motivo de la consulta</Typography>
+                                <Typography variant="h6">{t('reason_for_consultation')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
                                 <Typography variant="body1">{appointment.description}</Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={4}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Modalidad</Typography>
+                                <Typography variant="h6">{t('modality_label')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
                                 <Typography variant="body1">{appointment.modality}</Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={8}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Atendido por:</Typography>
+                                <Typography variant="h6">{t('attended_by')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
                                 <Typography variant="body1">{appointment.worker.user.first_name} {appointment.worker.user.last_name}</Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={4}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Fecha</Typography>
+                                <Typography variant="h6">{t('date')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
                                 <Typography variant="body1">{appointment.schedule.date} {appointment.schedule.time}</Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Diagnóstico</Typography>
+                                <Typography variant="h6">{t('diagnostic_label')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
-                                <Typography variant="body1"> {appointment.inform?.diagnostic || 'No disponible'} </Typography>
+                                <Typography variant="body1"> {appointment.inform?.diagnostic || t('not_available')} </Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Tratamiento</Typography>
+                                <Typography variant="h6">{t('treatment_label')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
-                                <Typography variant="body1"> {appointment.inform?.treatment || 'No disponible'} </Typography>
+                                <Typography variant="body1"> {appointment.inform?.treatment || t('not_available')} </Typography>
                             </Paper>
                         </Grid>
                         <Grid item xs={12}>
                             <Paper sx={{ padding: 2, backgroundColor: '#f5f5f5' }}>
-                                <Typography variant="h6">Firma de la clínica</Typography>
+                                <Typography variant="h6">{t('clinic_signature')}</Typography>
                                 <Divider sx={{ marginY: 2 }} />
-                                <Typography variant="body1">Firma</Typography>
+                                <Typography variant="body1">{t('signature')}</Typography>
                             </Paper>
                         </Grid>
                     </Grid>
@@ -177,9 +179,9 @@ export function InformTemplate() {
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 1 }}>
                 <Button variant="contained" color="secondary" sx={{ marginRight: 2 }} onClick={handleDownloadPdf}>
-                    Download PDF
+                    {t('download_pdf')}
                 </Button>
-                <Button variant="contained" color="error" onClick={handleBackClick}>Back</Button>
+                <Button variant="contained" color="error" onClick={handleBackClick}>{t('back_button')}</Button>
             </Box>
         </>
     );

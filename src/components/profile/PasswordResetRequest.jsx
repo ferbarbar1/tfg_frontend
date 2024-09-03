@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box } from '@mui/material';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 export const PasswordResetRequest = () => {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
@@ -11,21 +13,21 @@ export const PasswordResetRequest = () => {
         e.preventDefault();
         try {
             await axios.post('http://127.0.0.1:8000/password-reset/', { email });
-            setMessage('Password reset email sent.');
+            setMessage(t('password_reset_email_sent'));
         } catch (error) {
-            setError('Error sending password reset email');
-            console.error('Error sending password reset email', error);
+            setError(t('error_sending_password_reset_email'));
+            console.error(t('error_sending_password_reset_email'), error);
         }
     };
 
     return (
         <Box>
-            <Typography variant="h4">Reset Password</Typography>
+            <Typography variant="h4">{t('reset_password')}</Typography>
             {message && <Typography color="primary">{message}</Typography>}
             {error && <Typography color="error">{error}</Typography>}
             <form onSubmit={handleSubmit}>
                 <TextField
-                    label="Email"
+                    label={t('email')}
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -33,7 +35,7 @@ export const PasswordResetRequest = () => {
                     required
                     sx={{ my: 2 }}
                 />
-                <Button variant="contained" color="primary" type="submit">Send Reset Email</Button>
+                <Button variant="contained" color="primary" type="submit">{t('send_reset_email')}</Button>
             </form>
         </Box>
     );

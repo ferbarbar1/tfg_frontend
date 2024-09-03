@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, Button, Box, MobileStepper, Divider } fr
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { getAllServices } from '../../api/services.api';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export function ServicesPage() {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const [services, setServices] = useState([]);
     const [activeStep, setActiveStep] = useState(0);
@@ -65,7 +67,7 @@ export function ServicesPage() {
         >
             {user && user.user && user.user.role === 'owner' &&
                 <div style={{ textAlign: 'center' }}>
-                    <Button variant="contained" color="primary" onClick={handleCreateService}>Create Service</Button>
+                    <Button variant="contained" color="primary" onClick={handleCreateService}>{t('create_button')}</Button>
                 </div>
             }
             <Card sx={{ maxWidth: { xs: '90%', sm: 800 }, flexGrow: 1, m: { xs: 'auto', sm: 4 } }}>
@@ -103,14 +105,14 @@ export function ServicesPage() {
                             activeStep={activeStep}
                             nextButton={
                                 <Button size="large" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
-                                    Next
+                                    {t('next')}
                                     <KeyboardArrowRight />
                                 </Button>
                             }
                             backButton={
                                 <Button size="large" onClick={handleBack} disabled={activeStep === 0}>
                                     <KeyboardArrowLeft />
-                                    Back
+                                    {t('previous')}
                                 </Button>
                             }
                         />

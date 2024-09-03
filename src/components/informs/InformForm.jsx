@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { createInform, updateInform } from '../../api/informs.api';
 import { getAppointment, updateAppointment } from '../../api/appointments.api';
 import { Box, TextField, Button, Typography, Divider } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
+    const { t } = useTranslation();
     const [informId, setInformId] = useState(null);
     const [relevantInformation, setRelevantInformation] = useState('');
     const [diagnostic, setDiagnostic] = useState('');
@@ -65,14 +67,14 @@ export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
     return (
         <Box component="form" onSubmit={handleSubmit} noValidate>
             <Typography variant="h6" component="h2" align="center">
-                {isUpdate ? 'Edit Inform' : 'Add Inform'}
+                {isUpdate ? t('edit_inform') : t('add_inform')}
             </Typography>
             <Divider sx={{ my: 2, bgcolor: "grey" }} />
             <TextField
                 margin="normal"
                 fullWidth
                 id="relevantInformation"
-                label="Relevant Information"
+                label={t('relevant_information_label')}
                 name="relevantInformation"
                 multiline
                 rows={3}
@@ -84,7 +86,7 @@ export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
                 required
                 fullWidth
                 id="diagnostic"
-                label="Diagnostic"
+                label={t('diagnostic_label')}
                 name="diagnostic"
                 multiline
                 rows={3}
@@ -96,7 +98,7 @@ export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
                 required
                 fullWidth
                 id="treatment"
-                label="Treatment"
+                label={t('treatment_label')}
                 name="treatment"
                 multiline
                 rows={3}
@@ -109,7 +111,7 @@ export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
                     variant="contained"
                     color="primary"
                 >
-                    {isUpdate ? 'Update' : 'Save'}
+                    {isUpdate ? t('update_button') : t('save_button')}
                 </Button>
                 {closeModal && (
                     <Button
@@ -118,7 +120,7 @@ export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
                         onClick={closeModal}
                         sx={{ ml: 2 }}
                     >
-                        Cancel
+                        {t('cancel')}
                     </Button>
                 )}
             </Box>

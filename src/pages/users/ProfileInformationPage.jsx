@@ -5,8 +5,10 @@ import { getClient } from '../../api/clients.api';
 import { getWorker } from '../../api/workers.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { ProfilePage } from './ProfilePage';
+import { useTranslation } from 'react-i18next';
 
 export const ProfileInformationPage = () => {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const { userId } = useParams();
     const [userData, setUserData] = useState(null);
@@ -29,7 +31,9 @@ export const ProfileInformationPage = () => {
     }, [userId, user.user.role]);
 
     if (!userData) {
-        return <Typography variant="h4">Loading...</Typography>;
+        return <Typography variant="h4">
+            {t('loading')}
+        </Typography>;
     }
 
     return <ProfilePage userData={userData} />;

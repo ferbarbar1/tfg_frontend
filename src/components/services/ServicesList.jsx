@@ -45,7 +45,7 @@ export function ServicesList() {
     return <DataTable data={services} columns={columns} pagination paginationPerPage={5} paginationRowsPerPageOptions={[5, 10]} onRowClicked={handleRowClick} customStyles={{
         rows: {
             style: {
-                cursor: 'pointer', // Cambia el cursor a una mano
+                cursor: 'pointer',
             },
         },
     }} />;

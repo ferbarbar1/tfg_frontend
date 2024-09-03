@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getService, updateService, createService, deleteService } from '../../api/services.api';
 import { getAllWorkers } from '../../api/workers.api';
-import { Container, Box, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid } from '@mui/material';
-
+import { Container, Box, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, Typography, IconButton, Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import AttachFile from '@mui/icons-material/AttachFile';
 
 export function ServiceForm({ isUpdate }) {
+    const { t } = useTranslation();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
@@ -90,7 +92,6 @@ export function ServiceForm({ isUpdate }) {
         }
     };
 
-
     return (
         <Box
             display="flex"
@@ -102,46 +103,69 @@ export function ServiceForm({ isUpdate }) {
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <Card>
-                            <CardHeader title={isUpdate ? 'Update service' : 'Create service'} sx={{ textAlign: 'center' }} />
+                            <CardHeader title={isUpdate ? t('update_service_button') : t('create_service_button')} sx={{ textAlign: 'center' }} />
                             <Divider sx={{ bgcolor: 'grey.800' }} />
                             <CardContent>
                                 <form onSubmit={handleSubmit}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
-                                            <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label="Description" value={description} onChange={(e) => setDescription(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label="Price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('name_label')} value={name} onChange={(e) => setName(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('description_label')} value={description} onChange={(e) => setDescription(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('price_label')} type="number" value={price} onChange={(e) => setPrice(e.target.value)} required fullWidth sx={{ mb: 2 }} />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormControl fullWidth required sx={{ mb: 2 }}>
-                                                <InputLabel id="workers-label">Workers</InputLabel>
+                                                <InputLabel id="workers-label">{t('workers_label')}</InputLabel>
                                                 <Select
                                                     labelId="workers-label"
                                                     multiple
                                                     value={workers}
                                                     onChange={(e) => setWorkers(e.target.value)}
-                                                    label="Workers"
+                                                    label={t('workers')}
                                                 >
                                                     {allWorkers.map(worker => (
                                                         <MenuItem key={worker.id} value={worker.id}>{worker.user.username}</MenuItem>
                                                     ))}
                                                 </Select>
                                             </FormControl>
-                                            <Box>
-                                                <input type="file" onChange={handleImageChange} />
-                                                {imagePreviewUrl && <img src={imagePreviewUrl} alt="Service Preview" style={{ width: '40%', height: 'auto' }} />}
+                                            <Box sx={{ textAlign: 'center', mt: 2 }}>
+                                                {imagePreviewUrl && (
+                                                    <Box sx={{ mb: 2 }}>
+                                                        <img src={imagePreviewUrl} alt={t('service_preview')} style={{ width: '50%', height: 'auto', borderRadius: '8px' }} />
+                                                    </Box>
+                                                )}
+                                                {imagePreviewUrl &&
+                                                    <Typography variant="subtitle1">{t('service_preview')}</Typography>
+                                                }
+                                                <input
+                                                    accept="image/*"
+                                                    style={{ display: 'none' }}
+                                                    id="icon-button-file"
+                                                    type="file"
+                                                    onChange={handleImageChange}
+                                                />
+                                                <label htmlFor="icon-button-file">
+                                                    <Tooltip title={t('upload_image')} placement="bottom">
+                                                        <IconButton color="primary" aria-label="upload picture" component="span">
+                                                            <AttachFile />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </label>
                                             </Box>
                                         </Grid>
                                     </Grid>
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                                         <Button variant="contained" color="primary" type="submit">
-                                            {isUpdate ? 'Update' : 'Create'}
+                                            {isUpdate ? t('update_button') : t('create_button')}
                                         </Button>
                                         {isUpdate &&
                                             <Button variant="contained" color="error" onClick={handleDelete} sx={{ ml: 2 }}>
-                                                Delete
+                                                {t('delete_button')}
                                             </Button>
                                         }
+                                        <Button variant="contained" color="inherit" onClick={() => navigate('/services')} sx={{ ml: 2 }}>
+                                            {t('cancel_button')}
+                                        </Button>
                                     </Box>
                                 </form>
                             </CardContent>

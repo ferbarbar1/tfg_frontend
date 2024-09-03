@@ -10,8 +10,10 @@ import { getConversationsByParticipants } from '../../api/conversations.api';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteNotification } from '../../api/notifications.api';
 import { getUserByUsername } from '../../api/users.api';
+import { useTranslation } from 'react-i18next';
 
 export function NotificationsList() {
+    const { t } = useTranslation();
     const { notifications, toggleNotificationReadStatus, deleteNotificationFromState } = useContext(NotificationsContext);
     const { user } = useContext(AuthContext);
     const [currentPage, setCurrentPage] = useState(1);
@@ -89,12 +91,12 @@ export function NotificationsList() {
                         variant="outlined"
                         sx={{ minWidth: 120 }}
                     >
-                        <MenuItem value="all">All</MenuItem>
-                        <MenuItem value="read">Read</MenuItem>
-                        <MenuItem value="unread">Unread</MenuItem>
+                        <MenuItem value="all">{t('all_notifications')}</MenuItem>
+                        <MenuItem value="read">{t('read')}</MenuItem>
+                        <MenuItem value="unread">{t('unread')}</MenuItem>
                     </Select>
                 )}
-                <Tooltip title="Refresh notifications">
+                <Tooltip title={t('refresh_notifications')}>
                     <IconButton onClick={handleRefresh} sx={{ ml: 2 }}>
                         <RefreshIcon />
                     </IconButton>
@@ -125,19 +127,19 @@ export function NotificationsList() {
                                 </Typography>
                             </Grid>
                             <Grid item xs={12} sm={3} container justifyContent="flex-end">
-                                <Tooltip title={notification.is_read ? "Mark as unread" : "Mark as read"}>
+                                <Tooltip title={notification.is_read ? t('mark_as_unread') : t('mark_as_read')}>
                                     <IconButton
                                         color="info"
-                                        aria-label={notification.is_read ? "mark as unread" : "mark as read"}
+                                        aria-label={notification.is_read ? t('mark_as_unread') : t('mark_as_read')}
                                         onClick={(event) => handleToggleReadStatus(event, notification.id, notification.is_read)}
                                     >
                                         {notification.is_read ? <MarkEmailReadIcon /> : <MarkunreadIcon />}
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title="Delete">
+                                <Tooltip title={t('delete_button')}>
                                     <IconButton
                                         color="error"
-                                        aria-label="delete"
+                                        aria-label={t('delete_button')}
                                         onClick={(event) => handleDelete(event, notification.id)}
                                     >
                                         <DeleteIcon />
@@ -149,16 +151,16 @@ export function NotificationsList() {
                 ))
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>
-                    No notifications to show.
+                    {t('no_notifications')}
                 </Typography>
             )}
             {filteredNotifications.length > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                     <Button variant="contained" onClick={handlePreviousPage} disabled={currentPage === 1} sx={{ mr: 2 }}>
-                        Previous
+                        {t('previous')}
                     </Button>
                     <Button variant="contained" onClick={handleNextPage} disabled={currentPage === Math.ceil(filteredNotifications.length / notificationsPerPage)}>
-                        Next
+                        {t('next')}
                     </Button>
                 </Box>
             )}

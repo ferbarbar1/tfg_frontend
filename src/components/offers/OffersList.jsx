@@ -7,8 +7,10 @@ import { Box, Button, Grid, IconButton, Paper, Typography, Select, MenuItem, For
 import { useNavigate } from 'react-router-dom';
 import { deleteOffer, getAllOffers } from '../../api/offers.api';
 import { truncateText } from '../../utils/auxFunctions';
+import { useTranslation } from 'react-i18next';
 
 export function OffersList() {
+    const { t } = useTranslation();
     const [offers, setOffers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const offersPerPage = 4;
@@ -85,20 +87,20 @@ export function OffersList() {
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3, mt: 2 }}>
                 {currentOffers.length > 0 && (
                     <FormControl>
-                        <InputLabel id="sort-label">Order by</InputLabel>
+                        <InputLabel id="sort-label">{t('order_by')}</InputLabel>
                         <Select
                             labelId="sort-label"
                             value={sortCriteria}
                             onChange={handleSortChange}
-                            label="Order by"
+                            label={t('order_by')}
                         >
-                            <MenuItem value="date">Date</MenuItem>
-                            <MenuItem value="name">Name</MenuItem>
-                            <MenuItem value="status">Status</MenuItem>
+                            <MenuItem value="date">{t('date')}</MenuItem>
+                            <MenuItem value="name">{t('name_label')}</MenuItem>
+                            <MenuItem value="status">{t('status_label')}</MenuItem>
                         </Select>
                     </FormControl>
                 )}
-                <Button variant="contained" sx={{ ml: 2 }} onClick={handleCreateOffer}>Create</Button>
+                <Button variant="contained" sx={{ ml: 2 }} onClick={handleCreateOffer}>{t('create_button')}</Button>
             </Box>
             {currentOffers.length > 0 ? (
                 currentOffers.map((offer, index) => (
@@ -117,7 +119,7 @@ export function OffersList() {
                             <Grid item xs={12} sm={9}>
                                 <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1976d2', display: 'flex', alignItems: 'center' }}>
                                     {truncateText(offer.name, 10)}
-                                    <Tooltip title={isOfferActive(offer) ? "Active" : "Inactive"}>
+                                    <Tooltip title={isOfferActive(offer) ? t('active') : t('inactive')}>
                                         {isOfferActive(offer) ? (
                                             <CheckCircleIcon color="success" sx={{ ml: 1 }} />
                                         ) : (
@@ -129,41 +131,45 @@ export function OffersList() {
                                     {truncateText(offer.description, 40)}
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#888', marginTop: 1 }}>
-                                    Discount: <strong>{offer.discount}%</strong>
+                                    {t('discount_label')}: <strong>{offer.discount}%</strong>
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#888' }}>
-                                    Period: {new Date(offer.start_date).toLocaleString()} - {new Date(offer.end_date).toLocaleString()}
+                                    {t('period_label')}: {new Date(offer.start_date).toLocaleString()} - {new Date(offer.end_date).toLocaleString()}
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#888' }}>
-                                    Services:
+                                    {t('services_label')}:{' '}
                                     <strong>
                                         {offer.services.map(service => service.name).join(', ')}
                                     </strong>
                                 </Typography>
                             </Grid>
                             <Grid item xs={12} sm={3} container justifyContent="flex-end">
-                                <IconButton color="primary" aria-label="edit offer" onClick={() => handleEdit(offer.id)}>
-                                    <EditIcon />
-                                </IconButton>
-                                <IconButton color="default" aria-label="delete offer" onClick={() => handleDelete(offer.id)}>
-                                    <DeleteIcon />
-                                </IconButton>
+                                <Tooltip title={t('edit_button')}>
+                                    <IconButton color="primary" aria-label={t('edit_button')} onClick={() => handleEdit(offer.id)}>
+                                        <EditIcon />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title={t('delete_button')}>
+                                    <IconButton color="default" aria-label={t('delete_button')} onClick={() => handleDelete(offer.id)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Tooltip>
                             </Grid>
                         </Grid>
                     </Paper>
                 ))
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>
-                    No offers yet.
+                    {t('no_offers_yet')}
                 </Typography>
             )}
             {offers.length > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                     <Button variant="contained" onClick={handlePreviousPage} disabled={currentPage === 1} sx={{ mr: 2 }}>
-                        Previous
+                        {t('previous')}
                     </Button>
                     <Button variant="contained" onClick={handleNextPage} disabled={currentPage === Math.ceil(sortedOffers.length / offersPerPage)}>
-                        Next
+                        {t('next')}
                     </Button>
                 </Box>
             )}

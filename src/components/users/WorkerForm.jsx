@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getWorker, updateWorker, createWorker } from '../../api/workers.api';
 import { TextField, Button, Box, Card, CardContent, Grid } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export function WorkerForm({ isUpdate }) {
+    const { t } = useTranslation();
     const [username, setUsername] = useState("");
     const [originalUsername, setOriginalUsername] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -98,7 +100,7 @@ export function WorkerForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="firstName"
-                                label="First Name"
+                                label={t('first_name_label')}
                                 name="firstName"
                                 value={firstName}
                                 onChange={(e) => setFirstName(e.target.value)}
@@ -111,7 +113,7 @@ export function WorkerForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="lastName"
-                                label="Last Name"
+                                label={t('last_name_label')}
                                 name="lastName"
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
@@ -124,7 +126,7 @@ export function WorkerForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="username"
-                                label="Username"
+                                label={t('username_label')}
                                 name="username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
@@ -137,7 +139,7 @@ export function WorkerForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="dateOfBirth"
-                                label="Date of Birth"
+                                label={t('date_of_birth_label')}
                                 name="dateOfBirth"
                                 type="date"
                                 value={dateOfBirth}
@@ -154,7 +156,7 @@ export function WorkerForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="email"
-                                label="Email"
+                                label={t('email_label')}
                                 name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -167,7 +169,7 @@ export function WorkerForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="specialty"
-                                label="Specialties"
+                                label={t('specialty_label')}
                                 name="specialty"
                                 value={specialty}
                                 onChange={(e) => setSpecialty(e.target.value)}
@@ -181,7 +183,7 @@ export function WorkerForm({ isUpdate }) {
                                 required
                                 fullWidth
                                 id="experience"
-                                label="Experience (years)"
+                                label={t('experience_label')}
                                 name="experience"
                                 value={experience}
                                 onChange={(e) => setExperience(e.target.value)}
@@ -196,7 +198,7 @@ export function WorkerForm({ isUpdate }) {
                                         required
                                         fullWidth
                                         name="password"
-                                        label="Password"
+                                        label={t('password_label')}
                                         type="password"
                                         id="password"
                                         value={password}
@@ -210,7 +212,7 @@ export function WorkerForm({ isUpdate }) {
                                         required
                                         fullWidth
                                         name="repeatPassword"
-                                        label="Repeat Password"
+                                        label={t('repeat_password_label')}
                                         type="password"
                                         id="repeatPassword"
                                         value={repeatPassword}
@@ -222,10 +224,10 @@ export function WorkerForm({ isUpdate }) {
                     </Grid>
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                         <Button variant="contained" color="primary" type="submit">
-                            {isUpdate ? 'Update' : 'Create'}
+                            {isUpdate ? t('update_button') : t('create_button')}
                         </Button>
                         <Button variant="contained" color="error" sx={{ ml: 2 }} onClick={() => navigate(-1)}>
-                            Cancel
+                            {t('cancel_button')}
                         </Button>
                     </Box>
                 </Box>

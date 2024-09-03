@@ -8,8 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { deleteResource, getAllResources } from '../../api/resources.api';
 import { truncateText } from '../../utils/auxFunctions';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export function ResourcesList() {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const [resources, setResources] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -88,7 +90,7 @@ export function ResourcesList() {
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3, mt: 2 }}>
                 {resources.length > 0 && (
                     <TextField
-                        label="Search"
+                        label={t('search_label')}
                         variant="outlined"
                         value={searchTerm}
                         onChange={handleSearchChange}
@@ -109,7 +111,7 @@ export function ResourcesList() {
                 )}
                 {user.user.role === 'owner' || user.user.role === 'worker' ? (
                     <Button variant="contained" sx={{ ml: 2 }} onClick={handleCreateResource}>
-                        Create
+                        {t('create_button')}
                     </Button>) : null}
             </Box>
             {currentResources.length > 0 ? (
@@ -146,12 +148,12 @@ export function ResourcesList() {
                                 </CardActionArea>
                                 {user.user.role === 'owner' || resource.author.id === user.user.id ? (
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
-                                        <Tooltip title="Edit">
+                                        <Tooltip title={t('edit_button')}>
                                             <IconButton onClick={() => handleEdit(resource.id)}>
                                                 <EditIcon />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip title="Delete">
+                                        <Tooltip title={t('delete_button')}>
                                             <IconButton onClick={() => handleDelete(resource.id)}>
                                                 <DeleteIcon />
                                             </IconButton>
@@ -164,16 +166,16 @@ export function ResourcesList() {
                 </Grid>
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>
-                    No resources found.
+                    {t('no_resources_published')}
                 </Typography>
             )}
             {filteredResources.length > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                     <Button variant="contained" onClick={handlePreviousPage} disabled={currentPage === 1} sx={{ mr: 2 }}>
-                        Previous
+                        {t('previous')}
                     </Button>
                     <Button variant="contained" onClick={handleNextPage} disabled={currentPage === Math.ceil(filteredResources.length / resourcesPerPage)}>
-                        Next
+                        {t('next')}
                     </Button>
                 </Box>
             )}

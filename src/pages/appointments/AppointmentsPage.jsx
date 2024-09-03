@@ -8,10 +8,12 @@ import { Modal, Container, Paper, Select, MenuItem, FormControl, InputLabel, Ico
 import ClearIcon from '@mui/icons-material/Clear';
 import { AppointmentForm } from '../../components/appointments/AppointmentForm';
 import { getAllWorkers } from '../../api/workers.api';
+import { useTranslation } from 'react-i18next';
 
 const localizer = momentLocalizer(moment);
 
 export function AppointmentsPage() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [appointmentModalOpen, setAppointmentModalOpen] = useState(false);
@@ -51,7 +53,7 @@ export function AppointmentsPage() {
                             id: appointment.id,
                             start: moment(`${schedule.date}T${schedule.start_time}`).toDate(),
                             end: moment(`${schedule.date}T${schedule.end_time}`).toDate(),
-                            title: `Appointment ${appointment.id}: ${appointment.description}`
+                            title: `${t('appointment')} ${appointment.id}: ${appointment.description}`
                         };
                     } else {
                         console.error('Invalid appointment or schedule data:', appointment);
@@ -66,7 +68,7 @@ export function AppointmentsPage() {
         };
 
         fetchAppointments();
-    }, [selectedWorker]);
+    }, [selectedWorker, t]);
 
     const handleSelectSlot = (slotInfo) => {
         setSelectedSlot(slotInfo);
@@ -85,24 +87,19 @@ export function AppointmentsPage() {
         setSelectedWorker('');
     };
 
-    const handleCreateSchedule = () => {
-        // Lógica para crear un nuevo horario
-        console.log('Crear nuevo horario');
-    };
-
     return (
         <Container maxWidth="md" className='mt-3'>
             <FormControl fullWidth sx={{ mb: 2, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <InputLabel id="worker-select-label">Select Worker</InputLabel>
+                <InputLabel id="worker-select-label">{t('select_worker')}</InputLabel>
                 <Select
                     labelId="worker-select-label"
-                    label="Select Worker"
+                    label={t('select_worker')}
                     value={selectedWorker}
                     onChange={handleWorkerChange}
-                    sx={{ flex: 1, maxWidth: '200px' }}
+                    sx={{ flex: 1, maxWidth: '210px' }}
                 >
                     <MenuItem value="">
-                        <em>All Workers</em>
+                        <em>{t('all_workers')}</em>
                     </MenuItem>
                     {workers.map(worker => (
                         <MenuItem key={worker.id} value={worker.id}>
@@ -127,6 +124,9 @@ export function AppointmentsPage() {
                 }}
                 onSelectSlot={handleSelectSlot}
                 selectable={true}
+                defaultView='week'
+                min={new Date(0, 0, 0, 9, 0, 0)}
+                max={new Date(0, 0, 0, 20, 0, 0)}
             />
             <Modal
                 open={appointmentModalOpen}

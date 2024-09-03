@@ -3,12 +3,13 @@ import { getAppointmentsByWorker, getAppointmentsByClient } from '../../api/appo
 import { createConversation, getConversationsByParticipants } from '../../api/conversations.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, IconButton } from '@mui/material';
+import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, IconButton, Tooltip } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import ChatIcon from '@mui/icons-material/Chat';
 import { styled } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const StyledDataGrid = styled(DataGrid)({
     backgroundColor: '#FFFFFF',
@@ -36,6 +37,7 @@ const TabPanel = (props) => {
 };
 
 export const MyAppointmentsPage = () => {
+    const { t } = useTranslation();
     const [appointments, setAppointments] = useState([]);
     const [statusFilter, setStatusFilter] = useState('');
     const [dateFilter, setDateFilter] = useState('');
@@ -135,7 +137,7 @@ export const MyAppointmentsPage = () => {
     const columns = [
         {
             field: 'service',
-            headerName: 'Service',
+            headerName: t('service_label'),
             flex: 1,
             minWidth: 150,
             sortable: true,
@@ -145,7 +147,7 @@ export const MyAppointmentsPage = () => {
         },
         {
             field: 'date',
-            headerName: 'Date',
+            headerName: t('date'),
             flex: 1,
             minWidth: 120,
             sortable: true,
@@ -155,7 +157,7 @@ export const MyAppointmentsPage = () => {
         },
         {
             field: 'time',
-            headerName: 'Time',
+            headerName: t('time_label'),
             flex: 1,
             minWidth: 150,
             sortable: true,
@@ -165,7 +167,7 @@ export const MyAppointmentsPage = () => {
         },
         !isMobile && {
             field: 'status',
-            headerName: 'Status',
+            headerName: t('status_label'),
             flex: 1,
             minWidth: 100,
             align: 'center',
@@ -174,7 +176,7 @@ export const MyAppointmentsPage = () => {
         },
         !isMobile && {
             field: 'modality',
-            headerName: 'Modality',
+            headerName: t('modality_label'),
             flex: 1,
             minWidth: 100,
             align: 'center',
@@ -183,15 +185,17 @@ export const MyAppointmentsPage = () => {
         },
         {
             field: 'actions',
-            headerName: 'Actions',
+            headerName: t('actions'),
             flex: 1,
             minWidth: 100,
             align: 'center',
             headerAlign: 'center',
             renderCell: (params) => (
-                <IconButton aria-label="chat" onClick={(event) => handleChat(event, params.row)}>
-                    <ChatIcon />
-                </IconButton>
+                <Tooltip title={t('chat_button')}>
+                    <IconButton aria-label={t('chat_button')} onClick={(event) => handleChat(event, params.row)}>
+                        <ChatIcon />
+                    </IconButton>
+                </Tooltip>
             )
         }
     ].filter(Boolean);
@@ -211,25 +215,25 @@ export const MyAppointmentsPage = () => {
     return (
         <Box sx={{ width: '100%' }}>
             <Tabs value={activeTab} onChange={handleChange}>
-                <Tab value="today" label="Today" />
-                <Tab value="upcoming" label="Upcoming" />
-                <Tab value="history" label="History" />
+                <Tab value="today" label={t('today')} />
+                <Tab value="upcoming" label={t('upcoming')} />
+                <Tab value="history" label={t('history')} />
             </Tabs>
             {activeTab === 'upcoming' && (
                 <TabPanel value={activeTab} index="upcoming">
                     <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <FormControl fullWidth sx={{ mt: 2 }}>
-                            <InputLabel id="status-label">Status</InputLabel>
+                            <InputLabel id="status-label">{t('status_label')}</InputLabel>
                             <Select
                                 labelId="status-label"
                                 value={statusFilter}
                                 onChange={handleStatusChange}
-                                label="Status"
+                                label={t('status_label')}
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="CONFIRMED">Confirmed</MenuItem>
-                                <MenuItem value="COMPLETED">Completed</MenuItem>
-                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                                <MenuItem value="">{t('all')}</MenuItem>
+                                <MenuItem value="CONFIRMED">{t('confirmed')}</MenuItem>
+                                <MenuItem value="COMPLETED">{t('completed')}</MenuItem>
+                                <MenuItem value="CANCELLED">{t('cancelled')}</MenuItem>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth sx={{ mt: 2 }}>
@@ -240,25 +244,27 @@ export const MyAppointmentsPage = () => {
                             />
                         </FormControl>
                         <FormControl fullWidth sx={{ mt: 2 }}>
-                            <InputLabel id="modality-label">Modality</InputLabel>
+                            <InputLabel id="modality-label">{t('modality_label')}</InputLabel>
                             <Select
                                 labelId="modality-label"
                                 value={modalityFilter}
                                 onChange={handleModalityChange}
-                                label="Modality"
+                                label={t('modality_label')}
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="VIRTUAL">Virtual</MenuItem>
-                                <MenuItem value="IN_PERSON">In person</MenuItem>
+                                <MenuItem value="">{t('all')}</MenuItem>
+                                <MenuItem value="VIRTUAL">{t('virtual')}</MenuItem>
+                                <MenuItem value="IN_PERSON">{t('in_person')}</MenuItem>
                             </Select>
                         </FormControl>
                         {(statusFilter || dateFilter || modalityFilter) && (
-                            <IconButton
-                                onClick={handleClearFilters}
-                                sx={{ mt: 2 }}
-                            >
-                                <ClearIcon />
-                            </IconButton>
+                            <Tooltip title={t('clear_button')}>
+                                <IconButton
+                                    onClick={handleClearFilters}
+                                    sx={{ mt: 2 }}
+                                >
+                                    <ClearIcon />
+                                </IconButton>
+                            </Tooltip>
                         )}
                     </Box>
                     <Box
@@ -283,7 +289,7 @@ export const MyAppointmentsPage = () => {
                                 pageSize={5}
                                 pageSizeOptions={[5, 10, 100]}
                                 hideFooterSelectedRowCount
-                                localeText={{ noRowsLabel: 'There are no appointments to display.' }}
+                                localeText={{ noRowsLabel: t('no_upcoming_appointments') }}
                                 onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
                             />
                         </Box>
@@ -294,17 +300,17 @@ export const MyAppointmentsPage = () => {
                 <TabPanel value={activeTab} index="history">
                     <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <FormControl fullWidth sx={{ mt: 2 }}>
-                            <InputLabel id="status-label">Status</InputLabel>
+                            <InputLabel id="status-label">{t('status_label')}</InputLabel>
                             <Select
                                 labelId="status-label"
                                 value={statusFilter}
                                 onChange={handleStatusChange}
-                                label="Status"
+                                label={t('status_label')}
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="CONFIRMED">Confirmed</MenuItem>
-                                <MenuItem value="COMPLETED">Completed</MenuItem>
-                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                                <MenuItem value="">{t('all')}</MenuItem>
+                                <MenuItem value="CONFIRMED">{t('confirmed')}</MenuItem>
+                                <MenuItem value="COMPLETED">{t('completed')}</MenuItem>
+                                <MenuItem value="CANCELLED">{t('cancelled')}</MenuItem>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth sx={{ mt: 2 }}>
@@ -315,25 +321,27 @@ export const MyAppointmentsPage = () => {
                             />
                         </FormControl>
                         <FormControl fullWidth sx={{ mt: 2 }}>
-                            <InputLabel id="modality-label">Modality</InputLabel>
+                            <InputLabel id="modality-label">{t('modality_label')}</InputLabel>
                             <Select
                                 labelId="modality-label"
                                 value={modalityFilter}
                                 onChange={handleModalityChange}
-                                label="Modality"
+                                label={t('modality_label')}
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="VIRTUAL">Virtual</MenuItem>
-                                <MenuItem value="IN_PERSON">In person</MenuItem>
+                                <MenuItem value="">{t('all')}</MenuItem>
+                                <MenuItem value="VIRTUAL">{t('virtual')}</MenuItem>
+                                <MenuItem value="IN_PERSON">{t('in_person')}</MenuItem>
                             </Select>
                         </FormControl>
                         {(statusFilter || dateFilter || modalityFilter) && (
-                            <IconButton
-                                onClick={handleClearFilters}
-                                sx={{ mt: 2 }}
-                            >
-                                <ClearIcon />
-                            </IconButton>
+                            <Tooltip title={t('clear_button')}>
+                                <IconButton
+                                    onClick={handleClearFilters}
+                                    sx={{ mt: 2 }}
+                                >
+                                    <ClearIcon />
+                                </IconButton>
+                            </Tooltip>
                         )}
                     </Box>
                     <Box
@@ -358,7 +366,7 @@ export const MyAppointmentsPage = () => {
                                 pageSize={5}
                                 pageSizeOptions={[5, 10, 100]}
                                 hideFooterSelectedRowCount
-                                localeText={{ noRowsLabel: 'There are no appointments to display.' }}
+                                localeText={{ noRowsLabel: t('no_past_appointments') }}
                                 onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
                             />
                         </Box>
@@ -369,39 +377,41 @@ export const MyAppointmentsPage = () => {
                 <TabPanel value={activeTab} index="today">
                     <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <FormControl fullWidth sx={{ mt: 2 }}>
-                            <InputLabel id="status-label">Status</InputLabel>
+                            <InputLabel id="status-label">{t('status_label')}</InputLabel>
                             <Select
                                 labelId="status-label"
                                 value={statusFilter}
                                 onChange={handleStatusChange}
-                                label="Status"
+                                label={t('status_label')}
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="CONFIRMED">Confirmed</MenuItem>
-                                <MenuItem value="COMPLETED">Completed</MenuItem>
-                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                                <MenuItem value="">{t('all')}</MenuItem>
+                                <MenuItem value="CONFIRMED">{t('confirmed')}</MenuItem>
+                                <MenuItem value="COMPLETED">{t('completed')}</MenuItem>
+                                <MenuItem value="CANCELLED">{t('cancelled')}</MenuItem>
                             </Select>
                         </FormControl>
                         <FormControl fullWidth sx={{ mt: 2 }}>
-                            <InputLabel id="modality-label">Modality</InputLabel>
+                            <InputLabel id="modality-label">{t('modality_label')}</InputLabel>
                             <Select
                                 labelId="modality-label"
                                 value={modalityFilter}
                                 onChange={handleModalityChange}
-                                label="Modality"
+                                label={t('modality_label')}
                             >
-                                <MenuItem value="">All</MenuItem>
-                                <MenuItem value="VIRTUAL">Virtual</MenuItem>
-                                <MenuItem value="IN_PERSON">In person</MenuItem>
+                                <MenuItem value="">{t('all')}</MenuItem>
+                                <MenuItem value="VIRTUAL">{t('virtual')}</MenuItem>
+                                <MenuItem value="IN_PERSON">{t('in_person')}</MenuItem>
                             </Select>
                         </FormControl>
                         {(statusFilter || modalityFilter) && (
-                            <IconButton
-                                onClick={handleClearFilters}
-                                sx={{ mt: 2 }}
-                            >
-                                <ClearIcon />
-                            </IconButton>
+                            <Tooltip title={t('clear_button')}>
+                                <IconButton
+                                    onClick={handleClearFilters}
+                                    sx={{ mt: 2 }}
+                                >
+                                    <ClearIcon />
+                                </IconButton>
+                            </Tooltip>
                         )}
                     </Box>
                     <Box
@@ -426,7 +436,7 @@ export const MyAppointmentsPage = () => {
                                 pageSize={5}
                                 pageSizeOptions={[5, 10, 100]}
                                 hideFooterSelectedRowCount
-                                localeText={{ noRowsLabel: 'No appointments for today.' }}
+                                localeText={{ noRowsLabel: t('no_today_appointments') }}
                                 onRowClick={(params) => navigate(`/my-appointments/${params.row.appointmentId}/details`)}
                             />
                         </Box>

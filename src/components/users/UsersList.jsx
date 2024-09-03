@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton, TextField, Box, InputAdornment } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton, TextField, Box, InputAdornment, Tooltip } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,6 +9,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { styled } from '@mui/system';
 import { getConversationsByParticipants, createConversation } from '../../api/conversations.api';
 import { deleteUser } from '../../api/users.api';
+import { useTranslation } from 'react-i18next';
 
 const StyledTableRow = styled(TableRow)({
     '&:hover': {
@@ -18,6 +19,7 @@ const StyledTableRow = styled(TableRow)({
 });
 
 export function UsersList({ userType, fetchUsers }) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [page, setPage] = useState(0);
@@ -103,18 +105,25 @@ export function UsersList({ userType, fetchUsers }) {
     );
 
     const sortedUsers = [...filteredUsers].sort((a, b) => {
-        if (order === 'asc') {
-            return a[orderBy] < b[orderBy] ? -1 : 1;
-        } else {
-            return a[orderBy] > b[orderBy] ? -1 : 1;
+        if (orderBy === 'username') {
+            return order === 'asc'
+                ? a.user.username.localeCompare(b.user.username)
+                : b.user.username.localeCompare(a.user.username);
+        } else if (orderBy === 'name') {
+            const nameA = `${a.user.first_name} ${a.user.last_name}`;
+            const nameB = `${b.user.first_name} ${b.user.last_name}`;
+            return order === 'asc'
+                ? nameA.localeCompare(nameB)
+                : nameB.localeCompare(nameA);
         }
+        return 0;
     });
 
     return (
         <Box>
             <Box display="flex" alignItems="center" sx={{ mt: 2, mb: 2, ml: 1 }}>
                 <TextField
-                    label="Search"
+                    label={t('search_label')}
                     variant="outlined"
                     margin="normal"
                     value={searchTerm}
@@ -149,7 +158,7 @@ export function UsersList({ userType, fetchUsers }) {
                                     direction={orderBy === 'username' ? order : 'asc'}
                                     onClick={handleSort('username')}
                                 >
-                                    <div style={{ textAlign: 'center' }}>Username</div>
+                                    <div style={{ textAlign: 'center' }}>{t('username_label')}</div>
                                 </TableSortLabel>
                             </TableCell>
                             <TableCell align="center">
@@ -158,11 +167,11 @@ export function UsersList({ userType, fetchUsers }) {
                                     direction={orderBy === 'name' ? order : 'asc'}
                                     onClick={handleSort('name')}
                                 >
-                                    <div style={{ textAlign: 'center' }}>Name</div>
+                                    <div style={{ textAlign: 'center' }}>{t('name_label')}</div>
                                 </TableSortLabel>
                             </TableCell>
                             <TableCell align="center">
-                                Actions
+                                {t('actions')}
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -175,22 +184,28 @@ export function UsersList({ userType, fetchUsers }) {
                                 <TableCell align="center">{user.user.username}</TableCell>
                                 <TableCell align="center">{user.user.first_name + ' ' + user.user.last_name}</TableCell>
                                 <TableCell align="center">
-                                    <IconButton aria-label="chat" onClick={(event) => handleChat(event, user)}>
-                                        <ChatIcon color='action' />
-                                    </IconButton>
-                                    <IconButton aria-label="edit" onClick={(event) => handleEdit(event, user)}>
-                                        <EditIcon color='info' />
-                                    </IconButton>
-                                    <IconButton aria-label="delete" onClick={(event) => handleDelete(event, user)}>
-                                        <DeleteIcon color='error' />
-                                    </IconButton>
+                                    <Tooltip title={t('chat_button')}>
+                                        <IconButton aria-label={t('chat_button')} onClick={(event) => handleChat(event, user)}>
+                                            <ChatIcon color='action' />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title={t('edit_button')}>
+                                        <IconButton aria-label={t('edit_button')} onClick={(event) => handleEdit(event, user)}>
+                                            <EditIcon color='info' />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title={t('delete_button')}>
+                                        <IconButton aria-label={t('delete_button')} onClick={(event) => handleDelete(event, user)}>
+                                            <DeleteIcon color='error' />
+                                        </IconButton>
+                                    </Tooltip>
                                 </TableCell>
                             </StyledTableRow>
                         ))}
                         {sortedUsers.length === 0 && (
                             <TableRow>
                                 <TableCell colSpan={4} align="center">
-                                    There are no {userType} to display.
+                                    {t('no_users', { userType })}
                                 </TableCell>
                             </TableRow>
                         )}

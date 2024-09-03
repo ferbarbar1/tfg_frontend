@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Box, Container, Grid, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, IconButton, Typography } from "@mui/material";
+import { Box, Container, Grid, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, IconButton, Typography, Tooltip } from "@mui/material";
 import { useParams, useNavigate } from 'react-router-dom';
 import { createResource, updateResource, getResource } from '../../api/resources.api';
 import { AuthContext } from "../../contexts/AuthContext";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useTranslation } from 'react-i18next';
 
 export function ResourceForm({ isUpdate }) {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const [author, setAuthor] = useState("");
     const [title, setTitle] = useState("");
@@ -103,30 +105,30 @@ export function ResourceForm({ isUpdate }) {
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <Card>
-                            <CardHeader title={isUpdate ? 'Update Resource' : 'Create Resource'} sx={{ textAlign: 'center' }} />
+                            <CardHeader title={isUpdate ? t('update_resource') : t('create_resource')} sx={{ textAlign: 'center' }} />
                             <Divider sx={{ bgcolor: 'grey.800' }} />
                             <CardContent>
                                 <form onSubmit={handleSubmit}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
-                                            <TextField label="Title" value={title} onChange={(e) => setTitle(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label="Description" value={description} onChange={(e) => setDescription(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('title')} value={title} onChange={(e) => setTitle(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('description_label')} value={description} onChange={(e) => setDescription(e.target.value)} required fullWidth sx={{ mb: 2 }} />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormControl fullWidth required sx={{ mb: 2 }}>
-                                                <InputLabel id="resource-type-label">Resource Type</InputLabel>
+                                                <InputLabel id="resource-type-label">{t('resource_type')}</InputLabel>
                                                 <Select
                                                     labelId="resource-type-label"
                                                     value={resourceType}
                                                     onChange={(e) => setResourceType(e.target.value)}
-                                                    label="Resource Type"
+                                                    label={t('resource_type')}
                                                 >
-                                                    <MenuItem value="FILE">File</MenuItem>
-                                                    <MenuItem value="URL">URL</MenuItem>
+                                                    <MenuItem value="FILE">{t('file')}</MenuItem>
+                                                    <MenuItem value="URL">{t('url')}</MenuItem>
                                                 </Select>
                                             </FormControl>
                                             {resourceType === "URL" && (
-                                                <TextField label="URL" value={url} onChange={(e) => setUrl(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                                <TextField label={t('url')} value={url} onChange={(e) => setUrl(e.target.value)} required fullWidth sx={{ mb: 2 }} />
                                             )}
                                             {resourceType === "FILE" && (
                                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -136,7 +138,7 @@ export function ResourceForm({ isUpdate }) {
                                                         startIcon={<CloudUploadIcon />}
                                                         sx={{ mr: 2 }}
                                                     >
-                                                        Upload File
+                                                        {t('upload_file')}
                                                         <input
                                                             type="file"
                                                             hidden
@@ -162,7 +164,7 @@ export function ResourceForm({ isUpdate }) {
                                                     startIcon={<CloudUploadIcon />}
                                                     sx={{ mr: 2 }}
                                                 >
-                                                    Add Image Preview
+                                                    {t('add_image_preview')}
                                                     <input
                                                         type="file"
                                                         hidden
@@ -172,9 +174,11 @@ export function ResourceForm({ isUpdate }) {
                                                 {imagePreviewName && (
                                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                         <Typography variant="body2" sx={{ mr: 2 }}>{imagePreviewName}</Typography>
-                                                        <IconButton onClick={handleImagePreviewDiscard}>
-                                                            <DeleteIcon />
-                                                        </IconButton>
+                                                        <Tooltip title={t('delete_button')}>
+                                                            <IconButton onClick={handleImagePreviewDiscard}>
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
                                                     </Box>
                                                 )}
                                             </Box>
@@ -182,7 +186,7 @@ export function ResourceForm({ isUpdate }) {
                                     </Grid>
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                                         <Button variant="contained" color="primary" type="submit">
-                                            {isUpdate ? 'Update' : 'Create'}
+                                            {isUpdate ? t('update_button') : t('create_button')}
                                         </Button>
                                     </Box>
                                 </form>

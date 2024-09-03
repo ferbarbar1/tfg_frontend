@@ -1,14 +1,16 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Typography, Card, CardContent, Divider, Button, Grid, Box } from '@mui/material';
+import { Avatar, Typography, Card, CardContent, Divider, Button, Grid, Box, Tooltip } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import EngineeringIcon from '@mui/icons-material/Engineering';
 import CakeIcon from '@mui/icons-material/Cake';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import WorkIcon from '@mui/icons-material/Work';
 import { AuthContext } from '../../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export const UserInformation = ({ user }) => {
+    const { t } = useTranslation();
     const { user: authenticatedUser } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -41,7 +43,9 @@ export const UserInformation = ({ user }) => {
                             <Box sx={{ marginTop: 2 }}>
                                 <Grid container alignItems="center" sx={{ marginBottom: 1 }}>
                                     <Grid item sx={{ minWidth: '40px', textAlign: 'center', ml: 13 }}>
-                                        <AlternateEmailIcon />
+                                        <Tooltip title={t('username_label')}>
+                                            <AlternateEmailIcon />
+                                        </Tooltip>
                                     </Grid>
                                     <Grid item xs>
                                         <Typography variant="subtitle1" component="p" sx={{ ml: 2 }}>
@@ -51,7 +55,9 @@ export const UserInformation = ({ user }) => {
                                 </Grid>
                                 <Grid container alignItems="center" sx={{ marginBottom: 1 }}>
                                     <Grid item sx={{ minWidth: '40px', textAlign: 'center', ml: 13 }}>
-                                        <EmailIcon />
+                                        <Tooltip title={t('email_label')}>
+                                            <EmailIcon />
+                                        </Tooltip>
                                     </Grid>
                                     <Grid item xs>
                                         <Typography variant="subtitle1" component="p" sx={{ ml: 2 }}>
@@ -62,7 +68,9 @@ export const UserInformation = ({ user }) => {
                                 {user?.user?.date_of_birth && (
                                     <Grid container alignItems="center" sx={{ mb: 1 }}>
                                         <Grid item sx={{ minWidth: '40px', textAlign: 'center', ml: 13 }}>
-                                            <CakeIcon />
+                                            <Tooltip title={t('date_of_birth_label')}>
+                                                <CakeIcon />
+                                            </Tooltip>
                                         </Grid>
                                         <Grid item xs>
                                             <Typography variant="subtitle1" component="p" sx={{ ml: 2 }}>
@@ -75,7 +83,9 @@ export const UserInformation = ({ user }) => {
                                     <>
                                         <Grid container alignItems="center" sx={{ mb: 1 }}>
                                             <Grid item sx={{ minWidth: '40px', textAlign: 'center', ml: 13 }}>
-                                                <EngineeringIcon />
+                                                <Tooltip title={t('specialty_label')}>
+                                                    <EngineeringIcon />
+                                                </Tooltip>
                                             </Grid>
                                             <Grid item xs>
                                                 <Typography variant="subtitle1" component="p" sx={{ ml: 2 }}>
@@ -85,11 +95,13 @@ export const UserInformation = ({ user }) => {
                                         </Grid>
                                         <Grid container alignItems="center" sx={{ mb: 1 }}>
                                             <Grid item sx={{ minWidth: '40px', textAlign: 'center', ml: 13 }}>
-                                                <WorkIcon />
+                                                <Tooltip title={t('experience_label')}>
+                                                    <WorkIcon />
+                                                </Tooltip>
                                             </Grid>
                                             <Grid item xs>
                                                 <Typography variant="subtitle1" component="p" sx={{ ml: 2 }}>
-                                                    {user?.experience} year/s of experience
+                                                    {t('experience_years', { count: user?.experience })}
                                                 </Typography>
                                             </Grid>
                                         </Grid>
@@ -99,10 +111,10 @@ export const UserInformation = ({ user }) => {
                             {authenticatedUser?.user?.id === user?.user?.id && (
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <Button variant="contained" color="primary" sx={{ mt: 5 }} onClick={handleUpdate}>
-                                        Edit
+                                        {t('edit_button')}
                                     </Button>
                                     <Button variant="contained" color="primary" sx={{ mt: 5, ml: 2 }} onClick={handlePasswordChange}>
-                                        Change Password
+                                        {t('change_password_button')}
                                     </Button>
                                 </Box>
                             )}

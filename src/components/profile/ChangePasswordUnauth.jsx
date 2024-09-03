@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { TextField, Button, Typography, Box } from '@mui/material';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 export const ChangePasswordUnauth = () => {
+    const { t } = useTranslation();
     const { uid, token } = useParams();
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,7 +15,7 @@ export const ChangePasswordUnauth = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            setError('Passwords do not match');
+            setError(t('passwords_do_not_match'));
             return;
         }
 
@@ -24,18 +26,18 @@ export const ChangePasswordUnauth = () => {
             );
             navigate('/');
         } catch (error) {
-            setError('Error changing password');
-            console.error("Error changing password", error);
+            setError(t('error_changing_password'));
+            console.error(t('error_changing_password'), error);
         }
     };
 
     return (
         <Box>
-            <Typography variant="h4">Reset Password</Typography>
+            <Typography variant="h4">{t('reset_password')}</Typography>
             {error && <Typography color="error">{error}</Typography>}
             <form onSubmit={handleSubmit}>
                 <TextField
-                    label="New Password"
+                    label={t('new_password')}
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -44,7 +46,7 @@ export const ChangePasswordUnauth = () => {
                     sx={{ my: 2 }}
                 />
                 <TextField
-                    label="Confirm New Password"
+                    label={t('confirm_new_password')}
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -52,7 +54,7 @@ export const ChangePasswordUnauth = () => {
                     required
                     sx={{ my: 2 }}
                 />
-                <Button variant="contained" color="primary" type="submit">Reset Password</Button>
+                <Button variant="contained" color="primary" type="submit">{t('reset_password')}</Button>
             </form>
         </Box>
     );

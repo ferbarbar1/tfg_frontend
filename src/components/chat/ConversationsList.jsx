@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Box, Button, Grid, IconButton, Paper, Typography, TextField, InputAdornment } from '@mui/material';
+import { Box, Button, Grid, IconButton, Paper, Typography, TextField, InputAdornment, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { getConversationsByParticipants, deleteConversation } from '../../api/conversations.api';
 import { getUserById } from '../../api/users.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
+import { useTranslation } from 'react-i18next';
 
 export function ConversationsList({ onConversationsLoaded }) {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const [conversations, setConversations] = useState([]);
     const [receivers, setReceivers] = useState({});
@@ -99,7 +101,7 @@ export function ConversationsList({ onConversationsLoaded }) {
         <Box sx={{ mr: 3, ml: 3 }}>
             {filteredConversations.length > 1 && (
                 <TextField
-                    label="Buscar usuario"
+                    label={t('search_label')}
                     variant="outlined"
                     fullWidth
                     value={searchTerm}
@@ -108,9 +110,11 @@ export function ConversationsList({ onConversationsLoaded }) {
                     InputProps={{
                         endAdornment: searchTerm && (
                             <InputAdornment position="end">
-                                <IconButton onClick={handleClearSearch}>
-                                    <ClearIcon />
-                                </IconButton>
+                                <Tooltip title={t('clear_button')} placement="top">
+                                    <IconButton onClick={handleClearSearch}>
+                                        <ClearIcon />
+                                    </IconButton>
+                                </Tooltip>
                             </InputAdornment>
                         )
                     }}
@@ -147,9 +151,11 @@ export function ConversationsList({ onConversationsLoaded }) {
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={12} sm={3} container justifyContent="flex-end">
-                                    <IconButton color="default" aria-label="delete offer" onClick={() => handleDelete(conversation.id)}>
-                                        <DeleteIcon />
-                                    </IconButton>
+                                    <Tooltip title={t('delete_button')}>
+                                        <IconButton color="default" aria-label="delete conversation" onClick={() => handleDelete(conversation.id)}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Tooltip>
                                 </Grid>
                             </Grid>
                         </Paper>
@@ -157,16 +163,16 @@ export function ConversationsList({ onConversationsLoaded }) {
                 })
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>
-                    No conversations yet.
+                    {t('no_conversations')}
                 </Typography>
             )}
             {filteredConversations.length > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                     <Button variant="contained" onClick={handlePreviousPage} disabled={currentPage === 1} sx={{ mr: 2 }}>
-                        Previous
+                        {t('previous')}
                     </Button>
                     <Button variant="contained" onClick={handleNextPage} disabled={currentPage === Math.ceil(conversations.length / conversationsPerPage)}>
-                        Next
+                        {t('next')}
                     </Button>
                 </Box>
             )}

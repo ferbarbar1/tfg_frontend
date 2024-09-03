@@ -3,8 +3,10 @@ import { WorkersRatingsChart } from '../../components/analytics/WorkersRatingsCh
 import { ServicesRatingsChart } from '../../components/analytics/ServicesRatingsChart';
 import { InvoicesChart } from '../../components/analytics/InvoicesChart';
 import { Tabs, Tab, Box, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export function AnalyticsPage() {
+    const { t } = useTranslation();
     const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
@@ -14,9 +16,9 @@ export function AnalyticsPage() {
     return (
         <Box sx={{ width: '100%' }}>
             <Tabs value={value} onChange={handleChange} aria-label="tabs">
-                <Tab label="Calificaciones por Trabajador" />
-                <Tab label="Calificaciones por Servicio" />
-                <Tab label="Facturación" />
+                <Tab label={t('worker_ratings')} />
+                <Tab label={t('service_ratings')} />
+                <Tab label={t('billing')} />
             </Tabs>
             <TabPanel value={value} index={0}>
                 <WorkersRatingsChart />

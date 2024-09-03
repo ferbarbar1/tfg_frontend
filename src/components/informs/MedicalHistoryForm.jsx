@@ -3,8 +3,10 @@ import { useDropzone } from 'react-dropzone';
 import { AuthContext } from '../../contexts/AuthContext';
 import { createMedicalHistory, updateMedicalHistory, getMedicalHistory } from '../../api/medicalHistories.api';
 import { Box, TextField, Button, Typography, Divider } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
+    const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -62,7 +64,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
     return (
         <Box component="form" onSubmit={handleSubmit} noValidate>
             <Typography variant="h6" component="h2" align="center">
-                {isUpdate ? 'Update Medical History' : 'Add Medical History'}
+                {isUpdate ? t('update_medical_history') : t('add_medical_history')}
             </Typography>
             <Divider sx={{ my: 2, bgcolor: "grey" }} />
             <TextField
@@ -70,7 +72,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                 required
                 fullWidth
                 id="title"
-                label="Title"
+                label={t('title')}
                 name="title"
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
@@ -80,7 +82,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                 required
                 fullWidth
                 id="description"
-                label="Description"
+                label={t('description_label')}
                 name="description"
                 multiline
                 rows={4}
@@ -92,7 +94,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                 {selectedFile ? (
                     <Typography>{selectedFile.name}</Typography>
                 ) : (
-                    <Typography>Drag and drop a PDF file here, or click to select one</Typography>
+                    <Typography>{t('drag_and_drop')}</Typography>
                 )}
             </Box>
             <Box sx={{ mt: 3, mb: 2, display: 'flex', justifyContent: 'center' }}>
@@ -101,7 +103,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                     variant="contained"
                     color="primary"
                 >
-                    {isUpdate ? 'Update' : 'Save'}
+                    {isUpdate ? t('update_button') : t('save_button')}
                 </Button>
                 <Button
                     variant="contained"
@@ -109,7 +111,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                     onClick={closeModal}
                     sx={{ ml: 2 }}
                 >
-                    Cancel
+                    {t('cancel_button')}
                 </Button>
             </Box>
         </Box>

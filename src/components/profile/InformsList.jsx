@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Button, Box, Paper, Grid, IconButton, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Typography, Button, Box, Paper, Grid, IconButton, TextField, Select, MenuItem, FormControl, InputLabel, Tooltip } from '@mui/material';
 import { getAppointmentsByClient } from '../../api/appointments.api';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { useNavigate } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
+import { useTranslation } from 'react-i18next';
 
 export const InformsList = ({ user }) => {
+    const { t } = useTranslation();
     const [informs, setInforms] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const informsPerPage = 3;
@@ -88,120 +90,122 @@ export const InformsList = ({ user }) => {
         setEndDate(null);
     };
 
-    if (!user) {
-        return <Typography variant="h4">Please, log in to see your profile.</Typography>;
-    }
-
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                <FormControl sx={{ mr: 2 }}>
-                    <InputLabel id="sort-label">Order by</InputLabel>
-                    <Select
-                        labelId="sort-label"
-                        value={sortCriteria}
-                        onChange={handleSortChange}
-                        label="Ordenar por"
-                    >
-                        <MenuItem value="date">Date</MenuItem>
-                        <MenuItem value="service">Service</MenuItem>
-                        <MenuItem value="worker">Worker</MenuItem>
-                    </Select>
-                </FormControl>
-                <TextField
-                    label="Start Date"
-                    type="date"
-                    InputLabelProps={{ shrink: true }}
-                    value={startDate || ''}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    sx={{ mr: 2 }}
-                />
-                <TextField
-                    label="End Date"
-                    type="date"
-                    InputLabelProps={{ shrink: true }}
-                    value={endDate || ''}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    sx={{ mr: 2 }}
-                />
-                <IconButton color="default" onClick={handleClearFilters}>
-                    <ClearIcon />
-                </IconButton>
-            </Box>
             {currentInforms.length > 0 ? (
                 currentInforms.map((inform, index) => (
-                    <Paper
-                        key={index}
-                        elevation={3}
-                        sx={{
-                            padding: 3,
-                            marginBottom: 3,
-                            borderRadius: 2,
-                            backgroundColor: '#fff',
-                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                            width: '100%',
-                            maxWidth: '600px'
-                        }}
-                    >
-                        <Grid container alignItems="center" spacing={2}>
-                            <Grid item xs={12} sm={8}>
-                                <Typography
-                                    variant="h5"
-                                    sx={{ fontWeight: 'bold', color: '#1976d2', mb: 1 }}
+                    <>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                            <FormControl sx={{ mr: 2 }}>
+                                <InputLabel id="sort-label">{t('order_by')}</InputLabel>
+                                <Select
+                                    labelId="sort-label"
+                                    value={sortCriteria}
+                                    onChange={handleSortChange}
+                                    label={t('order_by')}
                                 >
-                                    Inform {index + 1}
-                                </Typography>
-                                <Typography
-                                    variant="subtitle2"
-                                    title={inform.service}
-                                >
-                                    {inform.service}
-                                </Typography>
-                                <Typography
-                                    variant="subtitle2"
-                                    title={inform.client}
-                                >
-                                    Patient: {inform.client}
-                                </Typography>
-                                <Typography
-                                    variant="subtitle2"
-                                    title={inform.worker}
-                                >
-                                    Attended by: {inform.worker}
-                                </Typography>
-                                <Typography
-                                    variant="subtitle2"
-                                    title={inform.appointment_date}
-                                    sx={{ mt: 1, color: '#777' }}
-                                >
-                                    {inform.appointment_date}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={12} sm={4} container justifyContent="flex-end">
-                                <IconButton
-                                    color="primary"
-                                    aria-label="view report"
-                                    onClick={() => navigate(`/appointments/${inform.appointment_id}/inform`)}
-                                >
-                                    <PictureAsPdfIcon />
+                                    <MenuItem value="date">{t('date')}</MenuItem>
+                                    <MenuItem value="service">{t('service')}</MenuItem>
+                                    <MenuItem value="worker">{t('worker')}</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <TextField
+                                label={t('start_date')}
+                                type="date"
+                                InputLabelProps={{ shrink: true }}
+                                value={startDate || ''}
+                                onChange={(e) => setStartDate(e.target.value)}
+                                sx={{ mr: 2 }}
+                            />
+                            <TextField
+                                label={t('end_date')}
+                                type="date"
+                                InputLabelProps={{ shrink: true }}
+                                value={endDate || ''}
+                                onChange={(e) => setEndDate(e.target.value)}
+                                sx={{ mr: 2 }}
+                            />
+                            <Tooltip title={t('clear_button')}>
+                                <IconButton color="default" onClick={handleClearFilters}>
+                                    <ClearIcon />
                                 </IconButton>
+                            </Tooltip>
+                        </Box>
+                        <Paper
+                            key={index}
+                            elevation={3}
+                            sx={{
+                                padding: 3,
+                                marginBottom: 3,
+                                borderRadius: 2,
+                                backgroundColor: '#fff',
+                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                                width: '100%',
+                                maxWidth: '600px'
+                            }}
+                        >
+                            <Grid container alignItems="center" spacing={2}>
+                                <Grid item xs={12} sm={8}>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{ fontWeight: 'bold', color: '#1976d2', mb: 1 }}
+                                    >
+                                        {t('inform')} {index + 1}
+                                    </Typography>
+                                    <Typography
+                                        variant="subtitle2"
+                                        title={inform.service}
+                                    >
+                                        {inform.service}
+                                    </Typography>
+                                    <Typography
+                                        variant="subtitle2"
+                                        title={inform.client}
+                                    >
+                                        {t('patient')}: {inform.client}
+                                    </Typography>
+                                    <Typography
+                                        variant="subtitle2"
+                                        title={inform.worker}
+                                    >
+                                        {t('attended_by')}: {inform.worker}
+                                    </Typography>
+                                    <Typography
+                                        variant="subtitle2"
+                                        title={inform.appointment_date}
+                                        sx={{ mt: 1, color: '#777' }}
+                                    >
+                                        {inform.appointment_date}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={4} container justifyContent="flex-end">
+                                    <Tooltip title={t('view_report')}>
+                                        <IconButton
+                                            color="primary"
+                                            aria-label={t('view_report')}
+                                            onClick={() => navigate(`/appointments/${inform.appointment_id}/inform`)}
+                                        >
+                                            <PictureAsPdfIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Paper>
+                        </Paper>
+                    </>
                 ))
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>
-                    No informs yet.
+                    {t('no_informs')}
                 </Typography>
             )}
 
             {filteredInforms.length > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                     <Button variant="contained" onClick={handlePreviousPage} disabled={currentPage === 1} sx={{ mr: 2 }}>
-                        Previous
+                        {t('previous')}
                     </Button>
                     <Button variant="contained" onClick={handleNextPage} disabled={currentPage === Math.ceil(filteredInforms.length / informsPerPage)}>
-                        Next
+                        {t('next')}
                     </Button>
                 </Box>
             )}

@@ -5,12 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NAVLINKS } from "../utils/navLinks";
 import { AuthContext } from '../contexts/AuthContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export function Sidebar({ open }) {
     const theme = useTheme();
     const { token, setToken, user } = useContext(AuthContext);
     const location = useLocation();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const handleLogout = () => {
         setToken(null);
@@ -59,7 +61,7 @@ export function Sidebar({ open }) {
                                 <FontAwesomeIcon icon={link.icon} size="lg" />
                             </ListItemIcon>
                             <div style={{ height: '20px', display: 'flex', alignItems: 'center' }}>
-                                {open && <ListItemText primary={link.name} />}
+                                {open && <ListItemText primary={t(`sidebar_${link.name.toLowerCase().replace(' ', '_')}`)} />}
                             </div>
                         </ListItemButton>
                     </Link>
@@ -81,7 +83,7 @@ export function Sidebar({ open }) {
                             <ExitToAppIcon sx={{ fontSize: 24 }} />
                         </ListItemIcon>
                         <div style={{ height: '20px', display: 'flex', alignItems: 'center' }}>
-                            {open && <ListItemText primary="Logout" />}
+                            {open && <ListItemText primary={t('sidebar_logout')} />}
                         </div>
                     </ListItemButton>
                 </div>

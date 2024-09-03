@@ -7,8 +7,10 @@ import { AuthContext } from '../../contexts/AuthContext';
 import CallEndIcon from '@mui/icons-material/CallEnd';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export function VirtualAppointment({ appointmentId, role, informSaved }) {
+    const { t } = useTranslation();
     const [peerId, setPeerId] = useState('');
     const [remotePeerId, setRemotePeerId] = useState('');
     const [isRemotePeerAvailable, setIsRemotePeerAvailable] = useState(false);
@@ -168,7 +170,7 @@ export function VirtualAppointment({ appointmentId, role, informSaved }) {
         <Box sx={{ p: 3 }}>
             {role === 'client' && !isRemotePeerAvailable && (
                 <Typography variant="body1" align="center" sx={{ mb: 1 }}>
-                    Waiting for the other user to join...
+                    {t('waiting_for_other_user')}
                 </Typography>
             )}
             <Grid container spacing={2} direction={role === 'worker' ? 'column' : 'row'}>
@@ -255,7 +257,7 @@ export function VirtualAppointment({ appointmentId, role, informSaved }) {
                                         }}
                                     >
                                         <Typography variant="body1" align="center">
-                                            Remote user has not joined yet
+                                            {t('remote_user_not_joined')}
                                         </Typography>
                                     </Box>
                                 )}
@@ -272,7 +274,7 @@ export function VirtualAppointment({ appointmentId, role, informSaved }) {
             {role === 'worker' && appointment && appointment.inform &&
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                     <Button onClick={endCall} variant="contained" color="error" startIcon={<CallEndIcon />}>
-                        End Call
+                        {t('end_call')}
                     </Button>
                 </Box>
             }
