@@ -86,7 +86,7 @@ export const Conversation = ({ refreshConversations }) => {
                     <RefreshIcon />
                 </IconButton>
             </Box>
-            <Box flex="1" overflow="auto" padding={2} bgcolor="#f5f5f5" ref={messagesContainerRef}>
+            <Box flex="1" display="flex" flexDirection="column-reverse" overflow="auto" padding={2} bgcolor="#f5f5f5" ref={messagesContainerRef}>
                 <Box maxWidth="lg" mx="auto">
                     <List>
                         {messages.length === 0 ? (
@@ -105,15 +105,26 @@ export const Conversation = ({ refreshConversations }) => {
                                                 padding: '10px',
                                                 borderRadius: '8px',
                                                 backgroundColor: msg.sender === user.user.id ? '#d1e7dd' : '#cce5ff',
-                                                maxWidth: '100%',
+                                                maxWidth: '80%', // Ajusta el ancho máximo para que no llegue a los bordes
+                                                marginLeft: msg.sender === user.user.id ? 'auto' : '10px', // Margen izquierdo para el emisor
+                                                marginRight: msg.sender !== user.user.id ? 'auto' : '10px' // Margen derecho para el receptor
                                             }}
                                         >
                                             <ListItemText
-                                                primary={<Typography variant="body1">{msg.content}</Typography>}
-                                                secondary={
-                                                    <Typography variant="caption" color="textSecondary">
-                                                        {formatDate(msg.timestamp)}
+                                                primary={
+                                                    <Typography variant="body1">
+                                                        {msg.content}
                                                     </Typography>
+                                                }
+                                                secondary={
+                                                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                                                        <Typography variant="caption" color="textSecondary">
+                                                            {msg.sender === user.user.id ? formatDate(msg.timestamp) : receiver ? receiver.username : t('loading')}
+                                                        </Typography>
+                                                        <Typography variant="caption" color="textSecondary">
+                                                            {msg.sender === user.user.id ? t('me') : formatDate(msg.timestamp)}
+                                                        </Typography>
+                                                    </Box>
                                                 }
                                             />
                                         </Paper>
@@ -143,13 +154,15 @@ export const Conversation = ({ refreshConversations }) => {
                         }}
                     />
                     <Tooltip title={t('send_message')} placement='top'>
-                        <IconButton
-                            onClick={handleSendMessage}
-                            color="primary"
-                            disabled={newMessage.trim() === ''}
-                        >
-                            <SendIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                onClick={handleSendMessage}
+                                color="primary"
+                                disabled={newMessage.trim() === ''}
+                            >
+                                <SendIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </Box>
             </Box>

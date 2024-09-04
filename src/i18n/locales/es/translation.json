@@ -209,5 +209,6 @@
     "reload": "Recargar",
     "no_messages_yet": "Aún no hay mensajes",
     "type_a_message": "Escribe un mensaje",
-    "send_message": "Enviar mensaje"
+    "send_message": "Enviar mensaje",
+    "me": "Yo"
 }
