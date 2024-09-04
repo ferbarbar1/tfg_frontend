@@ -2,9 +2,9 @@
     "banner_welcome": "Hola",
     "banner_profile": "Perfil",
     "banner_chats": "Chats",
-    "banner_otifications": "Notificaciones",
+    "banner_notifications": "Notificaciones",
     "banner_menu": "Menu",
-    "banner_language": "Idioma",
+    "banner_language": "Idioma de la aplicación",
     "sidebar_home": "Inicio",
     "sidebar_users": "Usuarios",
     "sidebar_services": "Servicios",
@@ -203,5 +203,11 @@
     "logo_alt": "Logo de la aplicación",
     "sign_up": "Regístrate",
     "login": "Inicia sesión",
-    "enter_registered_email": "Por favor, introduce el correo electrónico con el que te registraste para restablecer tu contraseña."
+    "enter_registered_email": "Por favor, introduce el correo electrónico con el que te registraste para restablecer tu contraseña.",
+    "appointment_details": "Detalles de la cita",
+    "chat_with": "Chatear con",
+    "reload": "Recargar",
+    "no_messages_yet": "Aún no hay mensajes",
+    "type_a_message": "Escribe un mensaje",
+    "send_message": "Enviar mensaje"
 }

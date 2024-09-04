@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton, TextField, Box, InputAdornment, Tooltip } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -10,6 +10,7 @@ import { styled } from '@mui/system';
 import { getConversationsByParticipants, createConversation } from '../../api/conversations.api';
 import { deleteUser } from '../../api/users.api';
 import { useTranslation } from 'react-i18next';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const StyledTableRow = styled(TableRow)({
     '&:hover': {
@@ -27,6 +28,7 @@ export function UsersList({ userType, fetchUsers }) {
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('username');
     const [searchTerm, setSearchTerm] = useState('');
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
         async function fetchData() {
@@ -59,11 +61,14 @@ export function UsersList({ userType, fetchUsers }) {
         setOrderBy(property);
     };
 
-    const handleChat = async (event, user) => {
+    const handleChat = async (event, receiver_user) => {
         event.stopPropagation();
         event.preventDefault();
         try {
-            const participantIds = [user.user.id, user.user.id];
+            let participantIds;
+            if (user.user.role === 'owner') {
+                participantIds = [user.user.id, receiver_user.user.id];
+            }
             const response = await getConversationsByParticipants(participantIds);
             let conversationId;
 

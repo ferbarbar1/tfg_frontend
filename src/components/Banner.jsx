@@ -50,7 +50,7 @@ export function Banner({ onMenuClick }) {
                                 </Tooltip>
                             </Link>
                             <Link to="/chat" style={{ color: '#ecf0f1' }}>
-                                <Tooltip title={t('banner_chat')}>
+                                <Tooltip title={t('banner_chats')}>
                                     <ChatIcon sx={{ marginLeft: 2 }} />
                                 </Tooltip>
                             </Link>

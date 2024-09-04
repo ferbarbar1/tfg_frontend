@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, TextField, List, ListItem, ListItemText, Divider, Typography, Paper, IconButton } from '@mui/material';
+import { Box, TextField, List, ListItem, ListItemText, Divider, Typography, Paper, IconButton, Tooltip } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SendIcon from '@mui/icons-material/Send';
 import { getMessagesByConversationId, createMessage, getConversationById } from '../../api/conversations.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { getUserById } from '../../api/users.api';
+import { useTranslation } from 'react-i18next';
 
-export const Conversation = () => {
+export const Conversation = ({ refreshConversations }) => {
     const { conversationId } = useParams();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
@@ -16,6 +17,7 @@ export const Conversation = () => {
     const { user } = useContext(AuthContext);
     const messagesEndRef = useRef(null);
     const messagesContainerRef = useRef(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -59,6 +61,7 @@ export const Conversation = () => {
             setNewMessage('');
             const response = await getMessagesByConversationId(conversationId);
             setMessages(response.data);
+            refreshConversations();
         } catch (error) {
             console.error(error);
         }
@@ -77,9 +80,9 @@ export const Conversation = () => {
         <Box display="flex" flexDirection="column" height="85vh" maxWidth="md" mx="auto">
             <Box display="flex" justifyContent="space-between" alignItems="center" padding={2} bgcolor="#f5f5f5">
                 <Typography variant="h5" textAlign="center" gutterBottom>
-                    Chat with: {receiver ? receiver.username : 'Loading...'}
+                    {t('chat_with')}: {receiver ? receiver.username : t('loading')}
                 </Typography>
-                <IconButton onClick={handleReload} aria-label="reload">
+                <IconButton onClick={handleReload} aria-label={t('reload')}>
                     <RefreshIcon />
                 </IconButton>
             </Box>
@@ -89,7 +92,7 @@ export const Conversation = () => {
                         {messages.length === 0 ? (
                             <ListItem>
                                 <ListItemText
-                                    primary={<Typography variant="body1" color="textSecondary" textAlign="center">No messages yet</Typography>}
+                                    primary={<Typography variant="body1" color="textSecondary" textAlign="center">{t('no_messages_yet')}</Typography>}
                                 />
                             </ListItem>
                         ) : (
@@ -128,7 +131,7 @@ export const Conversation = () => {
                     <TextField
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type a message"
+                        placeholder={t('type_a_message')}
                         fullWidth
                         variant="outlined"
                         margin="none"
@@ -139,13 +142,15 @@ export const Conversation = () => {
                             }
                         }}
                     />
-                    <IconButton
-                        onClick={handleSendMessage}
-                        color="primary"
-                        disabled={newMessage.trim() === ''}
-                    >
-                        <SendIcon />
-                    </IconButton>
+                    <Tooltip title={t('send_message')} placement='top'>
+                        <IconButton
+                            onClick={handleSendMessage}
+                            color="primary"
+                            disabled={newMessage.trim() === ''}
+                        >
+                            <SendIcon />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
             </Box>
         </Box>

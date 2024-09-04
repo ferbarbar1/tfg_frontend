@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Box, Grid } from '@mui/material';
 import { ConversationsList } from '../../components/chat/ConversationsList';
 import { Conversation } from '../../components/chat/Conversation';
@@ -14,21 +14,25 @@ export const ChatPage = () => {
         setConversations(loadedConversations);
     };
 
+    const refreshConversations = useCallback(() => {
+        handleConversationsLoaded(conversations);
+    }, [conversations]);
+
     return (
         <Box sx={{ height: '100vh', width: '100%' }}>
             <Grid container>
-                <Grid item xs={12} md={conversations.length > 0 ? 4 : 12} sx={{ ml: 2 }}>
+                <Grid item xs={12} md={4} sx={{ ml: 2 }}>
                     <ConversationsList onConversationsLoaded={handleConversationsLoaded} />
                 </Grid>
-                {conversations.length > 0 && (
-                    <Grid item xs={12} md={7}>
-                        {conversationId ? (
-                            <Conversation />
-                        ) : (
-                            <Box p={3}>{t('select_conversation')}</Box>
-                        )}
-                    </Grid>
-                )}
+                <Grid item xs={12} md={7}>
+                    {conversationId ? (
+                        <Conversation refreshConversations={refreshConversations} />
+                    ) : (
+                        <Box p={3}>
+                            {conversations.length > 0 ? t('select_conversation') : t('no_conversations')}
+                        </Box>
+                    )}
+                </Grid>
             </Grid>
         </Box>
     );

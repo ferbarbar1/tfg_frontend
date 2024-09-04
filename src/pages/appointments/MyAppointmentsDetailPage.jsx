@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getAppointment } from '../../api/appointments.api';
-import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Modal } from '@mui/material';
+import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Modal, IconButton, Tooltip } from '@mui/material';
 import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
 import { InformForm } from '../../components/informs/InformForm';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export function MyAppointmentsDetailPage() {
     const { t } = useTranslation();
@@ -67,7 +68,7 @@ export function MyAppointmentsDetailPage() {
         <Card>
             <CardContent>
                 <Typography variant="h5" component="div" gutterBottom align="center">
-                    {t('details')}
+                    {t('appointment_details')}
                 </Typography>
                 <Divider sx={{ marginBottom: 3, bgcolor: 'black' }} />
                 <Grid container spacing={2}>
@@ -80,15 +81,15 @@ export function MyAppointmentsDetailPage() {
                                 disabled
                                 InputProps={{
                                     endAdornment: (
-                                        <Button
-                                            component={Link}
-                                            to={`/profile/${appointment.client.id}`}
-                                            variant="contained"
-                                            color="primary"
-                                            size="small"
-                                        >
-                                            {t('view_profile')}
-                                        </Button>
+                                        <Tooltip title={t('view_profile')}>
+                                            <IconButton
+                                                component={Link}
+                                                to={`/profile/${appointment.client.id}`}
+                                                color="primary"
+                                            >
+                                                <AccountCircleIcon />
+                                            </IconButton>
+                                        </Tooltip>
                                     ),
                                 }}
                             />
@@ -103,15 +104,15 @@ export function MyAppointmentsDetailPage() {
                                 disabled
                                 InputProps={{
                                     endAdornment: (
-                                        <Button
-                                            component={Link}
-                                            to={`/profile/${appointment.worker.id}`}
-                                            variant="contained"
-                                            color="primary"
-                                            size="small"
-                                        >
-                                            {t('view_profile')}
-                                        </Button>
+                                        <Tooltip title={t('view_profile')}>
+                                            <IconButton
+                                                component={Link}
+                                                to={`/profile/${appointment.worker.id}`}
+                                                color="primary"
+                                            >
+                                                <AccountCircleIcon />
+                                            </IconButton>
+                                        </Tooltip>
                                     ),
                                 }}
                             />
@@ -197,7 +198,7 @@ export function MyAppointmentsDetailPage() {
                     {appointment.inform !== null && (
                         <Button variant="contained" color="primary" sx={{ marginRight: 1 }} onClick={handleShowInform}>{t('show_inform')}</Button>
                     )}
-                    <Button variant="contained" color="error" onClick={() => navigate('/my-appointments')}>{t('back')}</Button>
+                    <Button variant="contained" color="error" onClick={() => navigate('/my-appointments')}>{t('back_button')}</Button>
                 </Box>
             </CardContent>
         </Card>

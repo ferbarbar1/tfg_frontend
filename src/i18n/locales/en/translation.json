@@ -2,9 +2,9 @@
     "banner_welcome": "Hello",
     "banner_profile": "Profile",
     "banner_chats": "Chats",
-    "banner_otifications": "Notifications",
+    "banner_notifications": "Notifications",
     "banner_menu": "Menu",
-    "banner_language": "Language",
+    "banner_language": "App language",
     "sidebar_home": "Home",
     "sidebar_users": "Users",
     "sidebar_services": "Services",
@@ -203,5 +203,11 @@
     "logo_alt": "App logo",
     "sign_up": "Sign up",
     "login": "Login",
-    "enter_registered_email": "Please enter the email you registered with to reset your password."
+    "enter_registered_email": "Please enter the email you registered with to reset your password.",
+    "appointment_details": "Appointment details",
+    "chat_with": "Chat with",
+    "reload": "Reload",
+    "no_messages_yet": "No messages yet",
+    "type_a_message": "Type a message",
+    "send_message": "Send message"
 }

@@ -97,6 +97,8 @@ export function ConversationsList({ onConversationsLoaded }) {
         return receiver && receiver.username.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
+    console.log(user.user.id);
+    console.log(filteredConversations);
     return (
         <Box sx={{ mr: 3, ml: 3 }}>
             {filteredConversations.length > 1 && (

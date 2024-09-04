@@ -15,7 +15,6 @@ export function InvoicesChart() {
             try {
                 const response = await getAllInvoices();
                 const data = response.data;
-                console.log(data);
 
                 const uniqueYears = [...new Set(data.map(invoice => new Date(invoice.date).getFullYear()))];
                 setYears(uniqueYears);
