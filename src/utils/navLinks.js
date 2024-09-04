@@ -50,7 +50,7 @@ export const NAVLINKS = [
     name: "Resources",
     path: "/resources",
     icon: faFolder,
-    public: ["owner", "worker", "client"],
+    roles: ["owner", "worker", "client"],
   },
   {
     name: "Analytics",

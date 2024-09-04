@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Typography, Box } from '@mui/material';
+import { TextField, Button, Typography, Box, Container, Paper, Alert, Divider } from '@mui/material';
 import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
@@ -38,30 +38,39 @@ export const ChangePasswordAuth = () => {
     };
 
     return (
-        <Box>
-            <Typography variant="h4">{t('change_password')}</Typography>
-            {error && <Typography color="error">{error}</Typography>}
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    label={t('new_password')}
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    required
-                    sx={{ my: 2 }}
-                />
-                <TextField
-                    label={t('confirm_new_password')}
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    fullWidth
-                    required
-                    sx={{ my: 2 }}
-                />
-                <Button variant="contained" color="primary" type="submit">{t('change_password')}</Button>
-            </form>
-        </Box>
+        <Container maxWidth="sm">
+            <Paper elevation={3} sx={{ padding: 4, marginTop: 8 }}>
+                <Typography variant="h4" align="center" gutterBottom>
+                    {t('change_password')}
+                </Typography>
+                {error && <Alert severity="error" sx={{ marginBottom: 2 }}>{error}</Alert>}
+                <Divider sx={{ marginBottom: 2 }} />
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        label={t('new_password')}
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                        required
+                        sx={{ marginBottom: 2 }}
+                    />
+                    <TextField
+                        label={t('confirm_new_password')}
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        fullWidth
+                        required
+                        sx={{ marginBottom: 2 }}
+                    />
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Button variant="contained" color="primary" type="submit">
+                            {t('change_password')}
+                        </Button>
+                    </Box>
+                </form>
+            </Paper>
+        </Container>
     );
 };

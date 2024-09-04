@@ -105,7 +105,7 @@ export const MedicalHistoriesList = ({ user }) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 3 }}>
-            {authenticatedUser.id === user.user.id && (
+            {authenticatedUser.user.id === user.user.id && (
                 <Button variant="contained" color="primary" sx={{ mb: 2 }} onClick={() => { setIsUpdate(false); setShowModal(true); }}>
                     {t('add_button')}
                 </Button>
