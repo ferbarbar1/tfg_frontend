@@ -66,10 +66,13 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
             </Typography>
             <Divider sx={{ my: 2, bgcolor: "grey" }} />
             {isUpdate && (
-                <Alert severity="info" className="mb-3">
+                <Alert severity="warning" className="mb-3">
                     {t('update_rating_info')}
                 </Alert>
             )}
+            <Alert severity="info" className="mb-3">
+                {t('anonymous_rating_info')}
+            </Alert>
             <Box sx={{ mb: 2, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <Typography variant="subtitle1" sx={{ mr: 2 }}>{t('rate_label')}:</Typography>
                 <Rating

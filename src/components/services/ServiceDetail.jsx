@@ -34,12 +34,6 @@ export function ServiceDetail() {
                 setService(serviceData);
                 setWorkers(serviceData.workers);
 
-                if (activeOffer && activeOffer.services.includes(Number(id))) {
-                    const discount = activeOffer.discount / 100;
-                    const discountedPrice = (serviceData.price * (1 - discount)).toFixed(2);
-                    setService(prevService => ({ ...prevService, discountedPrice }));
-                }
-
                 const appointmentsResponse = await getAppointmentsByService(id);
                 const ratingsArray = [];
                 for (let appointment of appointmentsResponse.data) {
@@ -47,10 +41,19 @@ export function ServiceDetail() {
                     ratingsArray.push(...ratingsResponse.data);
                 }
                 setRatings(ratingsArray);
+
                 if (ratingsArray.length > 0) {
                     const average = ratingsArray.reduce((acc, rating) => acc + Number(rating.rate), 0) / ratingsArray.length;
                     setAvgRating(average);
                 }
+
+                // Procesa las ofertas aplicables
+                if (activeOffer && activeOffer.services.includes(Number(id))) {
+                    const discount = activeOffer.discount / 100;
+                    const discountedPrice = (serviceData.price * (1 - discount)).toFixed(2);
+                    setService(prevService => ({ ...prevService, discountedPrice }));
+                }
+
                 setLoading(false);
             } catch (error) {
                 console.error(error);
@@ -80,13 +83,13 @@ export function ServiceDetail() {
                             <Grid container spacing={4}>
                                 <Grid item xs={12} md={4} container justifyContent="center" alignItems="center" sx={{ ml: 2 }}>
                                     <img src={service.image} alt={service.name} style={{ maxWidth: '100%', height: 'auto', marginBottom: '20px' }} />
-                                    {service.discountedPrice ? (
+                                    {service.discounted_price ? (
                                         <Box textAlign="center" sx={{ ml: 2 }}>
                                             <Typography variant="h6" style={{ textDecoration: 'line-through', color: 'red' }}>
-                                                {t('original_price')}: {service.price} €/hour
+                                                {t('original_price')}: {service.price} {t('€_hour')}
                                             </Typography>
                                             <Typography variant="h5" style={{ color: 'green' }}>
-                                                <LocalOfferIcon /> {t('discounted_price')}: {service.discountedPrice} €/hour
+                                                <LocalOfferIcon /> {t('discounted_price')}: {parseFloat(service.discounted_price).toFixed(2)} {t('€_hour')}
                                             </Typography>
                                         </Box>
                                     ) : (

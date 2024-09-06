@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { List, ListItemIcon, ListItemText, ListItemButton, Divider, useTheme } from '@mui/material';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NAVLINKS } from "../utils/navLinks";
 import { AuthContext } from '../contexts/AuthContext';
@@ -80,7 +80,7 @@ export function Sidebar({ open }) {
                         marginTop: '12px',
                     }}>
                         <ListItemIcon sx={{ color: '#ecf0f1' }}>
-                            <ExitToAppIcon sx={{ fontSize: 24 }} />
+                            <LogoutIcon sx={{ fontSize: 24 }} />
                         </ListItemIcon>
                         <div style={{ height: '20px', display: 'flex', alignItems: 'center' }}>
                             {open && <ListItemText primary={t('sidebar_logout')} />}

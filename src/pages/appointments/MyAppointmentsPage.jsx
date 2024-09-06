@@ -3,13 +3,16 @@ import { getAppointmentsByWorker, getAppointmentsByClient } from '../../api/appo
 import { createConversation, getConversationsByParticipants } from '../../api/conversations.api';
 import { AuthContext } from '../../contexts/AuthContext';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, IconButton, Tooltip } from '@mui/material';
+import { Box, useMediaQuery, Tabs, Tab, TextField, MenuItem, InputLabel, FormControl, Select, IconButton, Tooltip, Modal } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import ChatIcon from '@mui/icons-material/Chat';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import VideoCallIcon from '@mui/icons-material/VideoCall';
 import { styled } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
 
 const StyledDataGrid = styled(DataGrid)({
     backgroundColor: '#FFFFFF',
@@ -48,6 +51,10 @@ export const MyAppointmentsPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
+
+    const [showModal, setShowModal] = useState(false);
+    const [appointmentId, setAppointmentId] = useState(null);
+    const [isUpdate, setIsUpdate] = useState(false);
 
     useEffect(() => {
         const fetchAppointments = async () => {
@@ -134,6 +141,24 @@ export const MyAppointmentsPage = () => {
         }
     };
 
+    const handleStartVideoCall = (event, appointmentId) => {
+        event.stopPropagation();
+        event.preventDefault();
+        navigate(`/appointments/${appointmentId}/video-call`);
+    };
+
+    const handleRateAppointment = (event, appointmentId) => {
+        event.stopPropagation();
+        event.preventDefault();
+        setAppointmentId(appointmentId);
+        setIsUpdate(true);
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
     const columns = [
         {
             field: 'service',
@@ -191,11 +216,31 @@ export const MyAppointmentsPage = () => {
             align: 'center',
             headerAlign: 'center',
             renderCell: (params) => (
-                <Tooltip title={t('chat_button')}>
-                    <IconButton aria-label={t('chat_button')} onClick={(event) => handleChat(event, params.row)}>
-                        <ChatIcon />
-                    </IconButton>
-                </Tooltip>
+                <Box>
+                    {params.row.status === 'CONFIRMED' && (
+                        <>
+                            <Tooltip title={t('chat_button')}>
+                                <IconButton aria-label={t('chat_button')} onClick={(event) => handleChat(event, params.row)}>
+                                    <ChatIcon color='primary' />
+                                </IconButton>
+                            </Tooltip>
+                            {params.row.modality === 'VIRTUAL' && (
+                                <Tooltip title={t('join_video_call')}>
+                                    <IconButton aria-label={t('join_video_call')} onClick={(event) => handleStartVideoCall(event, params.row.appointmentId)}>
+                                        <VideoCallIcon color='secondary' />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                        </>
+                    )}
+                    {params.row.status === 'COMPLETED' && user.user.role === 'client' && (
+                        <Tooltip title={t('rate_button')}>
+                            <IconButton aria-label={t('rate_button')} onClick={(event) => handleRateAppointment(event, params.row.appointmentId)}>
+                                <ThumbUpOffAltIcon color='primary' />
+                            </IconButton>
+                        </Tooltip>
+                    )}
+                </Box>
             )
         }
     ].filter(Boolean);
@@ -443,6 +488,24 @@ export const MyAppointmentsPage = () => {
                     </Box>
                 </TabPanel>
             )}
+            <Modal
+                open={showModal}
+                onClose={closeModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={{
+                    width: '100%',
+                    maxWidth: '400px',
+                    margin: 'auto',
+                    bgcolor: 'background.paper',
+                    boxShadow: 24,
+                    p: 4,
+                    mt: 6
+                }}>
+                    <RateAppointmentForm appointmentId={appointmentId} closeModal={closeModal} isUpdate={isUpdate} />
+                </Box>
+            </Modal>
         </Box>
     );
 };

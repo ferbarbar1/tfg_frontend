@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { deleteOffer, getAllOffers } from '../../api/offers.api';
 import { truncateText } from '../../utils/auxFunctions';
 import { useTranslation } from 'react-i18next';
+import { AuthContext } from '../../contexts/AuthContext';
 
 export function OffersList() {
     const { t } = useTranslation();
@@ -16,6 +17,7 @@ export function OffersList() {
     const offersPerPage = 4;
     const [sortCriteria, setSortCriteria] = useState('date');
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
 
     useEffect(() => {
         async function fetchOffers() {
@@ -62,6 +64,8 @@ export function OffersList() {
             return a.name.localeCompare(b.name);
         } else if (sortCriteria === 'status') {
             return isOfferActive(b) - isOfferActive(a);
+        } else if (sortCriteria === 'discount') {
+            return b.discount - a.discount;
         }
         return 0;
     });
@@ -97,10 +101,13 @@ export function OffersList() {
                             <MenuItem value="date">{t('date')}</MenuItem>
                             <MenuItem value="name">{t('name_label')}</MenuItem>
                             <MenuItem value="status">{t('status_label')}</MenuItem>
+                            <MenuItem value="discount">{t('discount_label')}</MenuItem>
                         </Select>
                     </FormControl>
                 )}
-                <Button variant="contained" sx={{ ml: 2 }} onClick={handleCreateOffer}>{t('create_button')}</Button>
+                {user.user.role === 'owner' &&
+                    <Button variant="contained" sx={{ ml: 2 }} onClick={handleCreateOffer}>{t('create_button')}</Button>
+                }
             </Box>
             {currentOffers.length > 0 ? (
                 currentOffers.map((offer, index) => (
@@ -127,34 +134,40 @@ export function OffersList() {
                                         )}
                                     </Tooltip>
                                 </Typography>
-                                <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }}>
-                                    {truncateText(offer.description, 40)}
+                                <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }} title={offer.description}>
+
+                                    {user.user.role === 'owner' ?
+                                        truncateText(offer.description, 40) :
+                                        offer.description
+                                    }
                                 </Typography>
-                                <Typography variant="body2" sx={{ color: '#888', marginTop: 1 }}>
+                                <Typography variant="body1" sx={{ color: '#888', marginTop: 1 }}>
                                     {t('discount_label')}: <strong>{offer.discount}%</strong>
                                 </Typography>
-                                <Typography variant="body2" sx={{ color: '#888' }}>
+                                <Typography variant="body1" sx={{ color: '#888' }}>
                                     {t('period_label')}: {new Date(offer.start_date).toLocaleString()} - {new Date(offer.end_date).toLocaleString()}
                                 </Typography>
-                                <Typography variant="body2" sx={{ color: '#888' }}>
+                                <Typography variant="body1" sx={{ color: '#888' }}>
                                     {t('services_label')}:{' '}
                                     <strong>
                                         {offer.services.map(service => service.name).join(', ')}
                                     </strong>
                                 </Typography>
                             </Grid>
-                            <Grid item xs={12} sm={3} container justifyContent="flex-end">
-                                <Tooltip title={t('edit_button')}>
-                                    <IconButton color="primary" aria-label={t('edit_button')} onClick={() => handleEdit(offer.id)}>
-                                        <EditIcon />
-                                    </IconButton>
-                                </Tooltip>
-                                <Tooltip title={t('delete_button')}>
-                                    <IconButton color="default" aria-label={t('delete_button')} onClick={() => handleDelete(offer.id)}>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            </Grid>
+                            {user.user.role === 'owner' && (
+                                <Grid item xs={12} sm={3} container justifyContent="flex-end">
+                                    <Tooltip title={t('edit_button')}>
+                                        <IconButton color="primary" aria-label={t('edit_button')} onClick={() => handleEdit(offer.id)}>
+                                            <EditIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title={t('delete_button')}>
+                                        <IconButton color="default" aria-label={t('delete_button')} onClick={() => handleDelete(offer.id)}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                            )}
                         </Grid>
                     </Paper>
                 ))

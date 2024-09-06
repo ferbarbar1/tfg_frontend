@@ -39,7 +39,7 @@ export const RatingsServiceList = ({ ratings }) => {
                     <Box key={index} mt={3} mb={3} p={2} bgcolor="grey.100" borderRadius="borderRadius">
                         <Grid container>
                             <Grid item xs={12} sm={6}>
-                                <Typography variant="body1"><strong>{rating.client.user.username}</strong>: {rating.opinion}</Typography>
+                                <Typography variant="body1"><strong>{t('anonymous_user')}</strong>: {rating.opinion}</Typography>
                             </Grid>
                         </Grid>
                         <Box display="flex" alignItems="center" mt={1}>
@@ -58,9 +58,6 @@ export const RatingsServiceList = ({ ratings }) => {
             ) : (
                 <Typography variant="body1" align="center" style={{ color: 'grey' }}>{t('no_ratings_yet')}</Typography>
             )}
-            <Box mt={2} display="flex" justifyContent="center">
-                <Button variant="contained" color="error" onClick={() => navigate(-1)}>{t('back')}</Button>
-            </Box>
         </Box>
     );
 };

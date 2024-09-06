@@ -110,106 +110,110 @@ export const MedicalHistoriesList = ({ user }) => {
                     {t('add_button')}
                 </Button>
             )}
+            {currentHistories.length > 0 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                    <FormControl sx={{ mr: 2 }}>
+                        <InputLabel id="sort-label">{t('order_by')}</InputLabel>
+                        <Select
+                            labelId="sort-label"
+                            value={sortCriteria}
+                            onChange={handleSortChange}
+                            label={t('order_by')}
+                        >
+                            <MenuItem value="date">{t('date')}</MenuItem>
+                            <MenuItem value="title">{t('title')}</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        label={t('start_date')}
+                        type="date"
+                        InputLabelProps={{ shrink: true }}
+                        value={startDate || ''}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        sx={{ mr: 2 }}
+                    />
+                    <TextField
+                        label={t('end_date')}
+                        type="date"
+                        InputLabelProps={{ shrink: true }}
+                        value={endDate || ''}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        sx={{ mr: 2 }}
+                    />
+                    {(startDate || endDate) &&
+                        <Tooltip title={t('clear_button')}>
+                            <IconButton color="default" onClick={handleClearFilters}>
+                                <ClearIcon />
+                            </IconButton>
+                        </Tooltip>
+                    }
+
+                </Box>
+            )}
             {currentHistories.length > 0 ? (
                 currentHistories.map((history, index) => (
-                    <>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                            <FormControl sx={{ mr: 2 }}>
-                                <InputLabel id="sort-label">{t('order_by')}</InputLabel>
-                                <Select
-                                    labelId="sort-label"
-                                    value={sortCriteria}
-                                    onChange={handleSortChange}
-                                    label={t('order_by')}
+
+                    <Paper
+                        key={index}
+                        elevation={3}
+                        sx={{
+                            padding: 3,
+                            marginBottom: 3,
+                            borderRadius: 2,
+                            backgroundColor: '#fff',
+                            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                            width: '100%',
+                            maxWidth: '600px'
+                        }}
+                    >
+                        <Grid container alignItems="center" spacing={2}>
+                            <Grid item xs={12} sm={8}>
+                                <Typography
+                                    variant="h5"
+                                    sx={{ fontWeight: 'bold', color: '#1976d2' }}
+                                    title={history.title}
                                 >
-                                    <MenuItem value="date">{t('date')}</MenuItem>
-                                    <MenuItem value="title">{t('title')}</MenuItem>
-                                </Select>
-                            </FormControl>
-                            <TextField
-                                label={t('start_date')}
-                                type="date"
-                                InputLabelProps={{ shrink: true }}
-                                value={startDate || ''}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                sx={{ mr: 2 }}
-                            />
-                            <TextField
-                                label={t('end_date')}
-                                type="date"
-                                InputLabelProps={{ shrink: true }}
-                                value={endDate || ''}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                sx={{ mr: 2 }}
-                            />
-                            <Tooltip title={t('clear_button')}>
-                                <IconButton color="default" onClick={handleClearFilters}>
-                                    <ClearIcon />
-                                </IconButton>
-                            </Tooltip>
-                        </Box>
-                        <Paper
-                            key={index}
-                            elevation={3}
-                            sx={{
-                                padding: 3,
-                                marginBottom: 3,
-                                borderRadius: 2,
-                                backgroundColor: '#fff',
-                                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                                width: '100%',
-                                maxWidth: '600px'
-                            }}
-                        >
-                            <Grid container alignItems="center" spacing={2}>
-                                <Grid item xs={12} sm={8}>
-                                    <Typography
-                                        variant="h5"
-                                        sx={{ fontWeight: 'bold', color: '#1976d2' }}
-                                        title={history.title}
-                                    >
-                                        {truncateText(history.title, 10)}
-                                    </Typography>
-                                    <Typography
-                                        variant="subtitle1"
-                                        title={history.description}
-                                    >
-                                        {truncateText(history.description, 40)}
-                                    </Typography>
-                                    <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }}>
-                                        {history.date}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={4} container justifyContent="flex-end">
-                                    {history.medical_report && (
-                                        <Tooltip title={t('view_report')}>
-                                            <IconButton
-                                                color="primary"
-                                                aria-label={t('view_report')}
-                                                onClick={() => window.open(history.medical_report, '_blank')}
-                                            >
-                                                <PictureAsPdfIcon />
+                                    {truncateText(history.title, 10)}
+                                </Typography>
+                                <Typography
+                                    variant="subtitle1"
+                                    title={history.description}
+                                >
+                                    {truncateText(history.description, 40)}
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }}>
+                                    {history.date}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={4} container justifyContent="flex-end">
+                                {history.medical_report && (
+                                    <Tooltip title={t('view_report')}>
+                                        <IconButton
+                                            color="primary"
+                                            aria-label={t('view_report')}
+                                            onClick={() => window.open(history.medical_report, '_blank')}
+                                        >
+                                            <PictureAsPdfIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                )}
+                                {authenticatedUser.user.id === user.user.id && (
+                                    <>
+                                        <Tooltip title={t('edit')}>
+                                            <IconButton color="primary" aria-label={t('edit')} onClick={() => { setHistoryId(history.id); setIsUpdate(true); setShowModal(true); }}>
+                                                <EditIcon />
                                             </IconButton>
                                         </Tooltip>
-                                    )}
-                                    {authenticatedUser.user.id === user.user.id && (
-                                        <>
-                                            <Tooltip title={t('edit')}>
-                                                <IconButton color="primary" aria-label={t('edit')} onClick={() => { setHistoryId(history.id); setIsUpdate(true); setShowModal(true); }}>
-                                                    <EditIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title={t('delete')}>
-                                                <IconButton color="default" aria-label={t('delete')} onClick={() => handleDelete(history.id)}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </>
-                                    )}
-                                </Grid>
+                                        <Tooltip title={t('delete')}>
+                                            <IconButton color="default" aria-label={t('delete')} onClick={() => handleDelete(history.id)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </>
+                                )}
                             </Grid>
-                        </Paper>
-                    </>
+                        </Grid>
+                    </Paper>
                 ))
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>

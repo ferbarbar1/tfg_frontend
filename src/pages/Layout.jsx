@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Box, CssBaseline, useMediaQuery, useTheme, Alert } from '@mui/material';
+import { Box, CssBaseline, useMediaQuery, useTheme, Alert, Link } from '@mui/material';
 import { Sidebar } from '../components/Sidebar';
 import { Banner } from '../components/Banner';
 import Stack from 'react-stackai';
 import { AuthContext } from '../contexts/AuthContext';
 import { OffersContext } from '../contexts/OffersContext';
-
+import { useTranslation } from 'react-i18next';
 
 export function Layout({ children }) {
     const theme = useTheme();
@@ -13,6 +13,7 @@ export function Layout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
     const { user, token } = useContext(AuthContext);
     const { activeOffer } = useContext(OffersContext);
+    const { t } = useTranslation();
 
     useEffect(() => {
         setSidebarOpen(!isMobile);
@@ -44,7 +45,7 @@ export function Layout({ children }) {
             >
                 {activeOffer && user && user.user.role === "client" && (
                     <Alert variant="filled" severity="info" sx={{ mb: 3 }}>
-                        ¡Oferta activa! Descuento del {activeOffer.discount}% en algunos servicios desde el {new Date(activeOffer.start_date).toLocaleDateString()} hasta el {new Date(activeOffer.end_date).toLocaleDateString()}.
+                        {t('alert_message')} <Link href="/offers" color="inherit" underline="always">{t('click_here')}</Link>
                     </Alert>
                 )}
                 {children}

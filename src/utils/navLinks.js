@@ -44,7 +44,7 @@ export const NAVLINKS = [
     name: "Offers",
     path: "/offers",
     icon: faPercent,
-    roles: ["owner"],
+    roles: ["owner", "client"],
   },
   {
     name: "Resources",
