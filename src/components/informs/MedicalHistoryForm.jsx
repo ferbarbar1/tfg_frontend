@@ -11,6 +11,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
+    const [isModified, setIsModified] = useState(false);
 
     useEffect(() => {
         if (isUpdate) {
@@ -30,6 +31,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
 
     const onDrop = (acceptedFiles) => {
         setSelectedFile(acceptedFiles[0]);
+        setIsModified(true);
     };
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -37,6 +39,16 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
         accept: 'application/pdf',
         maxFiles: 1
     });
+
+    const handleTitleChange = (event) => {
+        setTitle(event.target.value);
+        setIsModified(true);
+    };
+
+    const handleDescriptionChange = (event) => {
+        setDescription(event.target.value);
+        setIsModified(true);
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -75,7 +87,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                 label={t('title')}
                 name="title"
                 value={title}
-                onChange={(event) => setTitle(event.target.value)}
+                onChange={handleTitleChange}
             />
             <TextField
                 margin="normal"
@@ -87,7 +99,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                 multiline
                 rows={4}
                 value={description}
-                onChange={(event) => setDescription(event.target.value)}
+                onChange={handleDescriptionChange}
             />
             <Box {...getRootProps()} sx={{ border: '2px dashed grey', padding: '20px', textAlign: 'center', marginTop: '16px' }}>
                 <input {...getInputProps()} />
@@ -98,13 +110,24 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                 )}
             </Box>
             <Box sx={{ mt: 3, mb: 2, display: 'flex', justifyContent: 'center' }}>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                >
-                    {isUpdate ? t('update_button') : t('save_button')}
-                </Button>
+                {isUpdate && isModified && (
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                    >
+                        {t('update_button')}
+                    </Button>
+                )}
+                {!isUpdate && (
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                    >
+                        {t('save_button')}
+                    </Button>
+                )}
                 <Button
                     variant="contained"
                     color="error"

@@ -1,22 +1,50 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { cancelAppointment } from '../../api/appointments.api';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getAppointment } from '../../api/appointments.api';
-import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Modal, IconButton, Tooltip } from '@mui/material';
+import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Dialog, DialogActions, DialogContent, DialogContentText, CircularProgress, IconButton, Tooltip } from '@mui/material';
 import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
 import { InformForm } from '../../components/informs/InformForm';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useAlert } from '../../contexts/AlertContext';
 
 export function MyAppointmentsDetailPage() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { id } = useParams();
     const { user } = useContext(AuthContext);
+    const { showAlert } = useAlert();
     const [appointment, setAppointment] = useState(null);
     const [appointmentId, setAppointmentId] = useState(null);
     const [isUpdate, setIsUpdate] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showCancelDialog, setShowCancelDialog] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
+
+    const handleCancelAppointment = async () => {
+        setIsCancelling(true);
+        try {
+            await cancelAppointment(appointment.id);
+            setShowCancelDialog(false);
+            showAlert(t('appointment_cancelled_success'), 'success');
+            navigate('/my-appointments');
+        } catch (error) {
+            console.error('Error cancelling appointment:', error);
+            showAlert(t('appointment_cancelled_error'), 'error');
+        } finally {
+            setIsCancelling(false);
+        }
+    };
+
+    const openCancelDialog = () => {
+        setShowCancelDialog(true);
+    };
+
+    const closeCancelDialog = () => {
+        setShowCancelDialog(false);
+    };
 
     useEffect(() => {
         const fetchAppointment = async () => {
@@ -49,7 +77,11 @@ export function MyAppointmentsDetailPage() {
     }, [id]);
 
     if (!appointment) {
-        return <div>{t('loading')}</div>;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     const closeModal = () => {
@@ -198,8 +230,30 @@ export function MyAppointmentsDetailPage() {
                     {appointment.inform !== null && (
                         <Button variant="contained" color="primary" sx={{ marginRight: 1 }} onClick={handleShowInform}>{t('show_inform')}</Button>
                     )}
-                    <Button variant="contained" color="error" onClick={() => navigate('/my-appointments')}>{t('back_button')}</Button>
+                    {user.user.role === 'client' && appointment.status === 'CONFIRMED' && (
+                        <Button variant="contained" color="error" onClick={openCancelDialog}>
+                            {t('cancel_appointment')}
+                        </Button>
+                    )}
                 </Box>
+                <Dialog
+                    open={showCancelDialog}
+                    onClose={closeCancelDialog}
+                    aria-labelledby="cancel-dialog-title"
+                    aria-describedby="cancel-dialog-description"
+                >
+                    <DialogContent>
+                        <DialogContentText id="cancel-dialog-description">
+                            {t('confirm_cancel_appointment')}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions sx={{ justifyContent: 'center' }}>
+                        <Button onClick={closeCancelDialog} disabled={isCancelling}>{t('no')}</Button>
+                        <Button color="error" onClick={handleCancelAppointment} disabled={isCancelling}>
+                            {isCancelling ? <CircularProgress size={24} /> : t('yes_cancel')}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </CardContent>
         </Card>
     );

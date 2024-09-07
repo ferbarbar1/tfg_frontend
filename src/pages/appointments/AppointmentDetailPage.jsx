@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAppointment, deleteAppointment, updateAppointment } from '../../api/appointments.api';
-import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid } from '@mui/material';
+import { Button, TextField, Box, Card, CardContent, Grid, Dialog, DialogActions, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export function AppointmentDetailPage() {
@@ -9,6 +9,8 @@ export function AppointmentDetailPage() {
     const navigate = useNavigate();
     const { id } = useParams();
     const [appointment, setAppointment] = useState(null);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [isModified, setIsModified] = useState(false);
 
     useEffect(() => {
         const fetchAppointment = async () => {
@@ -39,13 +41,22 @@ export function AppointmentDetailPage() {
     }, [id]);
 
     if (!appointment) {
-        return <div>{t('loading')}</div>;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
+        setOpenDialog(true);
+    };
+
+    const confirmDelete = async () => {
         try {
             await deleteAppointment(id);
             navigate('/appointments');
+            setOpenDialog(false);
         } catch (error) {
             console.error(error);
         }
@@ -68,6 +79,7 @@ export function AppointmentDetailPage() {
 
     const handleChange = (field, value) => {
         setAppointment(prev => ({ ...prev, [field]: value }));
+        setIsModified(true);
     };
 
     return (
@@ -93,14 +105,37 @@ export function AppointmentDetailPage() {
                         <TextField fullWidth label={t('status_label')} value={appointment.status} onChange={e => handleChange('status', e.target.value)} />
                     </Grid>
                     <Grid item xs={12} md={6}>
-                        <TextField fullWidth label={t('modality_label')} value={appointment.modality} onChange={e => handleChange('modality', e.target.value)} />
+                        <TextField fullWidth label={t('modality_label')} value={appointment.modality} onChange={e => handleChange('modality', e.target.value)} disabled />
                     </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', justifyContent: 'center', p: 1, marginTop: 2 }}>
-                    <Button variant="contained" color="primary" onClick={handleUpdate} sx={{ marginRight: 1 }}>{t('update_button')}</Button>
+                    {isModified && (
+                        <Button variant="contained" color="primary" onClick={handleUpdate} sx={{ marginRight: 1 }}>{t('update_button')}</Button>
+                    )}
                     <Button variant="contained" color="error" onClick={handleDelete}>{t('delete_button')}</Button>
                 </Box>
             </CardContent>
+
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {t('confirm_delete')}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                    <Button onClick={() => setOpenDialog(false)} color="primary">
+                        {t('cancel_button')}
+                    </Button>
+                    <Button onClick={confirmDelete} color="error" autoFocus>
+                        {t('confirm_button')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Card>
     );
 }

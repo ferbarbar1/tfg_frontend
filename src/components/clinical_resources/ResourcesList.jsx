@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
-import { Box, Button, Grid, IconButton, Typography, Tooltip, Card, CardContent, CardMedia, CardActionArea, TextField, InputAdornment, Avatar } from '@mui/material';
+import { Box, Button, Grid, IconButton, Typography, Tooltip, Card, CardContent, CardMedia, CardActionArea, TextField, InputAdornment, Avatar, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { deleteResource, getAllResources } from '../../api/resources.api';
 import { truncateText } from '../../utils/auxFunctions';
@@ -17,6 +17,8 @@ export function ResourcesList() {
     const [currentPage, setCurrentPage] = useState(1);
     const resourcesPerPage = 6;
     const [searchTerm, setSearchTerm] = useState('');
+    const [openDialog, setOpenDialog] = useState(false);
+    const [resourceToDelete, setResourceToDelete] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -39,10 +41,21 @@ export function ResourcesList() {
         navigate(`/resources/${id}/update/`);
     };
 
-    const handleDelete = async (id) => {
+    const handleOpenDialog = (id) => {
+        setResourceToDelete(id);
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setResourceToDelete(null);
+    };
+
+    const handleDelete = async () => {
         try {
-            await deleteResource(id);
-            setResources(resources.filter(resource => resource.id !== id));
+            await deleteResource(resourceToDelete);
+            setResources(resources.filter(resource => resource.id !== resourceToDelete));
+            handleCloseDialog();
         } catch (error) {
             console.error(error);
         }
@@ -150,12 +163,12 @@ export function ResourcesList() {
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', p: 2 }}>
                                         <Tooltip title={t('edit_button')}>
                                             <IconButton onClick={() => handleEdit(resource.id)}>
-                                                <EditIcon />
+                                                <EditIcon color='info' />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title={t('delete_button')}>
-                                            <IconButton onClick={() => handleDelete(resource.id)}>
-                                                <DeleteIcon />
+                                            <IconButton onClick={() => handleOpenDialog(resource.id)}>
+                                                <DeleteIcon color='error' />
                                             </IconButton>
                                         </Tooltip>
                                     </Box>
@@ -179,6 +192,26 @@ export function ResourcesList() {
                     </Button>
                 </Box>
             )}
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {t('confirm_delete')}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                    <Button onClick={handleCloseDialog} color="primary">
+                        {t('cancel_button')}
+                    </Button>
+                    <Button onClick={handleDelete} color="error" autoFocus>
+                        {t('delete_button')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

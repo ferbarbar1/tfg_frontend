@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, TextField, Box, Link } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 
-export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
+export const LoginForm = ({ closeModal, setToken, openRegisterModal, resetAlert }) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -30,7 +30,6 @@ export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
       // Guarda el token en el contexto
       setToken(token);
       closeModal();
-      navigate('/');
     } catch (error) {
       console.error(error);
     }
@@ -67,12 +66,12 @@ export const LoginForm = ({ closeModal, setToken, openRegisterModal }) => {
       />
 
       <Box textAlign="center">
-        <p>{t('dont_have_account')} <Link href="#" onClick={() => { closeModal(); openRegisterModal(); }}>{t('sign_up_here')}</Link></p>
-        <p>{t('forgot_password')} <Link href="#" onClick={() => { closeModal(); navigate('/password-reset'); }}>{t('reset_it_here')}</Link></p>
+        <p>{t('dont_have_account')} <Link href="#" onClick={() => { closeModal(); resetAlert(); openRegisterModal(); }}>{t('sign_up_here')}</Link></p>
+        <p>{t('forgot_password')} <Link href="#" onClick={() => { closeModal(); resetAlert(); navigate('/password-reset'); }}>{t('reset_it_here')}</Link></p>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
         <Button type="submit" variant="contained" color="primary">{t('login_button')}</Button>
-        <Button type="button" variant="contained" color="error" onClick={closeModal} sx={{ ml: 2 }}>{t('cancel_button')}</Button>
+        <Button type="button" variant="contained" color="error" onClick={() => { closeModal(); resetAlert(); }} sx={{ ml: 2 }}>{t('cancel_button')}</Button>
       </Box>
     </Box>
   );

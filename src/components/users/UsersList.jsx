@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton, TextField, Box, InputAdornment, Tooltip } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, Avatar, IconButton, TextField, Box, InputAdornment, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText, Button } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -29,6 +29,9 @@ export function UsersList({ userType, fetchUsers }) {
     const [orderBy, setOrderBy] = useState('username');
     const [searchTerm, setSearchTerm] = useState('');
     const { user } = useContext(AuthContext);
+
+    const [openDialog, setOpenDialog] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
 
     useEffect(() => {
         async function fetchData() {
@@ -89,11 +92,17 @@ export function UsersList({ userType, fetchUsers }) {
         navigate(`/${userType}/${user.id}/update/`);
     };
 
-    const handleDelete = async (event, user) => {
+    const handleDelete = (event, user) => {
         event.stopPropagation();
+        setUserToDelete(user);
+        setOpenDialog(true);
+    };
+
+    const confirmDelete = async () => {
         try {
-            await deleteUser(user.user.id);
-            setUsers(users.filter(u => u.id !== user.id));
+            await deleteUser(userToDelete.user.id);
+            setUsers(users.filter(u => u.id !== userToDelete.id));
+            setOpenDialog(false);
         } catch (error) {
             console.error(error);
         }
@@ -226,6 +235,27 @@ export function UsersList({ userType, fetchUsers }) {
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
             </TableContainer>
+
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {t('confirm_delete')}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                    <Button onClick={() => setOpenDialog(false)} color="primary">
+                        {t('cancel_button')}
+                    </Button>
+                    <Button onClick={confirmDelete} color="error" autoFocus>
+                        {t('confirm_button')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

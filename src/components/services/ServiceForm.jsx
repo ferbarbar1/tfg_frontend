@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getService, updateService, createService, deleteService } from '../../api/services.api';
 import { getAllWorkers } from '../../api/workers.api';
-import { Container, Box, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, Typography, IconButton, Tooltip } from '@mui/material';
+import { Container, Box, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, Typography, IconButton, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import AttachFile from '@mui/icons-material/AttachFile';
 
@@ -17,6 +17,9 @@ export function ServiceForm({ isUpdate }) {
     const [allWorkers, setAllWorkers] = useState([]);
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const [openDialog, setOpenDialog] = useState(false);
+    const [isModified, setIsModified] = useState(false);
 
     useEffect(() => {
         async function fetchServiceAndWorkers() {
@@ -78,17 +81,44 @@ export function ServiceForm({ isUpdate }) {
         }
     };
 
+    const handleNameChange = (e) => {
+        setName(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+        setIsModified(true);
+    };
+
+    const handlePriceChange = (e) => {
+        setPrice(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleWorkersChange = (e) => {
+        setWorkers(e.target.value);
+        setIsModified(true);
+    };
+
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
         setImagePreviewUrl(URL.createObjectURL(e.target.files[0]));
+        setIsModified(true);
     };
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
+        setOpenDialog(true);
+    };
+
+    const confirmDelete = async () => {
         try {
             await deleteService(id);
             navigate('/services');
         } catch (error) {
             console.error(error);
+        } finally {
+            setOpenDialog(false);
         }
     };
 
@@ -109,9 +139,9 @@ export function ServiceForm({ isUpdate }) {
                                 <form onSubmit={handleSubmit}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
-                                            <TextField label={t('name_label')} value={name} onChange={(e) => setName(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label={t('description_label')} value={description} onChange={(e) => setDescription(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label={t('price_label')} type="number" value={price} onChange={(e) => setPrice(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('name_label')} value={name} onChange={handleNameChange} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('description_label')} value={description} onChange={handleDescriptionChange} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('price_label')} type="number" value={price} onChange={handlePriceChange} required fullWidth sx={{ mb: 2 }} />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormControl fullWidth required sx={{ mb: 2 }}>
@@ -120,7 +150,7 @@ export function ServiceForm({ isUpdate }) {
                                                     labelId="workers-label"
                                                     multiple
                                                     value={workers}
-                                                    onChange={(e) => setWorkers(e.target.value)}
+                                                    onChange={handleWorkersChange}
                                                     label={t('workers')}
                                                 >
                                                     {allWorkers.map(worker => (
@@ -155,9 +185,17 @@ export function ServiceForm({ isUpdate }) {
                                         </Grid>
                                     </Grid>
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                                        <Button variant="contained" color="primary" type="submit">
-                                            {isUpdate ? t('update_button') : t('create_button')}
-                                        </Button>
+                                        {!isUpdate &&
+                                            <Button variant="contained" color="primary" type="submit">
+                                                {t('create_button')}
+                                            </Button>
+
+                                        }
+                                        {isUpdate && isModified &&
+                                            <Button variant="contained" color="primary" type="submit" sx={{ ml: 2 }}>
+                                                {t('update_button')}
+                                            </Button>
+                                        }
                                         {isUpdate &&
                                             <Button variant="contained" color="error" onClick={handleDelete} sx={{ ml: 2 }}>
                                                 {t('delete_button')}
@@ -173,6 +211,27 @@ export function ServiceForm({ isUpdate }) {
                     </Grid>
                 </Grid>
             </Container>
+
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {t('confirm_delete')}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                    <Button onClick={() => setOpenDialog(false)} color="primary">
+                        {t('cancel_button')}
+                    </Button>
+                    <Button onClick={confirmDelete} color="error" autoFocus>
+                        {t('confirm_button')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

@@ -15,6 +15,7 @@ export function ClientForm({ isUpdate }) {
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
+    const [isModified, setIsModified] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -80,6 +81,41 @@ export function ClientForm({ isUpdate }) {
         }
     };
 
+    const handleFirstNameChange = (e) => {
+        setFirstName(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleLastNameChange = (e) => {
+        setLastName(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleUsernameChange = (e) => {
+        setUsername(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleDateOfBirthChange = (e) => {
+        setDateOfBirth(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+        setIsModified(true);
+    };
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleRepeatPasswordChange = (e) => {
+        setRepeatPassword(e.target.value);
+        setIsModified(true);
+    };
+
     return (
         <Card>
             <CardContent>
@@ -96,7 +132,7 @@ export function ClientForm({ isUpdate }) {
                                 name="firstName"
                                 autoComplete="firstName"
                                 value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
+                                onChange={handleFirstNameChange}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -110,7 +146,7 @@ export function ClientForm({ isUpdate }) {
                                 name="lastName"
                                 autoComplete="lastName"
                                 value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
+                                onChange={handleLastNameChange}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -124,7 +160,7 @@ export function ClientForm({ isUpdate }) {
                                 name="username"
                                 autoComplete="username"
                                 value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                onChange={handleUsernameChange}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -138,7 +174,7 @@ export function ClientForm({ isUpdate }) {
                                 name="dateOfBirth"
                                 type="date"
                                 value={dateOfBirth}
-                                onChange={(e) => setDateOfBirth(e.target.value)}
+                                onChange={handleDateOfBirthChange}
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
@@ -155,7 +191,7 @@ export function ClientForm({ isUpdate }) {
                                 name="email"
                                 autoComplete="email"
                                 value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={handleEmailChange}
                             />
                         </Grid>
                         {!isUpdate && (
@@ -172,7 +208,7 @@ export function ClientForm({ isUpdate }) {
                                         id="password"
                                         autoComplete="current-password"
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={handlePasswordChange}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -186,16 +222,23 @@ export function ClientForm({ isUpdate }) {
                                         type="password"
                                         id="repeatPassword"
                                         value={repeatPassword}
-                                        onChange={(e) => setRepeatPassword(e.target.value)}
+                                        onChange={handleRepeatPasswordChange}
                                     />
                                 </Grid>
                             </>
                         )}
                     </Grid>
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                        <Button variant="contained" color="primary" type="submit">
-                            {isUpdate ? t('update_button') : t('create_button')}
-                        </Button>
+                        {isUpdate && isModified && (
+                            <Button variant="contained" color="primary" type="submit">
+                                {t('update_button')}
+                            </Button>
+                        )}
+                        {!isUpdate && (
+                            <Button variant="contained" color="primary" type="submit">
+                                {t('create_button')}
+                            </Button>
+                        )}
                         <Button variant="contained" color="error" sx={{ ml: 2 }} onClick={() => navigate(-1)}>
                             {t('cancel')}
                         </Button>

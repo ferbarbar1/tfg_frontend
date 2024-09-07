@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Typography, Button, Box, Modal, IconButton, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Tooltip } from '@mui/material';
+import { Typography, Button, Box, Modal, IconButton, Paper, Grid, TextField, Select, MenuItem, FormControl, InputLabel, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 import { MedicalHistoryForm } from '../informs/MedicalHistoryForm';
 import { getAllMedicalHistoriesByClient, deleteMedicalHistory } from '../../api/medicalHistories.api';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -22,6 +22,8 @@ export const MedicalHistoriesList = ({ user }) => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [sortCriteria, setSortCriteria] = useState('date');
+    const [openDialog, setOpenDialog] = useState(false);
+    const [historyToDelete, setHistoryToDelete] = useState(null);
 
     const fetchMedicalHistories = async () => {
         if (user) {
@@ -84,10 +86,16 @@ export const MedicalHistoriesList = ({ user }) => {
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = (id) => {
+        setHistoryToDelete(id);
+        setOpenDialog(true);
+    };
+
+    const confirmDelete = async () => {
         try {
-            await deleteMedicalHistory(id);
-            setMedicalHistories(medicalHistories.filter(history => history.id !== id));
+            await deleteMedicalHistory(historyToDelete);
+            setMedicalHistories(medicalHistories.filter(history => history.id !== historyToDelete));
+            setOpenDialog(false);
         } catch (error) {
             console.error('Error deleting medical history:', error);
         }
@@ -206,7 +214,7 @@ export const MedicalHistoriesList = ({ user }) => {
                                         </Tooltip>
                                         <Tooltip title={t('delete')}>
                                             <IconButton color="default" aria-label={t('delete')} onClick={() => handleDelete(history.id)}>
-                                                <DeleteIcon />
+                                                <DeleteIcon color='error' />
                                             </IconButton>
                                         </Tooltip>
                                     </>
@@ -250,6 +258,26 @@ export const MedicalHistoriesList = ({ user }) => {
                     <MedicalHistoryForm closeModal={handleModalClose} isUpdate={isUpdate} historyId={historyId} />
                 </Box>
             </Modal>
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {t('confirm_delete')}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                    <Button onClick={() => setOpenDialog(false)} color="primary">
+                        {t('cancel_button')}
+                    </Button>
+                    <Button onClick={confirmDelete} color="error" autoFocus>
+                        {t('confirm_button')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box >
     );
 };

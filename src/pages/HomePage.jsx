@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { LoginForm } from "../components/users/LoginForm";
 import { RegisterForm } from "../components/users/RegisterForm";
-import { Typography, Button, Box, Modal, Grid, Paper } from "@mui/material";
+import { Typography, Button, Box, Modal, Grid, Paper, Snackbar, Alert } from "@mui/material";
 import { AuthContext } from '../contexts/AuthContext';
 import logo from '../assets/logo.png';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +12,41 @@ export function HomePage() {
   const { token, setToken } = useContext(AuthContext);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [showAlert, setShowAlert] = useState(false);
+
+  const handleRegisterSuccess = () => {
+    setSnackbarMessage(t('register_success'));
+    setSnackbarSeverity('success');
+    setSnackbarOpen(true);
+    setShowAlert(true);
+    setRegisterModalOpen(false);
+  };
+
+  const handleLoginSuccess = () => {
+    setSnackbarMessage(t('login_success'));
+    setSnackbarSeverity('success');
+    setSnackbarOpen(true);
+    setShowAlert(true);
+    setLoginModalOpen(false);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+    setShowAlert(false);
+  };
+
+  const handleCloseModal = () => {
+    setLoginModalOpen(false);
+    setRegisterModalOpen(false);
+    setShowAlert(false);
+  };
+
+  const resetAlert = () => {
+    setShowAlert(false);
+  };
 
   return (
     <>
@@ -78,12 +113,12 @@ export function HomePage() {
           </Button>
           <Modal
             open={registerModalOpen}
-            onClose={() => setRegisterModalOpen(false)}
+            onClose={handleCloseModal}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
             <Box sx={{ width: '100%', maxWidth: '400px', p: 2, bgcolor: 'background.paper', margin: 'auto', mt: 2 }}>
-              <RegisterForm closeModal={() => setRegisterModalOpen(false)} setToken={setToken} />
+              <RegisterForm closeModal={handleRegisterSuccess} openLoginModal={() => setLoginModalOpen(true)} resetAlert={resetAlert} />
             </Box>
           </Modal>
 
@@ -98,16 +133,27 @@ export function HomePage() {
           </Button>
           <Modal
             open={loginModalOpen}
-            onClose={() => setLoginModalOpen(false)}
+            onClose={handleCloseModal}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
             <Box sx={{ width: '100%', maxWidth: '400px', p: 2, bgcolor: 'background.paper', margin: 'auto', mt: 2 }}>
-              <LoginForm closeModal={() => setLoginModalOpen(false)} setToken={setToken} openRegisterModal={() => setRegisterModalOpen(true)} />
+              <LoginForm closeModal={handleLoginSuccess} setToken={setToken} openRegisterModal={() => setRegisterModalOpen(true)} resetAlert={resetAlert} />
             </Box>
           </Modal>
         </Box>
       )}
+
+      <Snackbar
+        open={snackbarOpen && showAlert}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

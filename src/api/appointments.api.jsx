@@ -48,3 +48,13 @@ export const createCheckoutSession = async (serviceId, clientId, scheduleId, des
         throw error;
     }
 };
+
+export const cancelAppointment = async (appointmentId) => {
+    try {
+        const response = await axios.post('http://127.0.0.1:8000/api/appointments/cancel/', { appointment_id: appointmentId });
+        return response.data;
+    } catch (error) {
+        console.error('Error cancelling appointment:', error);
+        throw error;
+    }
+};

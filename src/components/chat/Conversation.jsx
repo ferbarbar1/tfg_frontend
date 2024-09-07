@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, TextField, List, ListItem, ListItemText, Divider, Typography, Paper, IconButton, Tooltip } from '@mui/material';
+import { Box, TextField, List, ListItem, ListItemText, Divider, Typography, Paper, IconButton, Tooltip, CircularProgress } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SendIcon from '@mui/icons-material/Send';
 import { getMessagesByConversationId, createMessage, getConversationById } from '../../api/conversations.api';
@@ -80,13 +80,23 @@ export const Conversation = ({ refreshConversations }) => {
         <Box display="flex" flexDirection="column" height="85vh" maxWidth="md" mx="auto">
             <Box display="flex" justifyContent="space-between" alignItems="center" padding={2} bgcolor="#f5f5f5">
                 <Typography variant="h5" textAlign="center" gutterBottom>
-                    {t('chat_with')}: {receiver ? receiver.username : t('loading')}
+                    {t('chat_with')}: {receiver ? receiver.username : <CircularProgress size={20} />}
                 </Typography>
                 <IconButton onClick={handleReload} aria-label={t('reload')}>
                     <RefreshIcon />
                 </IconButton>
             </Box>
-            <Box flex="1" display="flex" flexDirection="column-reverse" overflow="auto" padding={2} bgcolor="#f5f5f5" ref={messagesContainerRef}>
+            <Box
+                flex="1"
+                display="flex"
+                flexDirection="column"
+                justifyContent="flex-end"
+                overflow="auto"
+                padding={2}
+                bgcolor="#f5f5f5"
+                ref={messagesContainerRef}
+                style={{ gap: '10px' }}
+            >
                 <Box maxWidth="lg" mx="auto">
                     <List>
                         {messages.length === 0 ? (
@@ -98,16 +108,24 @@ export const Conversation = ({ refreshConversations }) => {
                         ) : (
                             messages.map((msg, index) => (
                                 <React.Fragment key={index}>
-                                    <ListItem alignItems="flex-start" style={{ justifyContent: msg.sender === user.user.id ? 'flex-end' : 'flex-start' }}>
+                                    <ListItem
+                                        alignItems="flex-start"
+                                        style={{
+                                            justifyContent: msg.sender === user.user.id ? 'flex-end' : 'flex-start',
+                                            padding: '0px'
+                                        }}
+                                    >
                                         <Paper
                                             elevation={3}
                                             style={{
-                                                padding: '10px',
-                                                borderRadius: '8px',
-                                                backgroundColor: msg.sender === user.user.id ? '#d1e7dd' : '#cce5ff',
-                                                maxWidth: '80%', // Ajusta el ancho máximo para que no llegue a los bordes
-                                                marginLeft: msg.sender === user.user.id ? 'auto' : '10px', // Margen izquierdo para el emisor
-                                                marginRight: msg.sender !== user.user.id ? 'auto' : '10px' // Margen derecho para el receptor
+                                                padding: '12px',
+                                                borderRadius: '20px',
+                                                backgroundColor: msg.sender === user.user.id ? '#e0ffe0' : '#f0f0f0',
+                                                maxWidth: '70%',
+                                                textAlign: msg.sender === user.user.id ? 'right' : 'left',
+                                                wordWrap: 'break-word',
+                                                borderBottomRightRadius: msg.sender === user.user.id ? '0' : '20px',
+                                                borderBottomLeftRadius: msg.sender !== user.user.id ? '0' : '20px',
                                             }}
                                         >
                                             <ListItemText
@@ -118,18 +136,18 @@ export const Conversation = ({ refreshConversations }) => {
                                                 }
                                                 secondary={
                                                     <Box display="flex" justifyContent="space-between" alignItems="center">
-                                                        <Typography variant="caption" color="textSecondary">
-                                                            {msg.sender === user.user.id ? formatDate(msg.timestamp) : receiver ? receiver.username : t('loading')}
+                                                        <Typography variant="caption" color="textSecondary" sx={{ mr: 2 }}>
+                                                            {msg.sender === user.user.id ? t('me') : receiver?.username || <CircularProgress size={20} />}
                                                         </Typography>
                                                         <Typography variant="caption" color="textSecondary">
-                                                            {msg.sender === user.user.id ? t('me') : formatDate(msg.timestamp)}
+                                                            {formatDate(msg.timestamp)}
                                                         </Typography>
                                                     </Box>
                                                 }
                                             />
                                         </Paper>
                                     </ListItem>
-                                    <Divider />
+                                    {index !== messages.length - 1 && <Divider style={{ margin: '10px 0' }} />}
                                 </React.Fragment>
                             ))
                         )}
@@ -145,8 +163,7 @@ export const Conversation = ({ refreshConversations }) => {
                         placeholder={t('type_a_message')}
                         fullWidth
                         variant="outlined"
-                        margin="none"
-                        style={{ marginRight: '10px' }}
+                        style={{ marginRight: '10px', borderRadius: '20px' }}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                                 handleSendMessage();

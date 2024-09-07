@@ -19,6 +19,7 @@ export function ResourceForm({ isUpdate }) {
     const [imagePreview, setImagePreview] = useState(null);
     const [imagePreviewName, setImagePreviewName] = useState("");
     const [url, setUrl] = useState("");
+    const [isModified, setIsModified] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -41,26 +42,50 @@ export function ResourceForm({ isUpdate }) {
         fetchResource();
     }, [id, isUpdate]);
 
+    const handleTitleChange = (e) => {
+        setTitle(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleResourceTypeChange = (e) => {
+        setResourceType(e.target.value);
+        setIsModified(true);
+    };
+
+    const handleUrlChange = (e) => {
+        setUrl(e.target.value);
+        setIsModified(true);
+    };
+
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
         setFile(selectedFile);
         setFileName(selectedFile ? selectedFile.name : "");
+        setIsModified(true);
     };
 
     const handleImagePreviewChange = (event) => {
         const selectedFile = event.target.files[0];
         setImagePreview(selectedFile);
         setImagePreviewName(selectedFile ? selectedFile.name : "");
+        setIsModified(true);
     };
 
     const handleFileDiscard = () => {
         setFile(null);
         setFileName("");
+        setIsModified(true);
     };
 
     const handleImagePreviewDiscard = () => {
         setImagePreview(null);
         setImagePreviewName("");
+        setIsModified(true);
     };
 
     const handleSubmit = async (event) => {
@@ -111,8 +136,8 @@ export function ResourceForm({ isUpdate }) {
                                 <form onSubmit={handleSubmit}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
-                                            <TextField label={t('title')} value={title} onChange={(e) => setTitle(e.target.value)} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label={t('description_label')} value={description} onChange={(e) => setDescription(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('title')} value={title} onChange={handleTitleChange} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('description_label')} value={description} onChange={handleDescriptionChange} required fullWidth sx={{ mb: 2 }} />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormControl fullWidth required sx={{ mb: 2 }}>
@@ -120,7 +145,7 @@ export function ResourceForm({ isUpdate }) {
                                                 <Select
                                                     labelId="resource-type-label"
                                                     value={resourceType}
-                                                    onChange={(e) => setResourceType(e.target.value)}
+                                                    onChange={handleResourceTypeChange}
                                                     label={t('resource_type')}
                                                 >
                                                     <MenuItem value="FILE">{t('file')}</MenuItem>
@@ -128,7 +153,7 @@ export function ResourceForm({ isUpdate }) {
                                                 </Select>
                                             </FormControl>
                                             {resourceType === "URL" && (
-                                                <TextField label={t('url')} value={url} onChange={(e) => setUrl(e.target.value)} required fullWidth sx={{ mb: 2 }} />
+                                                <TextField label={t('url')} value={url} onChange={handleUrlChange} required fullWidth sx={{ mb: 2 }} />
                                             )}
                                             {resourceType === "FILE" && (
                                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -185,8 +210,18 @@ export function ResourceForm({ isUpdate }) {
                                         </Grid>
                                     </Grid>
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                                        <Button variant="contained" color="primary" type="submit">
-                                            {isUpdate ? t('update_button') : t('create_button')}
+                                        {isUpdate && isModified && (
+                                            <Button variant="contained" color="primary" type="submit">
+                                                {t('update_button')}
+                                            </Button>
+                                        )}
+                                        {!isUpdate && (
+                                            <Button variant="contained" color="primary" type="submit">
+                                                {t('create_button')}
+                                            </Button>
+                                        )}
+                                        <Button variant="contained" color="error" onClick={() => navigate('/resources')} sx={{ ml: 2 }}>
+                                            {t('cancel_button')}
                                         </Button>
                                     </Box>
                                 </form>

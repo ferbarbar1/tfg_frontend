@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Box, Button, Grid, IconButton, Paper, Typography, TextField, InputAdornment, Tooltip } from '@mui/material';
+import { Box, Button, Grid, IconButton, Paper, Typography, TextField, InputAdornment, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { getConversationsByParticipants, deleteConversation } from '../../api/conversations.api';
 import { getUserById } from '../../api/users.api';
@@ -16,6 +16,8 @@ export function ConversationsList({ onConversationsLoaded }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedConversationId, setSelectedConversationId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [openDialog, setOpenDialog] = useState(false);
+    const [conversationToDelete, setConversationToDelete] = useState(null);
     const navigate = useNavigate();
 
     const conversationsPerPage = 4;
@@ -52,12 +54,24 @@ export function ConversationsList({ onConversationsLoaded }) {
         fetchConversationsAndReceivers();
     }, [user.user.id, onConversationsLoaded]);
 
-    const handleDelete = async (id) => {
+    const handleOpenDialog = (id) => {
+        setConversationToDelete(id);
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setConversationToDelete(null);
+    };
+
+    const handleDelete = async () => {
         try {
-            await deleteConversation(id);
-            const updatedConversations = conversations.filter(conversation => conversation.id !== id);
+            await deleteConversation(conversationToDelete);
+            const updatedConversations = conversations.filter(conversation => conversation.id !== conversationToDelete);
             setConversations(updatedConversations);
             onConversationsLoaded(updatedConversations);
+            handleCloseDialog();
+            navigate('/chat');
         } catch (error) {
             console.error("Error deleting conversation", error);
         }
@@ -97,11 +111,9 @@ export function ConversationsList({ onConversationsLoaded }) {
         return receiver && receiver.username.toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    console.log(user.user.id);
-    console.log(filteredConversations);
     return (
         <Box sx={{ mr: 3, ml: 3 }}>
-            {filteredConversations.length > 1 && (
+            {conversations.length > 0 && (
                 <TextField
                     label={t('search_label')}
                     variant="outlined"
@@ -148,13 +160,16 @@ export function ConversationsList({ onConversationsLoaded }) {
                                     >
                                         {receivers[conversation.id] ? receivers[conversation.id].username : 'Unknown'}
                                     </Typography>
-                                    <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }}>
-                                        {new Date(conversation.last_message).toLocaleString()}
-                                    </Typography>
+                                    {conversation.last_message &&
+                                        <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }}>
+                                            {new Date(conversation.last_message).toLocaleString()}
+                                        </Typography>
+                                    }
+
                                 </Grid>
                                 <Grid item xs={12} sm={3} container justifyContent="flex-end">
                                     <Tooltip title={t('delete_button')}>
-                                        <IconButton color="default" aria-label="delete conversation" onClick={() => handleDelete(conversation.id)}>
+                                        <IconButton color="default" aria-label="delete conversation" onClick={(e) => { e.stopPropagation(); handleOpenDialog(conversation.id); }}>
                                             <DeleteIcon />
                                         </IconButton>
                                     </Tooltip>
@@ -165,7 +180,7 @@ export function ConversationsList({ onConversationsLoaded }) {
                 })
             ) : (
                 <Typography variant="h6" align="center" sx={{ color: '#777' }}>
-                    {t('no_conversations')}
+                    {searchTerm ? t('no_search_results') : t('no_conversations')}
                 </Typography>
             )}
             {filteredConversations.length > 0 && (
@@ -178,6 +193,26 @@ export function ConversationsList({ onConversationsLoaded }) {
                     </Button>
                 </Box>
             )}
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {t('confirm_delete')}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                    <Button onClick={handleCloseDialog} color="primary">
+                        {t('cancel_button')}
+                    </Button>
+                    <Button onClick={handleDelete} color="error" autoFocus>
+                        {t('delete_button')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

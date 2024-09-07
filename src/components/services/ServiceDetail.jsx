@@ -4,7 +4,7 @@ import { getService } from '../../api/services.api';
 import { getRatingByAppointment } from '../../api/ratings.api';
 import { getAppointmentsByService } from '../../api/appointments.api';
 import { OffersContext } from '../../contexts/OffersContext';
-import { Container, Grid, Card, CardContent, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Divider, Rating, IconButton, Tooltip, Modal } from '@mui/material';
+import { Container, Grid, Card, CardContent, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Divider, Rating, IconButton, Tooltip, Modal, CircularProgress } from '@mui/material';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import BookIcon from '@mui/icons-material/Book';
@@ -64,7 +64,11 @@ export function ServiceDetail() {
     }, [id, activeOffer]);
 
     if (loading) {
-        return <div>{t('loading')}</div>;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     const getShortDescription = (text) => {

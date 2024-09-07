@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAppointment } from '../../api/appointments.api';
 import { getAllMedicalHistoriesByClient } from '../../api/medicalHistories.api';
-import { Box, Grid, Paper, Typography, Divider, Button } from '@mui/material';
+import { Box, Grid, Paper, Typography, Divider, Button, CircularProgress } from '@mui/material';
 import moment from 'moment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -43,7 +43,11 @@ export function InformTemplate() {
     }, [appointment]);
 
     if (!appointment) {
-        return <div>{t('loading')}</div>;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     const handleBackClick = () => {

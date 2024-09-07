@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { registerUser } from "../../api/users.api";
-import { Button, TextField, Box, Typography } from "@mui/material";
+import { Button, TextField, Box, Typography, Link, Checkbox, FormControlLabel } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 
-export const RegisterForm = ({ closeModal }) => {
+export const RegisterForm = ({ closeModal, openLoginModal, resetAlert }) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -13,10 +13,16 @@ export const RegisterForm = ({ closeModal }) => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (!acceptTerms) {
+      setPasswordError(t("accept_terms_error"));
+      return;
+    }
 
     if (password !== repeatPassword) {
       setPasswordError(t("passwords_do_not_match"));
@@ -36,7 +42,6 @@ export const RegisterForm = ({ closeModal }) => {
 
       await registerUser(userData);
       closeModal();
-      navigate('/');
     } catch (error) {
       console.error(error);
     }
@@ -120,11 +125,35 @@ export const RegisterForm = ({ closeModal }) => {
         onChange={(e) => setRepeatPassword(e.target.value)}
       />
 
-      {passwordError && <Typography color="error">{passwordError}</Typography>}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+        {passwordError && <Typography color="error">{passwordError}</Typography>}
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={acceptTerms}
+              onChange={(e) => setAcceptTerms(e.target.checked)}
+              name="acceptTerms"
+              color="primary"
+            />
+          }
+          label={
+            <Typography>
+              <Link component={RouterLink} to="/terms-and-conditions">
+                {t('accept_terms_label')}
+              </Link>
+            </Typography>
+          }
+        />
+      </Box>
 
+      <Box textAlign="center">
+        <p>{t('already_have_account')} <Link href="#" onClick={() => { closeModal(); resetAlert(); openLoginModal(); }}>{t('log_in_here')}</Link></p>
+      </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
         <Button type="submit" variant="contained" color="primary">{t("create_button")}</Button>
-        <Button type="button" variant="contained" color="error" onClick={closeModal} sx={{ ml: 2 }}>{t("cancel_button")}</Button>
+        <Button type="button" variant="contained" color="error" onClick={() => { closeModal(); resetAlert(); }} sx={{ ml: 2 }}>{t("cancel_button")}</Button>
       </Box>
     </Box>
   );

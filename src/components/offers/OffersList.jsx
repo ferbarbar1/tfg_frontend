@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { Box, Button, Grid, IconButton, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Tooltip } from '@mui/material';
+import { Box, Button, Grid, IconButton, Paper, Typography, Select, MenuItem, FormControl, InputLabel, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { deleteOffer, getAllOffers } from '../../api/offers.api';
 import { truncateText } from '../../utils/auxFunctions';
@@ -18,6 +18,9 @@ export function OffersList() {
     const [sortCriteria, setSortCriteria] = useState('date');
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
+
+    const [openDialog, setOpenDialog] = useState(false);
+    const [offerToDelete, setOfferToDelete] = useState(null);
 
     useEffect(() => {
         async function fetchOffers() {
@@ -39,10 +42,16 @@ export function OffersList() {
         navigate(`/offers/${id}/update/`);
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = (id) => {
+        setOfferToDelete(id);
+        setOpenDialog(true);
+    };
+
+    const confirmDelete = async () => {
         try {
-            await deleteOffer(id);
-            setOffers(offers.filter(offer => offer.id !== id));
+            await deleteOffer(offerToDelete);
+            setOffers(offers.filter(offer => offer.id !== offerToDelete));
+            setOpenDialog(false);
         } catch (error) {
             console.error(error);
         }
@@ -135,7 +144,6 @@ export function OffersList() {
                                     </Tooltip>
                                 </Typography>
                                 <Typography variant="body1" sx={{ color: '#555', marginTop: 1 }} title={offer.description}>
-
                                     {user.user.role === 'owner' ?
                                         truncateText(offer.description, 40) :
                                         offer.description
@@ -163,7 +171,7 @@ export function OffersList() {
                                     </Tooltip>
                                     <Tooltip title={t('delete_button')}>
                                         <IconButton color="default" aria-label={t('delete_button')} onClick={() => handleDelete(offer.id)}>
-                                            <DeleteIcon />
+                                            <DeleteIcon color='error' />
                                         </IconButton>
                                     </Tooltip>
                                 </Grid>
@@ -186,6 +194,26 @@ export function OffersList() {
                     </Button>
                 </Box>
             )}
-        </Box >
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {t('confirm_delete')}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                    <Button onClick={() => setOpenDialog(false)} color="primary">
+                        {t('cancel_button')}
+                    </Button>
+                    <Button onClick={confirmDelete} color="error" autoFocus>
+                        {t('confirm_button')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
     );
 }

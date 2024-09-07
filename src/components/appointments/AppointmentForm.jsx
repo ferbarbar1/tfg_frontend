@@ -5,7 +5,8 @@ import { createAppointment, createCheckoutSession } from '../../api/appointments
 import { getSchedulesAvailablesByDate } from '../../api/schedules.api';
 import { loadStripe } from '@stripe/stripe-js';
 import { AuthContext } from '../../contexts/AuthContext';
-import { Button, TextField, FormControl, InputLabel, Select, MenuItem, Box, Alert } from '@mui/material';
+import { useAlert } from '../../contexts/AlertContext';
+import { Box, Button, TextField, FormControl, InputLabel, Select, MenuItem, Alert } from '@mui/material';
 import { getAllClients } from '../../api/clients.api';
 import { getAllWorkers } from '../../api/workers.api';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ const stripePromise = loadStripe('pk_test_51PFdYTGzZooPGUyPyarTnl6RMGFS0Zkll6iKQ
 export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
     const { t } = useTranslation();
     const { user } = useContext(AuthContext);
+    const { showAlert } = useAlert();
     const [description, setDescription] = useState("");
     const [client, setClient] = useState("");
     const [worker, setWorker] = useState("");
@@ -45,7 +47,7 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
                     );
                     setAvailableTimes(uniqueTimes);
                 } catch (error) {
-                    console.error(t('error_loading_schedules'), error);
+                    console.error("Error loading available times", error);
                     setAvailableTimes([]);
                 }
             };
@@ -61,7 +63,7 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
                 setWorkers(workersResponse.data);
                 setClients(clientsResponse.data);
             } catch (error) {
-                console.error(t('error_loading_workers_clients'), error);
+                console.error("Error loading workers and clients", error);
             }
         };
         fetchWorkersAndClients();
@@ -87,9 +89,11 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
 
             await createAppointment(appointmentData);
             closeModal();
+            showAlert(t('appointment_success'), 'success');
             navigate('/appointments/');
         } catch (error) {
-            console.error(error);
+            console.error("Error creating appointment", error);
+            showAlert(t('appointment_error'), 'error');
         }
     };
 
@@ -101,7 +105,8 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
 
             const sessionId = await createCheckoutSession(serviceId, clientId, scheduleId, description, modality);
             if (!sessionId) {
-                console.error(t('stripe_session_id_error'));
+                console.error("Error creating checkout session");
+                showAlert(t('checkout_session_error'), 'error');
                 return;
             }
 
@@ -110,10 +115,11 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
             });
 
             if (result.error) {
-                alert(result.error.message);
+                showAlert(result.error.message, 'error');
             }
         } catch (error) {
-            console.error(t('stripe_error'), error);
+            console.error("Error creating checkout session", error);
+            showAlert(t('checkout_session_error'), 'error');
         }
     };
 
