@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const getAllRatings = () => {
-    return axios.get("https://tfgbackend-production.up.railway.app/api/ratings/")
+    return axios.get("http://127.0.0.1:8000/api/ratings/")
 }

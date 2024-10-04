@@ -40,11 +40,6 @@ export function WorkersList() {
             sortable: true,
         },
         {
-            name: 'Salary',
-            selector: row => row.salary,
-            sortable: true,
-        },
-        {
             name: 'Specialty',
             selector: row => row.specialty,
             sortable: true,
