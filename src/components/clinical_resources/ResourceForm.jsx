@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Box, Container, Grid, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, IconButton, Typography, Tooltip } from "@mui/material";
+import { Box, Container, Grid, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, IconButton, Typography, Tooltip, Alert } from "@mui/material";
 import { useParams, useNavigate } from 'react-router-dom';
 import { createResource, updateResource, getResource } from '../../api/resources.api';
 import { AuthContext } from "../../contexts/AuthContext";
@@ -20,6 +20,7 @@ export function ResourceForm({ isUpdate }) {
     const [imagePreviewName, setImagePreviewName] = useState("");
     const [url, setUrl] = useState("");
     const [isModified, setIsModified] = useState(false);
+    const [errors, setErrors] = useState({});
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -71,9 +72,14 @@ export function ResourceForm({ isUpdate }) {
 
     const handleImagePreviewChange = (event) => {
         const selectedFile = event.target.files[0];
+        if (selectedFile && !selectedFile.type.startsWith('image/')) {
+            setErrors({ imagePreview: t('invalid_image_error') });
+            return;
+        }
         setImagePreview(selectedFile);
         setImagePreviewName(selectedFile ? selectedFile.name : "");
         setIsModified(true);
+        setErrors((prevErrors) => ({ ...prevErrors, imagePreview: null }));
     };
 
     const handleFileDiscard = () => {
@@ -153,7 +159,7 @@ export function ResourceForm({ isUpdate }) {
                                                 </Select>
                                             </FormControl>
                                             {resourceType === "URL" && (
-                                                <TextField label={t('url')} value={url} onChange={handleUrlChange} required fullWidth sx={{ mb: 2 }} />
+                                                <TextField label={t('url')} value={url} onChange={handleUrlChange} type="url" required fullWidth sx={{ mb: 2 }} />
                                             )}
                                             {resourceType === "FILE" && (
                                                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -207,6 +213,9 @@ export function ResourceForm({ isUpdate }) {
                                                     </Box>
                                                 )}
                                             </Box>
+                                            {errors.imagePreview && (
+                                                <Typography color="error" sx={{ textAlign: 'center', mb: 2 }}>{errors.imagePreview}</Typography>
+                                            )}
                                         </Grid>
                                     </Grid>
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>

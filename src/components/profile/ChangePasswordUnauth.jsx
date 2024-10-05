@@ -37,8 +37,8 @@ export const ChangePasswordUnauth = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     {t('reset_password')}
                 </Typography>
-                {error && <Alert severity="error" sx={{ marginBottom: 2 }}>{error}</Alert>}
                 <Divider sx={{ marginBottom: 2 }} />
+                {error && <Alert severity="error" sx={{ marginBottom: 2 }}>{error}</Alert>}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         label={t('new_password')}

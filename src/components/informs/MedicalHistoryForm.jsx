@@ -12,6 +12,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
     const [description, setDescription] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
     const [isModified, setIsModified] = useState(false);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (isUpdate) {
@@ -53,6 +54,19 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
+        const newErrors = {};
+
+        if (!selectedFile) {
+            newErrors.file = t('file_required');
+        } else if (selectedFile.type !== 'application/pdf') {
+            newErrors.file = t('file_format_error');
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
         try {
             const formData = new FormData();
             formData.append('title', title);
@@ -74,7 +88,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Box component="form" onSubmit={handleSubmit}>
             <Typography variant="h6" component="h2" align="center">
                 {isUpdate ? t('update_medical_history') : t('add_medical_history')}
             </Typography>
@@ -88,6 +102,8 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                 name="title"
                 value={title}
                 onChange={handleTitleChange}
+                error={!!errors.title}
+                helperText={errors.title}
             />
             <TextField
                 margin="normal"
@@ -100,6 +116,8 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                 rows={4}
                 value={description}
                 onChange={handleDescriptionChange}
+                error={!!errors.description}
+                helperText={errors.description}
             />
             <Box {...getRootProps()} sx={{ border: '2px dashed grey', padding: '20px', textAlign: 'center', marginTop: '16px' }}>
                 <input {...getInputProps()} />
@@ -109,6 +127,7 @@ export const MedicalHistoryForm = ({ closeModal, isUpdate, historyId }) => {
                     <Typography>{t('drag_and_drop')}</Typography>
                 )}
             </Box>
+            {errors.file && <Typography color="error" sx={{ mt: 1 }}>{errors.file}</Typography>}
             <Box sx={{ mt: 3, mb: 2, display: 'flex', justifyContent: 'center' }}>
                 {isUpdate && isModified && (
                     <Button

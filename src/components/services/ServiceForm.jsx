@@ -4,7 +4,7 @@ import { getService, updateService, createService, deleteService } from '../../a
 import { getAllWorkers } from '../../api/workers.api';
 import { Container, Box, Card, CardHeader, Divider, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, Typography, IconButton, Tooltip, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import AttachFile from '@mui/icons-material/AttachFile';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 export function ServiceForm({ isUpdate }) {
     const { t } = useTranslation();
@@ -20,6 +20,7 @@ export function ServiceForm({ isUpdate }) {
 
     const [openDialog, setOpenDialog] = useState(false);
     const [isModified, setIsModified] = useState(false);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         async function fetchServiceAndWorkers() {
@@ -49,6 +50,23 @@ export function ServiceForm({ isUpdate }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        const newErrors = {};
+
+        // Validar que el precio no sea negativo
+        if (price < 0) {
+            newErrors.price = t('negative_price_error');
+        }
+
+        // Validar que la imagen sea un archivo de imagen
+        if (image && !image.type.startsWith('image/')) {
+            newErrors.image = t('invalid_image_error');
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
 
         const formData = new FormData();
         formData.append('name', name);
@@ -102,8 +120,14 @@ export function ServiceForm({ isUpdate }) {
     };
 
     const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
-        setImagePreviewUrl(URL.createObjectURL(e.target.files[0]));
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            setImage(file);
+            setImagePreviewUrl(URL.createObjectURL(file));
+            setErrors(prevErrors => ({ ...prevErrors, image: null }));
+        } else {
+            setErrors(prevErrors => ({ ...prevErrors, image: t('invalid_image_error') }));
+        }
         setIsModified(true);
     };
 
@@ -141,7 +165,7 @@ export function ServiceForm({ isUpdate }) {
                                         <Grid item xs={6}>
                                             <TextField label={t('name_label')} value={name} onChange={handleNameChange} required fullWidth sx={{ mb: 2 }} />
                                             <TextField label={t('description_label')} value={description} onChange={handleDescriptionChange} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label={t('price_label')} type="number" value={price} onChange={handlePriceChange} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField label={t('price_label')} type="number" value={price} onChange={handlePriceChange} required fullWidth sx={{ mb: 2 }} error={!!errors.price} helperText={errors.price} />
                                         </Grid>
                                         <Grid item xs={6}>
                                             <FormControl fullWidth required sx={{ mb: 2 }}>
@@ -167,20 +191,23 @@ export function ServiceForm({ isUpdate }) {
                                                 {imagePreviewUrl &&
                                                     <Typography variant="subtitle1">{t('service_preview')}</Typography>
                                                 }
-                                                <input
-                                                    accept="image/*"
-                                                    style={{ display: 'none' }}
-                                                    id="icon-button-file"
-                                                    type="file"
-                                                    onChange={handleImageChange}
-                                                />
-                                                <label htmlFor="icon-button-file">
-                                                    <Tooltip title={t('upload_image')} placement="bottom">
-                                                        <IconButton color="primary" aria-label="upload picture" component="span">
-                                                            <AttachFile />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </label>
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
+                                                    <Button
+                                                        variant="contained"
+                                                        component="label"
+                                                        startIcon={<CloudUploadIcon />}
+                                                        sx={{ mr: 2 }}
+                                                    >
+                                                        {t('upload_image')}
+                                                        <input
+                                                            accept="image/*"
+                                                            type="file"
+                                                            hidden
+                                                            onChange={handleImageChange}
+                                                        />
+                                                    </Button>
+                                                </Box>
+                                                {errors.image && <Typography color="error">{errors.image}</Typography>}
                                             </Box>
                                         </Grid>
                                     </Grid>
@@ -189,7 +216,6 @@ export function ServiceForm({ isUpdate }) {
                                             <Button variant="contained" color="primary" type="submit">
                                                 {t('create_button')}
                                             </Button>
-
                                         }
                                         {isUpdate && isModified &&
                                             <Button variant="contained" color="primary" type="submit" sx={{ ml: 2 }}>

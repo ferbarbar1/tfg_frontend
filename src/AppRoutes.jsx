@@ -161,7 +161,7 @@ const AppRoutes = () => {
                     </ProtectedRoute>
                 } />
                 <Route path='/my-profile/update' element={
-                    <ProtectedRoute roles={['client', 'worker']}>
+                    <ProtectedRoute roles={['owner', 'client', 'worker']}>
                         <UpdateProfileForm />
                     </ProtectedRoute>
                 } />

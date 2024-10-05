@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getClient, updateClient } from '../../api/clients.api';
 import { getWorker, updateWorker } from '../../api/workers.api';
-import { TextField, Button, Box, Card, CardContent, Grid, Avatar } from '@mui/material';
+import { TextField, Button, Box, Card, CardContent, Grid, Avatar, Typography } from '@mui/material';
 import { AuthContext } from '../../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +20,7 @@ export function UpdateProfileForm() {
     const [dateOfBirth, setDateOfBirth] = useState("");
     const [specialty, setSpecialty] = useState("");
     const [experience, setExperience] = useState("");
+    const [errors, setErrors] = useState({});
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
@@ -60,8 +61,14 @@ export function UpdateProfileForm() {
     }, [user]);
 
     const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
-        setImagePreviewUrl(URL.createObjectURL(e.target.files[0]));
+        const file = e.target.files[0];
+        if (file && !file.type.startsWith('image/')) {
+            setErrors({ image: t('invalid_image_error') });
+            return;
+        }
+        setImage(file);
+        setImagePreviewUrl(URL.createObjectURL(file));
+        setErrors((prevErrors) => ({ ...prevErrors, image: null }));
     };
 
     const handleCancelImageChange = () => {
@@ -74,6 +81,19 @@ export function UpdateProfileForm() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        const newErrors = {};
+
+        const today = new Date();
+        const birthDate = new Date(dateOfBirth);
+        if (birthDate > today) {
+            newErrors.dateOfBirth = t('birth_date_future_error');
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
 
         try {
             const formData = new FormData();
@@ -116,18 +136,33 @@ export function UpdateProfileForm() {
 
             if (response.status === 200) {
                 navigate('/my-profile');
+                window.location.reload();
             } else {
                 console.error("Error updating user", response);
             }
         } catch (error) {
-            console.error("Error updating user", error);
+            if (error.response && error.response.data) {
+                const backendErrors = error.response.data.user;
+                const apiErrors = {};
+
+                if (backendErrors.email) {
+                    apiErrors.email = backendErrors.email[0];
+                }
+                if (backendErrors.username) {
+                    apiErrors.username = backendErrors.username[0];
+                }
+
+                setErrors(apiErrors);
+            } else {
+                console.error("Error desconocido:", error);
+            }
         }
     };
 
     return (
         <Card>
             <CardContent>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <Grid container spacing={2} justifyContent="center">
                         <Grid item xs={12} sm={6} sx={{ display: 'flex', justifyContent: 'center' }}>
                             <Avatar
@@ -171,6 +206,11 @@ export function UpdateProfileForm() {
                                     </Grid>
                                 </Grid>
                             )}
+                            {errors.image && (
+                                <Typography color="error" variant="body2" align="center">
+                                    {errors.image}
+                                </Typography>
+                            )}
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -209,6 +249,8 @@ export function UpdateProfileForm() {
                                 name="username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
+                                error={!!errors.username}
+                                helperText={errors.username && t('username_exists')}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -226,6 +268,8 @@ export function UpdateProfileForm() {
                                 InputLabelProps={{
                                     shrink: true,
                                 }}
+                                error={!!errors.dateOfBirth}
+                                helperText={errors.dateOfBirth}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -239,6 +283,8 @@ export function UpdateProfileForm() {
                                 name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                error={!!errors.email}
+                                helperText={errors.email && t('email_exists')}
                             />
                         </Grid>
                         {user.user.role === 'worker' && (

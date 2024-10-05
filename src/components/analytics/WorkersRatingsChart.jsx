@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAllRatings } from '../../api/ratings.api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts';
-import { Box, Typography, Select, MenuItem, FormControl, InputLabel, Rating, Grid } from '@mui/material';
+import { Box, Typography, Select, MenuItem, FormControl, InputLabel, Rating, Grid, Alert } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export function WorkersRatingsChart() {
@@ -82,7 +82,9 @@ export function WorkersRatingsChart() {
                 </Select>
             </FormControl>
 
-            {selectedWorker && (
+            {!selectedWorker ? (
+                <Alert severity="info">{t('select_worker_to_view_data')}</Alert>
+            ) : (
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={4}>
                         <Box sx={{ mb: 4 }}>
@@ -108,17 +110,21 @@ export function WorkersRatingsChart() {
 
                     <Grid item xs={12} md={8}>
                         <Typography variant="h6">{t('ratings_trends')}</Typography>
-                        <ResponsiveContainer width="100%" height={400}>
-                            <LineChart data={trendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="date" />
-                                <YAxis />
-                                <Tooltip />
-                                <Legend />
-                                <Brush />
-                                <Line type="monotone" dataKey="averageRating" stroke="#82ca9d" />
-                            </LineChart>
-                        </ResponsiveContainer>
+                        {trendData.length > 0 ? (
+                            <ResponsiveContainer width="100%" height={400}>
+                                <LineChart data={trendData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="date" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Brush />
+                                    <Line type="monotone" dataKey="averageRating" stroke="#82ca9d" />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <Alert severity="info">{t('no_ratings_available')}</Alert>
+                        )}
                     </Grid>
                 </Grid>
             )}

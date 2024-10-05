@@ -29,7 +29,7 @@ export const ChatPage = () => {
                         <Conversation refreshConversations={refreshConversations} />
                     ) : (
                         <Box p={3}>
-                            {conversations.length > 0 ? t('select_conversation') : t('no_conversations')}
+                            {conversations.length > 0 ? t('select_conversation') : null}
                         </Box>
                     )}
                 </Grid>

@@ -37,11 +37,13 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
         event.preventDefault();
 
         const ratingData = {
-            client: user.id,
-            appointment: appointmentId,
+            client_id: user.id,
+            appointment_id: appointmentId,
             rate: parseInt(rate, 10),
             opinion,
         };
+
+        console.log(ratingData);
 
         try {
             if (isUpdate) {
@@ -60,7 +62,7 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
     }
 
     return (
-        <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Box component="form" onSubmit={handleSubmit}>
             <Typography variant="h6" component="h2" align="center">
                 {isUpdate ? t('update_button') : t('add_button')}
             </Typography>
@@ -109,7 +111,7 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
                     onClick={closeModal}
                     sx={{ ml: 2 }}
                 >
-                    {t('cancel')}
+                    {t('cancel_button')}
                 </Button>
             </Box>
         </Box>

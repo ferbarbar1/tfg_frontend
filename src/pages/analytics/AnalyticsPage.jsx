@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { WorkersRatingsChart } from '../../components/analytics/WorkersRatingsChart';
 import { ServicesRatingsChart } from '../../components/analytics/ServicesRatingsChart';
 import { InvoicesChart } from '../../components/analytics/InvoicesChart';
+import { Summary } from '../../components/analytics/Summary';
 import { Tabs, Tab, Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
@@ -16,17 +17,21 @@ export function AnalyticsPage() {
     return (
         <Box sx={{ width: '100%' }}>
             <Tabs value={value} onChange={handleChange} aria-label="tabs">
+                <Tab label={t('summary')} />
                 <Tab label={t('worker_ratings')} />
                 <Tab label={t('service_ratings')} />
                 <Tab label={t('billing')} />
             </Tabs>
             <TabPanel value={value} index={0}>
-                <WorkersRatingsChart />
+                <Summary />
             </TabPanel>
             <TabPanel value={value} index={1}>
-                <ServicesRatingsChart />
+                <WorkersRatingsChart />
             </TabPanel>
             <TabPanel value={value} index={2}>
+                <ServicesRatingsChart />
+            </TabPanel>
+            <TabPanel value={value} index={3}>
                 <InvoicesChart />
             </TabPanel>
         </Box>

@@ -57,15 +57,46 @@ export function HomePage() {
         <Typography variant="h6" component="h2" sx={{ color: 'text.secondary', mt: 2 }}>
           {t('intro_message')}
         </Typography>
-        <Box
-          component="img"
-          src={logo}
-          alt={t('logo_alt')}
-          sx={{
-            width: '100%', maxWidth: '330px', display: 'block', mx: 'auto'
-          }}
-        />
       </Box>
+
+      <Grid container spacing={2} alignItems="center" justifyContent="center" sx={{ mb: 4 }}>
+        {!token && (
+          <Grid item xs={12} sm={4} md={3} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<PersonAdd />}
+              onClick={() => setRegisterModalOpen(true)}
+              sx={{ bgcolor: 'secondary.main', mb: 2 }}
+            >
+              {t('sign_up')}
+            </Button>
+          </Grid>
+        )}
+        <Grid item xs={12} sm={4} md={3} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Box
+            component="img"
+            src={logo}
+            alt={t('logo_alt')}
+            sx={{
+              width: '100%', maxWidth: '330px', display: 'block', mx: 'auto'
+            }}
+          />
+        </Grid>
+        {!token && (
+          <Grid item xs={12} sm={4} md={3} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<Login />}
+              onClick={() => setLoginModalOpen(true)}
+              sx={{ mb: 2 }}
+            >
+              {t('login')}
+            </Button>
+          </Grid>
+        )}
+      </Grid>
 
       <Grid container spacing={4} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -100,49 +131,27 @@ export function HomePage() {
         </Grid>
       </Grid>
 
-      {!token && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: '20px', mt: 3, flexWrap: 'wrap' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<PersonAdd />}
-            onClick={() => setRegisterModalOpen(true)}
-            sx={{ bgcolor: 'secondary.main', mb: 2 }}
-          >
-            {t('sign_up')}
-          </Button>
-          <Modal
-            open={registerModalOpen}
-            onClose={handleCloseModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={{ width: '100%', maxWidth: '400px', p: 2, bgcolor: 'background.paper', margin: 'auto', mt: 2 }}>
-              <RegisterForm closeModal={handleRegisterSuccess} openLoginModal={() => setLoginModalOpen(true)} resetAlert={resetAlert} />
-            </Box>
-          </Modal>
-
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<Login />}
-            onClick={() => setLoginModalOpen(true)}
-            sx={{ mb: 2 }}
-          >
-            {t('login')}
-          </Button>
-          <Modal
-            open={loginModalOpen}
-            onClose={handleCloseModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={{ width: '100%', maxWidth: '400px', p: 2, bgcolor: 'background.paper', margin: 'auto', mt: 2 }}>
-              <LoginForm closeModal={handleLoginSuccess} setToken={setToken} openRegisterModal={() => setRegisterModalOpen(true)} resetAlert={resetAlert} />
-            </Box>
-          </Modal>
+      <Modal
+        open={registerModalOpen}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{ width: '100%', maxWidth: '500px', p: 2, bgcolor: 'background.paper', margin: 'auto', mt: 2 }}>
+          <RegisterForm closeModal={handleRegisterSuccess} openLoginModal={() => setLoginModalOpen(true)} resetAlert={resetAlert} />
         </Box>
-      )}
+      </Modal>
+
+      <Modal
+        open={loginModalOpen}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{ width: '100%', maxWidth: '400px', p: 2, bgcolor: 'background.paper', margin: 'auto', mt: 2 }}>
+          <LoginForm closeModal={handleLoginSuccess} setToken={setToken} openRegisterModal={() => setRegisterModalOpen(true)} resetAlert={resetAlert} />
+        </Box>
+      </Modal>
 
       <Snackbar
         open={snackbarOpen && showAlert}

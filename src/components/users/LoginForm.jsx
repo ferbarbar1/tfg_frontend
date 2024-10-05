@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { loginUser, getUserByUsername } from '../../api/users.api';
 import { useNavigate } from 'react-router-dom';
-import { Button, TextField, Box, Link } from "@mui/material";
+import { Button, TextField, Box, Link, Typography } from "@mui/material";
 import { useTranslation } from 'react-i18next';
 
 export const LoginForm = ({ closeModal, setToken, openRegisterModal, resetAlert }) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -32,11 +33,19 @@ export const LoginForm = ({ closeModal, setToken, openRegisterModal, resetAlert 
       closeModal();
     } catch (error) {
       console.error(error);
+      setErrors({ form: t('invalid_credentials') });
     }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+
+      {errors.form && (
+        <Typography color="error" align="center" sx={{ mt: 2 }}>
+          {errors.form}
+        </Typography>
+      )}
+
       <TextField
         variant="outlined"
         margin="normal"

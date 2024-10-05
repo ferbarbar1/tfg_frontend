@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { cancelAppointment } from '../../api/appointments.api';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getAppointment } from '../../api/appointments.api';
-import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Dialog, DialogActions, DialogContent, DialogContentText, CircularProgress, IconButton, Tooltip } from '@mui/material';
+import { Typography, Divider, Button, TextField, Box, Card, CardContent, Grid, Dialog, DialogActions, DialogContent, DialogContentText, CircularProgress, IconButton, Tooltip, Modal } from '@mui/material';
 import { RateAppointmentForm } from '../../components/ratings/RateAppointmentForm';
 import { InformForm } from '../../components/informs/InformForm';
 import { AuthContext } from '../../contexts/AuthContext';

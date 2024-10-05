@@ -65,7 +65,7 @@ export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Box component="form" onSubmit={handleSubmit}>
             <Typography variant="h6" component="h2" align="center">
                 {isUpdate ? t('edit_inform') : t('add_inform')}
             </Typography>
@@ -120,7 +120,7 @@ export const InformForm = ({ appointmentId, closeModal, onInformSaved }) => {
                         onClick={closeModal}
                         sx={{ ml: 2 }}
                     >
-                        {t('cancel')}
+                        {t('cancel_button')}
                     </Button>
                 )}
             </Box>
