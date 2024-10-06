@@ -1,45 +1,54 @@
 import axios from "axios";
 
+const getToken = () => localStorage.getItem("token");
+
+const axiosInstance = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+    headers: {
+        Authorization: `Bearer ${getToken()}`,
+    }
+});
+
 
 export const getAllAppointments = () => {
-    return axios.get("http://127.0.0.1:8000/api/appointments/")
+    return axiosInstance.get("appointments/");
 }
 
 export const getAppointment = (appointmentId) => {
-    return axios.get(`http://127.0.0.1:8000/api/appointments/${appointmentId}/`)
+    return axiosInstance.get(`appointments/${appointmentId}/`);
 }
 
 export const createAppointment = (appointmentData) => {
-    return axios.post("http://127.0.0.1:8000/api/appointments/", appointmentData)
+    return axiosInstance.post("appointments/", appointmentData);
 }
 
 export const updateAppointment = (appointmentId, appointmentData) => {
-    return axios.patch(`http://127.0.0.1:8000/api/appointments/${appointmentId}/`, appointmentData)
+    return axiosInstance.patch(`appointments/${appointmentId}/`, appointmentData);
 }
 
 export const deleteAppointment = (appointmentId) => {
-    return axios.delete(`http://127.0.0.1:8000/api/appointments/${appointmentId}/`)
+    return axiosInstance.delete(`appointments/${appointmentId}/`);
 }
 
 export const getAppointmentsByWorker = (workerId) => {
-    return axios.get(`http://127.0.0.1:8000/api/appointments?worker=${workerId}`)
+    return axiosInstance.get(`appointments?worker=${workerId}`);
 }
 
 export const getAppointmentsByClient = (clientId) => {
-    return axios.get(`http://127.0.0.1:8000/api/appointments?client=${clientId}`)
+    return axiosInstance.get(`appointments?client=${clientId}`);
 }
 
 export const getAppointmentsByService = (serviceId) => {
-    return axios.get(`http://127.0.0.1:8000/api/appointments?service=${serviceId}`)
+    return axiosInstance.get(`appointments?service=${serviceId}`);
 }
 
 export const getAppointmentsByWorkerAndService = (serviceId, workerId) => {
-    return axios.get(`http://127.0.0.1:8000/api/appointments?service=${serviceId}&worker=${workerId}`)
+    return axiosInstance.get(`appointments?service=${serviceId}&worker=${workerId}`);
 }
 
 export const createCheckoutSession = async (serviceId, clientId, scheduleId, description, modality) => {
     try {
-        const response = await axios.post("http://127.0.0.1:8000/api/payments/checkout-session/", {
+        const response = await axiosInstance.post("payments/checkout-session/", {
             service_id: serviceId,
             client_id: clientId,
             schedule_id: scheduleId,
@@ -55,7 +64,7 @@ export const createCheckoutSession = async (serviceId, clientId, scheduleId, des
 
 export const cancelAppointment = async (appointmentId) => {
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/appointments/cancel/', { appointment_id: appointmentId });
+        const response = await axiosInstance.post('appointments/cancel/', { appointment_id: appointmentId });
         return response.data;
     } catch (error) {
         console.error('Error cancelling appointment:', error);
@@ -65,14 +74,13 @@ export const cancelAppointment = async (appointmentId) => {
 
 export const createAppointmentByOwner = async (serviceId, clientId, scheduleId, description, modality) => {
     try {
-        const response = await axios.post('http://127.0.0.1:8000/api/create-appointment-by-owner/', {
+        const response = await axiosInstance.post('create-appointment-by-owner/', {
             service_id: serviceId,
             client_id: clientId,
             schedule_id: scheduleId,
             description: description,
             modality: modality
-        }
-        );
+        });
         return response.data;
     } catch (error) {
         console.error('Error creating appointment by owner:', error);

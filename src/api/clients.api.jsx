@@ -1,21 +1,30 @@
 import axios from "axios";
 
+const getToken = () => localStorage.getItem("token");
+
+const axiosInstance = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+    headers: {
+        Authorization: `Bearer ${getToken()}`,
+    }
+});
+
 export const getAllClients = () => {
-    return axios.get("http://127.0.0.1:8000/api/clients/")
+    return axiosInstance.get("clients/");
 }
 
 export const getClient = (id) => {
-    return axios.get(`http://127.0.0.1:8000/api/clients/${id}/`)
+    return axiosInstance.get(`clients/${id}/`);
 }
 
 export const createClient = (clientData) => {
-    return axios.post("http://127.0.0.1:8000/api/clients/", clientData)
+    return axiosInstance.post("clients/", clientData);
 }
 
 export const updateClient = (id, clientData) => {
-    return axios.patch(`http://127.0.0.1:8000/api/clients/${id}/`, clientData)
+    return axiosInstance.patch(`clients/${id}/`, clientData);
 }
 
 export const deleteClient = (id) => {
-    return axios.delete(`http://127.0.0.1:8000/api/clients/${id}/`)
+    return axiosInstance.delete(`clients/${id}/`);
 }

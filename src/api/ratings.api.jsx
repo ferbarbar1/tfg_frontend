@@ -1,17 +1,26 @@
 import axios from "axios";
 
+const getToken = () => localStorage.getItem("token");
+
+const axiosInstance = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+    headers: {
+        Authorization: `Bearer ${getToken()}`,
+    }
+});
+
 export const getAllRatings = () => {
-    return axios.get("http://127.0.0.1:8000/api/ratings/")
+    return axiosInstance.get("ratings/");
 }
 
 export const getRatingByAppointment = (appointmentId) => {
-    return axios.get(`http://127.0.0.1:8000/api/ratings?appointment=${appointmentId}`);
+    return axiosInstance.get(`ratings?appointment=${appointmentId}`);
 }
 
 export const createRating = (ratingData) => {
-    return axios.post("http://127.0.0.1:8000/api/ratings/", ratingData);
+    return axiosInstance.post("ratings/", ratingData);
 }
 
 export const updateRating = (id, ratingData) => {
-    return axios.patch(`http://127.0.0.1:8000/api/ratings/${id}/`, ratingData);
+    return axiosInstance.patch(`ratings/${id}/`, ratingData);
 }

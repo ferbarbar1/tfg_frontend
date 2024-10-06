@@ -1,25 +1,34 @@
 import axios from "axios";
 
+const getToken = () => localStorage.getItem("token");
+
+const axiosInstance = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+    headers: {
+        Authorization: `Bearer ${getToken()}`,
+    }
+});
+
 export const getAllResources = () => {
-    return axios.get("http://127.0.0.1:8000/api/resources/")
+    return axiosInstance.get("resources/");
 }
 
 export const getResource = (id) => {
-    return axios.get(`http://127.0.0.1:8000/api/resources/${id}/`)
+    return axiosInstance.get(`resources/${id}/`);
 }
 
 export const getMyResources = (userId) => {
-    return axios.get(`http://127.0.0.1:8000/api/resources/?author=${userId}`)
+    return axiosInstance.get(`resources/?author=${userId}`);
 }
 
 export const createResource = (resourceData) => {
-    return axios.post("http://127.0.0.1:8000/api/resources/", resourceData)
+    return axiosInstance.post("resources/", resourceData);
 }
 
 export const updateResource = (id, resourceData) => {
-    return axios.patch(`http://127.0.0.1:8000/api/resources/${id}/`, resourceData)
+    return axiosInstance.patch(`resources/${id}/`, resourceData);
 }
 
 export const deleteResource = (id) => {
-    return axios.delete(`http://127.0.0.1:8000/api/resources/${id}/`)
+    return axiosInstance.delete(`resources/${id}/`);
 }

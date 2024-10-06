@@ -1,13 +1,22 @@
 import axios from "axios";
 
+const getToken = () => localStorage.getItem("token");
+
+const axiosInstance = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+    headers: {
+        Authorization: `Bearer ${getToken()}`,
+    }
+});
+
 export const getAllInforms = () => {
-    return axios.get("http://127.0.0.1:8000/api/informs/")
+    return axiosInstance.get("informs/");
 }
 
 export const createInform = (informData) => {
-    return axios.post("http://127.0.0.1:8000/api/informs/", informData);
+    return axiosInstance.post("informs/", informData);
 }
 
 export const updateInform = (id, informData) => {
-    return axios.patch(`http://127.0.0.1:8000/api/informs/${id}/`, informData);
+    return axiosInstance.patch(`informs/${id}/`, informData);
 }

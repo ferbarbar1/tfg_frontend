@@ -1,13 +1,22 @@
 import axios from "axios";
 
+const getToken = () => localStorage.getItem("token");
+
+const axiosInstance = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+    headers: {
+        Authorization: `Bearer ${getToken()}`,
+    }
+});
+
 export const getAllNotificationsByUser = (userId) => {
-    return axios.get(`http://127.0.0.1:8000/api/notifications?user=${userId}`)
+    return axiosInstance.get(`notifications?user=${userId}`);
 }
 
 export const updateNotification = (id, notificationData) => {
-    return axios.patch(`http://127.0.0.1:8000/api/notifications/${id}/`, notificationData)
+    return axiosInstance.patch(`notifications/${id}/`, notificationData);
 }
 
 export const deleteNotification = (id) => {
-    return axios.delete(`http://127.0.0.1:8000/api/notifications/${id}/`)
+    return axiosInstance.delete(`notifications/${id}/`);
 }

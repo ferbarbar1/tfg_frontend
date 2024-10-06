@@ -1,25 +1,34 @@
 import axios from "axios";
 
+const getToken = () => localStorage.getItem("token");
+
+const axiosInstance = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+    headers: {
+        Authorization: `Bearer ${getToken()}`,
+    }
+});
+
 export const getMedicalHistory = (id) => {
-    return axios.get(`http://127.0.0.1:8000/api/medical-histories/${id}/`)
+    return axiosInstance.get(`medical-histories/${id}/`);
 }
 
 export const getAllMedicalHistories = () => {
-    return axios.get("http://127.0.0.1:8000/api/medical-histories/")
+    return axiosInstance.get("medical-histories/");
 }
 
 export const getAllMedicalHistoriesByClient = (clientId) => {
-    return axios.get(`http://127.0.0.1:8000/api/medical-histories?client=${clientId}`)
+    return axiosInstance.get(`medical-histories?client=${clientId}`);
 }
 
 export const createMedicalHistory = (medicalHistoryData) => {
-    return axios.post("http://127.0.0.1:8000/api/medical-histories/", medicalHistoryData)
+    return axiosInstance.post("medical-histories/", medicalHistoryData);
 }
 
 export const updateMedicalHistory = (id, medicalHistoryData) => {
-    return axios.put(`http://127.0.0.1:8000/api/medical-histories/${id}/`, medicalHistoryData)
+    return axiosInstance.put(`medical-histories/${id}/`, medicalHistoryData);
 }
 
 export const deleteMedicalHistory = (id) => {
-    return axios.delete(`http://127.0.0.1:8000/api/medical-histories/${id}/`)
+    return axiosInstance.delete(`medical-histories/${id}/`);
 }
