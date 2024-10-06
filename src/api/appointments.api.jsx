@@ -33,6 +33,10 @@ export const getAppointmentsByService = (serviceId) => {
     return axios.get(`http://127.0.0.1:8000/api/appointments?service=${serviceId}`)
 }
 
+export const getAppointmentsByWorkerAndService = (serviceId, workerId) => {
+    return axios.get(`http://127.0.0.1:8000/api/appointments?service=${serviceId}&worker=${workerId}`)
+}
+
 export const createCheckoutSession = async (serviceId, clientId, scheduleId, description, modality) => {
     try {
         const response = await axios.post("http://127.0.0.1:8000/api/payments/checkout-session/", {
@@ -58,3 +62,20 @@ export const cancelAppointment = async (appointmentId) => {
         throw error;
     }
 };
+
+export const createAppointmentByOwner = async (serviceId, clientId, scheduleId, description, modality) => {
+    try {
+        const response = await axios.post('http://127.0.0.1:8000/api/create-appointment-by-owner/', {
+            service_id: serviceId,
+            client_id: clientId,
+            schedule_id: scheduleId,
+            description: description,
+            modality: modality
+        }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error creating appointment by owner:', error);
+        throw error;
+    }
+}

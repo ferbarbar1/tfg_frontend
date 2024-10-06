@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getWorker, updateWorker, createWorker } from '../../api/workers.api';
-import { TextField, Button, Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { TextField, Button, Box, Card, CardContent, Grid, Typography, Divider } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export function WorkerForm({ isUpdate }) {
@@ -182,14 +182,17 @@ export function WorkerForm({ isUpdate }) {
     };
 
     return (
-        <Card>
+        <Card sx={{ mt: 4 }}>
             <CardContent>
+                <Typography variant="h5" component="div" gutterBottom sx={{ textAlign: 'center', mb: 2 }}>
+                    {isUpdate ? t('edit_worker_title') : t('create_worker_title')}
+                </Typography>
+                <Divider sx={{ mb: 3 }} />
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 type="text"
@@ -203,7 +206,6 @@ export function WorkerForm({ isUpdate }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 type='text'
@@ -217,7 +219,6 @@ export function WorkerForm({ isUpdate }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 type='text'
@@ -233,7 +234,6 @@ export function WorkerForm({ isUpdate }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 id="dateOfBirth"
@@ -252,7 +252,6 @@ export function WorkerForm({ isUpdate }) {
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 type='email'
@@ -268,7 +267,6 @@ export function WorkerForm({ isUpdate }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 type='text'
@@ -282,7 +280,6 @@ export function WorkerForm({ isUpdate }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 type='number'
                                 required
                                 fullWidth
@@ -300,7 +297,6 @@ export function WorkerForm({ isUpdate }) {
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         variant="outlined"
-                                        margin="normal"
                                         required
                                         fullWidth
                                         name="password"
@@ -316,7 +312,6 @@ export function WorkerForm({ isUpdate }) {
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         variant="outlined"
-                                        margin="normal"
                                         required
                                         fullWidth
                                         name="repeatPassword"

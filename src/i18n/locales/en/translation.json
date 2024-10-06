@@ -304,5 +304,15 @@
     "no_data_available": "No data available",
     "total_annual_billing": "Total annual billing",
     "average_monthly_billing": "Average monthly billing",
-    "monthly_billing": "Monthly billing"
+    "monthly_billing": "Monthly billing",
+    "appointment_detail_title": "Appointment details",
+    "create_client_title": "Create Client",
+    "edit_client_title": "Update Client",
+    "create_worker_title": "Create Worker",
+    "edit_worker_title": "Update Worker",
+    "all_services": "All services",
+    "start_date_future_error": "Start date must be in the future",
+    "end_date_future_error": "End date must be in the future",
+    "end_date_after_start_error": "End date must be after start date",
+    "duration_minimum_error": "Duration must be at least one day"
 }

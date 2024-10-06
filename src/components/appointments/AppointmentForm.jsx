@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { createAppointment, createCheckoutSession } from '../../api/appointments.api';
+import { createAppointment, createCheckoutSession, createAppointmentByOwner } from '../../api/appointments.api';
 import { getSchedulesAvailablesByDate } from '../../api/schedules.api';
 import { loadStripe } from '@stripe/stripe-js';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 const stripePromise = loadStripe('pk_test_51PFdYTGzZooPGUyPyarTnl6RMGFS0Zkll6iKQcpYRK0sICx2lokA4BEXIoxm1j4n1OmvkOP48mYaTaGBpsPfzs5Y0012QYjWvu');
 
-export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
+export const AppointmentForm = ({ closeModal, serviceId, selectedSlot, fetchAppointments }) => {
     const { t } = useTranslation();
     const { user } = useContext(AuthContext);
     const { showAlert } = useAlert();
@@ -125,22 +125,22 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
         const clientUser = user.user.role === 'client' ? user.id : client;
         try {
             const appointmentData = {
-                schedule: {
-                    date: schedule.date,
-                    start_time: schedule.start_time,
-                    end_time: schedule.end_time,
-                },
+                service_id: service,
+                client_id: clientUser,
+                schedule_id: schedule.id,
                 description,
-                client: clientUser,
                 modality,
-                service,
             };
 
-            console.log(appointmentData);
+            if (user.user.role === 'owner') {
+                await createAppointmentByOwner(appointmentData.service_id, appointmentData.client_id, appointmentData.schedule_id, appointmentData.description, appointmentData.modality);
+            } else {
+                await createAppointment(appointmentData);
+            }
 
-            await createAppointment(appointmentData);
             closeModal();
             showAlert(t('appointment_success'), 'success');
+            fetchAppointments();
             navigate('/appointments/');
         } catch (error) {
             console.error("Error creating appointment", error);
@@ -289,7 +289,11 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot }) => {
                 {errors.modality && <Typography color="error" sx={{ ml: 2 }}>{errors.modality}</Typography>}
             </FormControl>
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Button variant="contained" color="primary" onClick={handleBook}>{t('book')}</Button>
+                {user.user.role === "owner" ? (
+                    <Button variant="contained" color="primary" type="submit">{t('create_button')}</Button>
+                ) : (
+                    <Button variant="contained" color="primary" onClick={handleBook}>{t('book')}</Button>
+                )}
                 <Button variant="contained" color="error" onClick={closeModal} sx={{ ml: 2 }}>{t('cancel_button')}</Button>
             </Box>
         </Box>

@@ -43,8 +43,6 @@ export const RateAppointmentForm = ({ appointmentId, closeModal }) => {
             opinion,
         };
 
-        console.log(ratingData);
-
         try {
             if (isUpdate) {
                 await updateRating(ratingId, ratingData);

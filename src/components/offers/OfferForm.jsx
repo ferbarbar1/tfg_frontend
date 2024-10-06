@@ -15,6 +15,7 @@ export function OfferForm({ isUpdate }) {
     const [services, setServices] = useState([]);
     const [availableServices, setAvailableServices] = useState([]);
     const [isModified, setIsModified] = useState(false);
+    const [errors, setErrors] = useState({});
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -46,6 +47,36 @@ export function OfferForm({ isUpdate }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        const newErrors = {};
+
+        const now = new Date();
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Validar que las fechas sean futuras
+        if (start <= now) {
+            newErrors.startDate = t('start_date_future_error');
+        }
+        if (end <= now) {
+            newErrors.endDate = t('end_date_future_error');
+        }
+
+        // Validar que la fecha de fin no sea anterior a la de inicio
+        if (end <= start) {
+            newErrors.endDate = t('end_date_after_start_error');
+        }
+
+        // Validar que la duración sea de al menos un día
+        const oneDay = 24 * 60 * 60 * 1000;
+        if ((end - start) < oneDay) {
+            newErrors.duration = t('duration_minimum_error');
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
 
         const formData = new FormData();
         formData.append('name', name);
@@ -118,13 +149,57 @@ export function OfferForm({ isUpdate }) {
                                 <form onSubmit={handleSubmit}>
                                     <Grid container spacing={3}>
                                         <Grid item xs={6}>
-                                            <TextField label={t('name_label')} value={name} onChange={handleNameChange} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label={t('description_label')} value={description} onChange={handleDescriptionChange} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label={t('discount_label')} type="number" value={discount} onChange={handleDiscountChange} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField
+                                                label={t('name_label')}
+                                                value={name}
+                                                onChange={handleNameChange}
+                                                required
+                                                fullWidth
+                                                sx={{ mb: 2 }}
+                                            />
+                                            <TextField
+                                                label={t('description_label')}
+                                                value={description}
+                                                onChange={handleDescriptionChange}
+                                                required
+                                                fullWidth
+                                                sx={{ mb: 2 }}
+                                            />
+                                            <TextField
+                                                label={t('discount_label')}
+                                                type="number"
+                                                value={discount}
+                                                onChange={handleDiscountChange}
+                                                required
+                                                fullWidth
+                                                sx={{ mb: 2 }}
+                                            />
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <TextField label={t('start_date')} type="datetime-local" InputLabelProps={{ shrink: true }} value={startDate} onChange={handleStartDateChange} required fullWidth sx={{ mb: 2 }} />
-                                            <TextField label={t('end_date')} type="datetime-local" InputLabelProps={{ shrink: true }} value={endDate} onChange={handleEndDateChange} required fullWidth sx={{ mb: 2 }} />
+                                            <TextField
+                                                label={t('start_date')}
+                                                type="datetime-local"
+                                                InputLabelProps={{ shrink: true }}
+                                                value={startDate}
+                                                onChange={handleStartDateChange}
+                                                required
+                                                fullWidth
+                                                sx={{ mb: 2 }}
+                                                error={!!errors.startDate}
+                                                helperText={errors.startDate}
+                                            />
+                                            <TextField
+                                                label={t('end_date')}
+                                                type="datetime-local"
+                                                InputLabelProps={{ shrink: true }}
+                                                value={endDate}
+                                                onChange={handleEndDateChange}
+                                                required
+                                                fullWidth
+                                                sx={{ mb: 2 }}
+                                                error={!!errors.endDate || !!errors.duration}
+                                                helperText={errors.endDate || errors.duration}
+                                            />
                                             <FormControl fullWidth required sx={{ mb: 2 }}>
                                                 <InputLabel id="services-label">{t('services_label')}</InputLabel>
                                                 <Select

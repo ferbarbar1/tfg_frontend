@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getClient, updateClient, createClient } from '../../api/clients.api';
-import { TextField, Button, Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { TextField, Button, Box, Card, CardContent, Grid, Typography, Divider } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export function ClientForm({ isUpdate }) {
@@ -159,14 +159,17 @@ export function ClientForm({ isUpdate }) {
     };
 
     return (
-        <Card>
+        <Card sx={{ mt: 4 }}>
             <CardContent>
+                <Typography variant="h5" component="div" gutterBottom sx={{ textAlign: 'center', mb: 2 }}>
+                    {isUpdate ? t('edit_client_title') : t('create_client_title')}
+                </Typography>
+                <Divider sx={{ mb: 3 }} />
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 type='text'
@@ -181,7 +184,6 @@ export function ClientForm({ isUpdate }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 id="lastName"
@@ -195,7 +197,6 @@ export function ClientForm({ isUpdate }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 type='text'
@@ -212,7 +213,6 @@ export function ClientForm({ isUpdate }) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 id="dateOfBirth"
@@ -231,7 +231,6 @@ export function ClientForm({ isUpdate }) {
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
-                                margin="normal"
                                 required
                                 fullWidth
                                 type='email'
@@ -250,7 +249,6 @@ export function ClientForm({ isUpdate }) {
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         variant="outlined"
-                                        margin="normal"
                                         required
                                         fullWidth
                                         name="password"
@@ -267,7 +265,6 @@ export function ClientForm({ isUpdate }) {
                                 <Grid item xs={12} sm={6}>
                                     <TextField
                                         variant="outlined"
-                                        margin="normal"
                                         required
                                         fullWidth
                                         name="repeatPassword"
