@@ -190,9 +190,6 @@ export function VirtualAppointment({ appointmentId, role, informSaved }) {
                             <Typography variant="h6" align="center">
                                 {user.user.username}
                             </Typography>
-                            <Typography variant="body2" align="center" sx={{ color: 'gray' }}>
-                                {peerId}
-                            </Typography>
                             <Webcam
                                 audio={false}
                                 ref={localWebcamRef}
@@ -227,9 +224,6 @@ export function VirtualAppointment({ appointmentId, role, informSaved }) {
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '80%' }}>
                             <Typography variant="h6" align="center">
                                 {role === 'client' ? workerName : clientName}
-                            </Typography>
-                            <Typography variant="body2" align="center" sx={{ color: 'gray' }}>
-                                {remotePeerId}
                             </Typography>
                             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                                 {isRemotePeerAvailable ? (

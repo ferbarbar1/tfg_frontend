@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography, Container, Divider } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export const TermsAndConditions = () => {
@@ -12,6 +12,7 @@ export const TermsAndConditions = () => {
                     {t('terms_and_conditions_title')}
                 </Typography>
             </Box>
+            <Divider sx={{ mb: 2 }} />
             <Box>
                 <Typography variant="h6" component="h2" gutterBottom>
                     {t('section_1_title')}
@@ -50,6 +51,14 @@ export const TermsAndConditions = () => {
                 </Typography>
                 <Typography variant="body1" paragraph>
                     {t('section_5_content')}
+                </Typography>
+            </Box>
+            <Box>
+                <Typography variant="h6" component="h2" gutterBottom>
+                    {t('section_6_title')}
+                </Typography>
+                <Typography variant="body1" paragraph>
+                    {t('section_6_content')}
                 </Typography>
             </Box>
         </Container>

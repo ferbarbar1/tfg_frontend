@@ -75,29 +75,30 @@ export function Banner({ onMenuClick }) {
                                 </Badge>
                             </Tooltip>
                         </Link>
-
-                        <Select
-                            value={currentLanguage}
-                            onChange={handleLanguageChange}
-                            variant="outlined"
-                            sx={{
-                                color: '#ecf0f1',
-                                borderColor: '#ecf0f1',
-                                '& .MuiOutlinedInput-notchedOutline': {
-                                    border: 'none',
-                                },
-                                '& .MuiSelect-icon': {
-                                    color: '#ecf0f1',
-                                },
-                            }}
-                            inputProps={{ sx: { color: '#ecf0f1' } }}
-                            size={isMobile ? 'small' : 'medium'}
-                        >
-                            <MenuItem value="es">ESP</MenuItem>
-                            <MenuItem value="en">ENG</MenuItem>
-                        </Select>
                     </div>
                 )}
+
+                <Select
+                    value={currentLanguage}
+                    onChange={handleLanguageChange}
+                    variant="outlined"
+                    sx={{
+                        color: '#ecf0f1',
+                        borderColor: '#ecf0f1',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                            border: 'none',
+                        },
+                        '& .MuiSelect-icon': {
+                            color: '#ecf0f1',
+                        },
+                    }}
+                    inputProps={{ sx: { color: '#ecf0f1' } }}
+                    size={isMobile ? 'small' : 'medium'}
+                >
+                    <MenuItem value="es">ESP</MenuItem>
+                    <MenuItem value="en">ENG</MenuItem>
+                </Select>
+
             </Toolbar>
         </AppBar>
     );
