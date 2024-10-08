@@ -4,10 +4,20 @@ const getToken = () => localStorage.getItem("token");
 
 const axiosInstance = axios.create({
     baseURL: "http://127.0.0.1:8000/api/",
-    headers: {
-        Authorization: `Token ${getToken()}`,
-    }
 });
+
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = getToken();
+        if (token) {
+            config.headers.Authorization = `Token ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export const getMessagesByConversationId = async (conversationId) => {
     return axiosInstance.get(`messages?conversation=${conversationId}`);

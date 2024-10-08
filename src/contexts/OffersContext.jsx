@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { getAllOffers } from '../api/offers.api';
+import { AuthContext } from './AuthContext';
 
 export const OffersContext = React.createContext();
 
 export const OffersProvider = ({ children }) => {
     const [activeOffer, setActiveOffer] = useState(null);
+    const { token } = useContext(AuthContext);
 
     useEffect(() => {
         async function fetchActiveOffers() {
+            if (!token) {
+                return;
+            }
+
             try {
                 const offersResponse = await getAllOffers();
                 const offers = offersResponse.data;
@@ -27,7 +33,7 @@ export const OffersProvider = ({ children }) => {
         }
 
         fetchActiveOffers();
-    }, []);
+    }, [token]);
 
     return (
         <OffersContext.Provider value={{ activeOffer }}>

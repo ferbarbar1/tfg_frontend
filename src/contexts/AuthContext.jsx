@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { getUserData } from '../api/users.api';
 
 export const AuthContext = React.createContext({
@@ -9,10 +9,12 @@ export const AuthContext = React.createContext({
 
 export const AuthProvider = ({ children }) => {
   const savedToken = localStorage.getItem('token');
+  const [token, setTokenState] = useState(savedToken || "");
   const [user, setUser] = useState(null);
 
-  const setToken = async (newToken) => {
+  const setToken = useCallback(async (newToken) => {
     localStorage.setItem('token', newToken);
+    setTokenState(newToken);
 
     if (newToken && newToken.trim() !== '') {
       try {
@@ -23,22 +25,23 @@ export const AuthProvider = ({ children }) => {
         if (error.response && error.response.status === 401) {
           // El token es inválido, borra el token del almacenamiento local
           localStorage.removeItem('token');
+          setTokenState("");
           setUser(null);
         }
       }
     } else {
       setUser(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (savedToken) {
       setToken(savedToken);
     }
-  }, []);
+  }, [savedToken, setToken]);
 
   return (
-    <AuthContext.Provider value={{ token: savedToken, setToken, user }}>
+    <AuthContext.Provider value={{ token, setToken, user }}>
       {children}
     </AuthContext.Provider>
   );
