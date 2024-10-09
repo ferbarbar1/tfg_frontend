@@ -43,7 +43,7 @@ export const AppointmentForm = ({ closeModal, serviceId, selectedSlot, fetchAppo
                     // Filtrar para mantener solo horarios únicos
                     const uniqueTimes = times.filter((time, index, self) =>
                         index === self.findIndex((t) => (
-                            t.start_time === time.start_time && t.end_time === time.end_time
+                            t.start_time === time.start_time && t.end_time === time.end_time && t.available
                         ))
                     );
                     setAvailableTimes(uniqueTimes);
