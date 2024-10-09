@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, FormControl, InputLabel, Select, MenuItem, Card, CardContent, Grid, Paper, Divider } from '@mui/material';
+import { Box, Typography, FormControl, InputLabel, Select, MenuItem, Card, CardContent, Grid, Divider } from '@mui/material';
 import { getAllRatings } from '../../api/ratings.api';
 import { getAllInvoices } from '../../api/invoices.api';
 import { getAllAppointments } from '../../api/appointments.api';
@@ -127,7 +127,8 @@ export function Summary() {
                     <Card sx={{ boxShadow: 3 }}>
                         <CardContent>
                             <Typography variant="h6">{t('total_appointments')}</Typography>
-                            <Typography variant="h4">{totalAppointments}</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1">{totalAppointments}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -135,7 +136,8 @@ export function Summary() {
                     <Card sx={{ boxShadow: 3 }}>
                         <CardContent>
                             <Typography variant="h6">{t('total_amount')}</Typography>
-                            <Typography variant="h4">{totalAmount.toFixed(2)} €</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1">{totalAmount.toFixed(2)} €</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -143,7 +145,8 @@ export function Summary() {
                     <Card sx={{ boxShadow: 3 }}>
                         <CardContent>
                             <Typography variant="h6">{t('total_ratings')}</Typography>
-                            <Typography variant="h4">{totalRatings}</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1">{totalRatings}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -151,7 +154,8 @@ export function Summary() {
                     <Card sx={{ boxShadow: 3 }}>
                         <CardContent>
                             <Typography variant="h6">{t('average_rating')}</Typography>
-                            <Typography variant="h4">{averageRating}</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1">{averageRating}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -159,7 +163,8 @@ export function Summary() {
                     <Card sx={{ boxShadow: 3 }}>
                         <CardContent>
                             <Typography variant="h6">{t('total_clients')}</Typography>
-                            <Typography variant="h4">{totalClients}</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1">{totalClients}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -167,7 +172,8 @@ export function Summary() {
                     <Card sx={{ boxShadow: 3 }}>
                         <CardContent>
                             <Typography variant="h6">{t('total_services')}</Typography>
-                            <Typography variant="h4">{totalServices}</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1">{totalServices}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>
@@ -175,7 +181,8 @@ export function Summary() {
                     <Card sx={{ boxShadow: 3 }}>
                         <CardContent>
                             <Typography variant="h6">{t('total_workers')}</Typography>
-                            <Typography variant="h4">{totalWorkers}</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1">{totalWorkers}</Typography>
                         </CardContent>
                     </Card>
                 </Grid>

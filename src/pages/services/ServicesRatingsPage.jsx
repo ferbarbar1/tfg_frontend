@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getService } from '../../api/services.api';
 import { getRatingByAppointment } from '../../api/ratings.api';
 import { getAppointmentsByService } from '../../api/appointments.api';
-import { Container, Typography, Divider, CircularProgress } from '@mui/material';
+import { Container, Typography, Divider, CircularProgress, Box } from '@mui/material';
 import { RatingsServiceList } from '../../components/ratings/RatingsServiceList';
 import { useTranslation } from 'react-i18next';
 
@@ -37,7 +37,11 @@ export const ServicesRatingsPage = () => {
     }, [id]);
 
     if (loading) {
-        return <CircularProgress />;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (
