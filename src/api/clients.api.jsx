@@ -1,21 +1,40 @@
 import axios from "axios";
 
+const getToken = () => localStorage.getItem("token");
+
+const axiosInstance = axios.create({
+    baseURL: "http://127.0.0.1:8000/api/",
+});
+
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = getToken();
+        if (token) {
+            config.headers.Authorization = `Token ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 export const getAllClients = () => {
-    return axios.get("https://tfgbackend-production.up.railway.app/api/clients/")
+    return axiosInstance.get("clients/");
 }
 
 export const getClient = (id) => {
-    return axios.get(`https://tfgbackend-production.up.railway.app/api/clients/${id}/`)
+    return axiosInstance.get(`clients/${id}/`);
 }
 
 export const createClient = (clientData) => {
-    return axios.post("https://tfgbackend-production.up.railway.app/api/clients/", clientData)
+    return axiosInstance.post("clients/", clientData);
 }
 
 export const updateClient = (id, clientData) => {
-    return axios.patch(`https://tfgbackend-production.up.railway.app/api/clients/${id}/`, clientData)
+    return axiosInstance.patch(`clients/${id}/`, clientData);
 }
 
 export const deleteClient = (id) => {
-    return axios.delete(`https://tfgbackend-production.up.railway.app/api/clients/${id}/`)
+    return axiosInstance.delete(`clients/${id}/`);
 }

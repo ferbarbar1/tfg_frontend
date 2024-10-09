@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import React, { useState, useEffect, useCallback } from "react";
+import { getUserData } from '../api/users.api';
 
 export const AuthContext = React.createContext({
   token: "",
@@ -9,24 +9,36 @@ export const AuthContext = React.createContext({
 
 export const AuthProvider = ({ children }) => {
   const savedToken = localStorage.getItem('token');
-  const [token, setToken] = useState(savedToken);
+  const [token, setTokenState] = useState(savedToken || "");
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const getUserData = async () => {
-      if (token) {
-        const response = await axios.get('https://tfgbackend-production.up.railway.app/api/profile', {
-          headers: {
-            'Authorization': `Token ${token}`
-          }
-        });
+  const setToken = useCallback(async (newToken) => {
+    localStorage.setItem('token', newToken);
+    setTokenState(newToken);
 
-        setUser(response.data);
+    if (newToken && newToken.trim() !== '') {
+      try {
+        const userData = await getUserData(newToken);
+        setUser(userData);
+      } catch (error) {
+        console.error(error);
+        if (error.response && error.response.status === 401) {
+          // El token es inválido, borra el token del almacenamiento local
+          localStorage.removeItem('token');
+          setTokenState("");
+          setUser(null);
+        }
       }
-    };
+    } else {
+      setUser(null);
+    }
+  }, []);
 
-    getUserData();
-  }, [token]);
+  useEffect(() => {
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, [savedToken, setToken]);
 
   return (
     <AuthContext.Provider value={{ token, setToken, user }}>
